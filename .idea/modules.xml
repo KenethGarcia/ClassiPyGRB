@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$USER_HOME$/Documents/TesisWork/.idea/TesisWork.iml" filepath="$USER_HOME$/Documents/TesisWork/.idea/TesisWork.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/tSNE_Swift_GRB.iml" filepath="$PROJECT_DIR$/.idea/tSNE_Swift_GRB.iml" />
     </modules>
   </component>

@@ -1,0 +1,476 @@
+################################################################################
+## This is the redshift list for BAT-detected GRBs.
+## Columns are:
+## GRBname: GRB name
+## z: GRB redshift
+## Method: The mothod for how the redshift is determined:
+##         "ba": spectroscopic measurement from absorption lines;
+##         "he": spectroscopic measurement from host galaxy;
+##         "bp": photometric redshift;
+##         "hp": photometric redshift from host galaxy.
+## Uncertainty (mostly for photo-z): The uncertainty for the photometric redshift;
+##                                   the numbers quoted directly from the reference,
+##                                   and might refer to different confidence ranges.
+## Ref.: References of the GRB redshift measurements.
+##       If there are more than one references presented,
+##       The reference marked with "*" is the one related
+##        to the value presented in this table.
+################################################################################
+## GRBname | z | Method | Uncertainty (when available; mostly for photo-z) | Ref.
+GRB201024A  |   0.999   | ba |   N/A   |   de Ugarte Postigo et al. GCN Circ. 28764 (GTC/OSIRIS)  
+GRB201021C  |   1.070   | ba |   N/A   |   Vielfaure et al. GCN Circ. 28739 (VLT/X-shooter)  
+GRB201020A  |   2.903   | ba |   N/A   |   Kann et al. GCN Circ. 28717  
+GRB201015A  |   0.426   | be |   N/A   |   de Ugarte Postigo et al. GCN Circ. 28649  
+GRB201014A  |   4.56    | ba |   N/A   |   de Ugarte Postigo et al. GCN Circ. 28650  
+GRB200829A  |   1.25    | UVOT-XRT photometric redshift |   +0.02 -0.02   |   Oates et al. GCN Circ. 28338  
+GRB200205B  |   1.465   | ba |   N/A   |   Vielfaure et al. GCN Circ. 26998  
+GRB191221B  |   1.148   | ba |   N/A   |   *Vielfaure et al. GCN Circ. 26553 (VLT/X-shooter); Kuin et al. GCN Circ. 26538  
+GRB191019A  |   0.248(?)    | ba |   N/A   |   Fynbo et al. GCN Circ. 26041 (NOT)  
+GRB191011A  |   1.722    | ba |   N/A   |   Malesani et al. GCN Circ. 25991 (VLT/X-shooter)  
+GRB191004B  |   3.503    | ba |   N/A   |   D'Elia et al. GCN Circ. 25956 (VLT/X-shooter)  
+GRB190829A  |   0.0785   | ba he |   +0.005 -0.005   |   *Valeev et al. GCN Circ. 25565 (GTC); De et al. GCN Circ. 25595 (Keck)  
+GRB190719C  |   2.469    | he |   N/A   |   Rossi et al. GCN Circ. 25252 (CLT/X-shooter)  
+GRB190627A  |   1.942    | ba |   N/A   |   Japelj et al. GCN Circ. 24916 (VLT/FORS2)  
+GRB190324A  |   1.1715   | ba |   N/A   |   Perley et al. GCN Circ. 23999 (VLT/X-shooter)  
+GRB190114C  |   0.42     | ba |   N/A   |   *Selsing et al. GCN Circ. 23695 (NOT); Castro-Tirado et al. GCN Circ. 23708 (GTC)  
+GRB190114A  |   3.3765   | ba |   N/A   |   de Ugarte Postigo et al. GCN Circ. 23680 (VLT/X-shooter)  
+GRB190106A  |   1.859     | ba |   N/A   |   Xu et al. GCN Circ. 23629 (Xinglong); Mao et al. GCN Circ. 23630 (GMG); *Schady et al. GCN Circ. 23632 (VLR/X-shooter)  
+GRB181213A  |   <2.4     | Optical limit |   N/A   |   Heintz et al. GCN Circ. 23537 (NOT)  
+GRB181110A  |   1.505    | ba |   N/A   |   Perley et al. GCN Circ. 23421 (VLT/X-shooter)  
+GRB181020A  |   2.938    | ba |   N/A   |   Fynbo et al. GCN Circ. 23356 (VLT/X-shooter)  
+GRB181010A  |   1.39     | ba (and be) |   N/A   |   Vielfaure et al. GCN Circ. 23315 (VLA/X-shooter)  
+GRB180728A  |   0.117    | ba |   N/A   |   Rossi et al. GCN Circ. 23055 (VLA/X-shooter)  
+GRB180720B  |   0.654    | ba |   N/A   |   Vreeswijk et al. GCN Circ. 22996 (VLA/X-shooter)  
+GRB180624A  |   2.855    | ba |   N/A   |   *Rossi et al. GCN Circ. 22845 (LBT/MODS); Schady et al. GCN Circ. 22840 (GROND; photo-z)  
+GRB180620B  |   1.1175   | ba |   N/A   |   Izzo et al. GCN Circ. 22823 (VLA/X-shooter)  
+GRB180620A  |   <1.2     | UVOT limit |   N/A   |   Breeveld et al. GCN Circ. 22805  
+GRB180618A  |   <1.2     | UVOT limit |   N/A   |   Siegel et al. GCN Circ. 22810  
+GRB180510B  |   1.305    | ba |   N/A   |   Palmerio et al. GCN Circ. 22702 (VLT/X-shooter)  
+GRB180404A  |   1.000    | ba |   N/A   |   Selsing et al. GCN Circ. 22591 (VLT/X-shooter)  
+GRB180329B  |   1.998    | ba |   N/A   |   Izzo et al. GCN Circ. 22567 (VLT/X-shooter)  
+GRB180325A  |   2.25     | ba |   N/A   |   Heintz et al. GCN Circ. 22535 (NOT); D'Avanzo etal. GCN Circ. 22555 (VLT/X-shooter)  
+GRB180314A  |   1.445    | ba |   N/A   |   Sbarufatti et al. GCN Circ. 22484  
+GRB180205A  |   1.409    | ba |   N/A   |   Tanvir et al. GCN Circ. 22384  
+GRB180115A  |   2.487   | afterglow Lyman-alpha |   N/A   |   de Ugarte Postigo et al. GCN Circ. 22346  
+GRB171222A  |   2.409   | afterglow Lyman-alpha |   N/A   |   de Ugarte Postigo et al. GCN Circ. 22272  
+GRB171209A  |   1.8-2.8   | UVOT limit |   N/A   |   Kuin et al. GCN Circ. 22221  
+GRB171205A  |    0.037    | he (also ba) |   N/A   |   Izzo et al. GCN Circ. 22180  
+GRB171020A  |   1.87     | ba |   N/A   |   Malesani et al. GCN Circ. 22039  
+GRB170903A  |   0.886    | he |   N/A   |   de Ugarte Postigo et al. GCN Circ. 21799  
+GRB170714A  |   0.793    | he |   N/A   |   de Ugarte Postigo et al. GCN Circ. 21359  
+GRB170705A  |   2.010    | ba |   N/A   |   de Ugarte Postigo et al. GCN Circ. 21298  
+GRB170607A  |   0.557    | be |   N/A   |   de Ugarte Postigo et al. GCN Circ. 21240; Heintz et al. GCN Circ. 21217 (redshift from the possible host galaxy)  
+GRB170604A  |   1.329    | ba |   N/A   |   Izzo et al. GCN Circ. 21197  
+GRB170531B  |   2.366    | ba |   N/A   |   de Ugarte Postigo et al. GCN Circ. 21177; Wiersema et al. GCN Circ. 21209  
+GRB170519A  |   0.818    | ba |   N/A   |    Izzo et al. GCN Circ. 21119 (GTC/OSIRIS)  
+GRB170405A  |   3.510     | ba |   N/A   |   de Ugarte Postigo et al. GCN Circ. 20990  
+GRB170202A  |   3.645     | afterglow Lyman-alpha |   N/A   |   de Ugarte Postigo et al. GCN Circ. 20584 (OSIRIS/GTC); Xu et al. GCN Circ. 20588 (Xinglong); Palmerio et al. GCN Circ. 20590 (VLT/X-shooter)  
+GRB170113A  |   1.968    | ba |   N/A   |   Xu et al. GCN Circ. 20458  
+GRB161219B  |   0.1475    | ba |   N/A   |   Tanvir et al. GCN Circ. 20321; de Ugarte Postigo et al. GCN Circ. 20342  
+GRB161214B  |   <1.5     | UVOT limit |   N/A   |   Marshall et al. GCN Circ. 20268 (UVOT)  
+GRB161117A  |   1.549     | ba |   N/A   |   Malesani et al. GCN Circ. 20180 (VLT/X-Shooter)  
+GRB161108A  |   0.50(?)   | he |   +0.12 -0.12   |   Malesani et al. GCN Circ. 20146 (NOT; SDSS)  
+GRB161104A  |   0.788(?)  | N/A |   N/A   |   Fong et al. GCN Circ. 20168 (Magellan)  
+GRB161017A  |    2.013    | ba |   N/A   |   de Ugarte Postigo et al. GCN Circ. 20069 (GTC); Castro-Tirado et al. GCN Circ. 20077 (GTC); D'Avanzo et al. GCN Circ. 20078 (TNG)  
+GRB161014A  |    2.823    | ba |   N/A   |   de Ugarte Postigo et al. GCN Circ. 20043 (GTC); Selsing et al. GCN Circ. 20061 (VLT/X-shooter)   
+GRB161001A  |    0.891(?)   | he |   N/A   |   Kruehler et al. GCN Circ. 19971 (VLT/X-shooter)  
+GRB160821B  |    0.16     | he |   N/A   |   *Xu et al. GCN Circ. 19846 (WHT)  
+GRB160804A  |    0.736    | ba |   N/A   |   *Xu et al. GCN Circ. 19773 (VLT/X-shooter)  
+GRB160703A  |    <~1.5     | "UVOT limit" |   N/A   |   Hagen et al. GCN Circ. 19656 (UVOT)  
+GRB160624A  |    0.483    | he |   N/A   |    "Cucchiara et al. GCN Circ. 19565 (Gemini North)"  
+GRB160425A  |    0.555    | he |   N/A   |    "Tanvir et al. GCN Circ. 19350 (VLT/X-shooter)"  
+GRB160410A  |    1.717    | ba |    N/A    |    '*Selsing et al. GCN Circ. 19274 (VLT/X-shooter); Cao et al. GCN Circ. 19278 (VLT/X-shooter redshift)'   
+GRB160327A  |    4.99     | "Afterglow Lyman-alpha drop" |    +0.2 -0.9    |    'GCN 19245 (GTC)'   
+GRB160314A  |    0.726    | he |     N/A    |    'D'Elia et al. GCN Circ. 19192 (VLT/X-shooter)'   
+GRB160303A  |    <2.3     | "Afterglow spectrum" |     N/A    |    'de Ugarte Postigo et al. GCN Circ. 19154 (VLT/X-shooter)'   
+GRB160227A  |    2.38     | ba |    N/A    |    'Xu et al. GCN Circ. 19109 (NOT)'   
+GRB160203A  |    3.52     | ba |    N/A    |    'Pugliese et al. GCN Circ. 18982 (VLT/X-shooter)'   
+GRB160131A  |    0.972    | ba |    N/A    |    'Malesani et al. GCN Circ. 18965 (TNG); *de Ugarte Postigo et al. GCN Circ. 18966 (GTC); Xu et al. GCN Circ. 18969 (Xinglong)'   
+GRB160121A  |    1.960(?)     | ha |    N/A    |    'Sanchez-Ramirez et al. GCN Circ. 18925 (GTC)'   
+GRB160117B  |    0.87     | ba |    N/A    |    '*de Ugarte Postigo et al. GCN Circ. 18886 (VLT/X-shooter); D’Elia et al. GCN Circ. 18915 (TNG) '   
+GRB160104A  |    2.8(?) or 3.84(?)     | ba |    N/A    |    'de Ugarte Postig et al. GCN Circ. 18831 (GTC)'   
+GRB151215A  |    2.59     | ba |    N/A    |    'Xu et al. GCN Circ. 18696 (NOT)'   
+GRB151112A  |    4.1      | bp |    +0.3 -0.3    |    'Bolmer et al. GCN Circ. 18603 (GROND)'   
+GRB151111A  |    3.5      | bp |    +0.3 -0.3    |    'Bolmer et al. GCN Circ. 18598 (GROND)'   
+GRB151031A  |    1.167    | ba |    N/A    |    'Malesani et al. GCN Circ. 18540 (VLT/X-shooter)'   
+GRB151029A  |    1.423    | ba |    N/A    |    'Tanvir et al. GCN Circ. 18524 (VLT/X-shooter)'   
+GRB151027B  |    4.063    | ba |    N/A    |    'Xu et al. GCN Circ. 18505 (VLT/X-shooter)'   
+GRB151027A  |    0.810    | ba |    N/A    |    'Perley et al. GCN Circ. 18487 (Keck); Zhang et al. GCN Circ. 18493 (GMG)'   
+GRB151021A  |    2.330    | ba |    N/A    |    'de Ugarte Postigo et al. GCN Circ. 18426 (VLT/X-shooter)'   
+GRB150915A  |    1.968    | ba |    N/A    |    'D'Elia et al. GCN Circ. 18318 (VLT/X-shooter)'   
+GRB150910A  |    1.360    | ba |    N/A    |    'Zheng et al. GCN Circ. 18273 (Lick); *de Ugarte Postigo et al. GCN Circ. 18274 (GTC)'   
+GRB150821A  |    0.755    | ba |    N/A    |    'D'Elia et al. GCN Circ. 18187 (VLT/X-shooter)'   
+GRB150818A  |    0.282    | he |    N/A    |    'Sanchez-Ramirez et al. GCN Circ. 18177 (GTC)'   
+GRB150727A  |    0.313(?)    | he |   N/A   |    "Tanvir et al. GCN Circ. 18080 (VLT/X-shooter)"   
+GRB150424A  |    0.3(ref 1) or >0.7 (ref 2) (?) or 1.0? (ref 3)     | he |    N/A    |    "ref 1: Castro-Tirado et al. GCN Circ. 17758 (GTC); ref 2: Tanvir et al. GCN Circ. 18100 (HST); Ref3: Knust et al. (2017)"   
+GRB150423A  |    1.394(?)    | ba |    N/A    |    "Malesani et al. GCN Circ. 17755 (X-shooter)"   
+GRB150413A  |    3.139      | ba |    +0.003 -0.003    |    "Sanchez-Ramirez et al. GCN Circ. 17697 (CAHA); Tomasellla et al. ATEL 7391; *de Ugarte Postigo et al. GCN Circ. 17710 (MASTER)"   
+GRB150403A  |    2.06       | ba |    N/A     |    "Pugliese et al. GCN Circ. 17672 (VLT/X-shooter)"   
+GRB150323A  |    0.593    | ba |    N/A     |    "Perley et al. GCN Circ. 17616 (Keck)"   
+GRB150314A  |    1.758      | ba |    N/A     |    "de Ugarte Postigo et al. GCN Circ. 17583 (OSIRS/GTC)"       
+GRB150301B  |    1.5169     | ba |    N/A     |    "de Ugarte Postigo et al. GCN Circ. 17523 (VLT/X-shooter)"   
+GRB150206A  |     2.087     | ba |    N/A     |     "de Ugarte Postigo et al. GCN 17198 (VLT/x-shooter)"   
+GRB150120A  |    0.460     | ba |    N/A    |    "Chornock et al. GCN Circ. 17358 (Gemini-N)"   
+GRB150101B  |    0.1343     | ba |    +0.003 -0.003    |    "Levan et al. GCN Circ. 17281 (VLT); *Fong et al. (2016; arXiv:1608.08626)"   
+GRB141225A  |      0.915      | ba |      N/A      |      "Gorosabel et al. GCN Circ. 17234 (GTC)"     
+GRB141221A  |    1.452(?)    | ba |    N/A    |    "Perley et al. GCN Circ. 17228 (Keck)"   
+GRB141220A  |     1.32      | ba |     N/A     |     "de Ugarte Postigo et al. GCN Circ. 17198 (GTC)"    
+GRB141212A  |    0.596(?)    | he |    N/A    |    "Chornock et al. GCN Circ. 17177 (Gemini-N)"   
+GRB141121A  |     1.47      | ba |     N/A     |     "Perley et al. GCN Circ. 17081 (Keck)"   
+GRB141109A  |     2.993     | ba |     N/A     |     "Xu et al. GCN Circ. 17040 (VLT/X-shooter)"    
+GRB141026A  |     3.35(?)    | ba |    N/A    |    "de Ugarte Postigo et al. GCN Circ. 16968 (GTC)"   
+GRB141004A  |     0.573    | he |     N/A     |    "de Ugarte Postigo et al. GCN Circ. 16902 (GTC)"   
+GRB140907A  |    1.21    | ba |     N/A     |     "Castro-Tirado  et al. GCN Circ. 16797 (GTC)"    
+GRB140903A  |    0.351    | he |   +0.001 -0.001    |    "Cucchiara et al. GCN Circ. 16774 (Gemini-North); *Troja et al. ApJL 822 L8 (2016)"   
+GRB140710A  |    0.558    | he |     N/A     |    "Tanvir N.R. et al. GCN Circ. 16570"   
+GRB140703A  |    3.14    | ba |     N/A     |    "Castro-Tirado A.J. et al. GCN Circ. 16505"   
+GRB140629A  |    2.275    | ba |     N/A     |    "*Moskvitin A. et al. GCN Circ. 16489; D'Avanzo P. et al. GCN Circ. 16493"   
+GRB140622A  |    0.959    | he |     N/A     |    "Hartoog O.E. et al. GCN Circ. 16437"   
+GRB140614A  |    4.233    | ba |     N/A     |    "Kruehler T. et al. GCN Circ. 16401"   
+GRB140518A  |    4.707    | ba |     N/A     |    "Chornock R. et al. GCN Circ. 16301"   
+GRB140515A  |    6.33    | ba |     N/A     |    "Chornock R. et al. GCN Circ. 16269; *Chornock R. et al. arXiv:1405.7400 (2014)"   
+GRB140512A  |    0.725    | ba |     N/A     |    "de Ugarte Postigo A. et al. GCN Circ. 16310"   
+GRB140509A  |    2.4(?)    | bp |    N/A    |    "Marshall et al. GCN Circ. 16241 (UVOT)"   
+GRB140506A  |    0.889    | ba |     N/A     |    "Fynbo J.P.U. et al. GCN Circ. 16217"   
+GRB140430A  |    1.60    | ba |     N/A     |    "Kruehler T. et al. GCN Circ. 16194"   
+GRB140428A  |    4.7(?)    | "Damped Lyman Alpha" |    N/A    |    "Perley D.A. GCN Circ. 16181"   
+GRB140423A  |    3.26    | ba |     N/A     |    "Tanvir N.R. et al. GCN Circ. 16150"   
+GRB140419A  |    3.956    | ba |     N/A     |    "Tanvir N.R. et al. GCN Circ. 16125"   
+GRB140331A  |    4.65    | bp |    +0.34 -2.80    |    "Littlejohns O. et al. GCN Circ. 16050"   
+GRB140318A  |    1.02    | he |     N/A     |    "Tanvir N.R. et al. GCN Circ. 15988"   
+GRB140311A  |    4.954    | ba |     N/A     |    "Tanvir N.R. et al. GCN Circ. 15961; D'Avanzo P. et al. GCN Circ. 15964; *Chornock R. et al. GCN Circ. 15966"   
+GRB140304A  |    5.283    | ba |     N/A     |    "de Ugarte Postigo A. et al. GCN Circ. 15924; *Jeong S. et al. GCN Circ. 15936"   
+GRB140301A  |    1.416    | ba |     N/A     |    "Kruehler T. et al. GCN Circ. 15900"   
+GRB140213A  |    1.2076    | ba |     N/A     |    "Schulze S. et al. GCN Circ. 15831"   
+GRB140206A  |    2.73    | ba |     N/A     |    "*Malesani D. et al. GCN Circ. 15800; D'Elia V. et al. GCN Circ. 15802"   
+GRB140114A  |     3.0    | "Host Lyman-alpha break" |    +0.1 -0.1    |    "Krühler et al. A&A 581 A125 (2015)"   
+GRB131227A  |    5.3(?)    | "Afterglow Lyman-alpha drop" |    N/A    |    "Cucchiara et al. GCN Circ. 15624"   
+GRB131117A  |    4.042    | ba |     N/A     |    "Hartoog O.E. et al. GCN Circ. 15494"   
+GRB131105A  |    1.686    | ba |     N/A     |    "Xu D. et al. GCN Circ. 15450"   
+GRB131103A  |    0.5955    | ba |     N/A     |    "Xu D. et al. GCN Circ. 15451"   
+GRB131030A  |    1.293    | ba |     N/A     |    "*Xu D. et al. GCN Circ. 15407; de Ugarte Postigo A. et al. GCN Circ. 15408"   
+GRB131004A  |    0.717    | ba |     N/A     |    "*Chornock R. et al. GCN Circ. 15307; D'Elia V. et al. GCN 15310"   
+GRB130925A  |    0.348    | he |     N/A     |    "Vreeswijk P.M. et al. GCN Circ. 15249; Sudilovsky V. et al. GCN Circ. 15250; *Evans P.A. et al. arXiv:1403.4079 (2014)"   
+GRB130907A  |    1.238    | ba |     N/A     |    "de Ugarte Postigo A. et al. GCN Circ. 15187"   
+GRB130831A  |    0.4791    | ba |     N/A     |    "Cucchiara A. & Perley D.A. GCN Circ. 15144"   
+GRB130701A  |    1.155    | ba |     N/A     |    "Xu D. et al. GCN Circ. 14956"   
+GRB130612A  |    2.006    | ba |     N/A     |    "Tanvir N.R. et al. GCN Circ. 14882"   
+GRB130610A  |    2.092    | ba |     N/A     |    "Smette A. et al. GCN Circ. 14848"   
+GRB130606A  |    5.9134    | ba |     N/A     |    "Castro-Tirado A.J. et al. GCN Circ. 14796; Lunnan R. et al. GCN Circ. 14798; Xu D. et al. GCN Circ. 14816; *Chornock R. et al. ApJ 774 26 (2013); Castro-Tirado A.J. et al. arXiv:1312.5631 (2013)"   
+GRB130604A  |    1.06    | ba |     N/A     |    "Cenko S.B. et al. GCN Circ. 14762"   
+GRB130603B  |    0.3565    | ba |     N/A     |    "Thoene C.C. et al. GCN Circ. 14744; Foley R.J. et al. GCN Circ. 14745; Sanchez-Ramirez R. et al. GCN Circ. 14747; Cucchiara A. et al. GCN Circ. 14748; Xu D. et al. GCN Circ. 14757; Cucchiara A. et al. ApJ 777 94 (2013); *de Ugarte Postigo A. et al. A&A 563 A62 (2014)"   
+GRB130528A  |    1.250    | he |     N/A     |    "Jeong S. et al. arXiv:1404.0939 (2014)"   
+GRB130518A  |    2.488    | ba |     N/A     |    "Sanchez-Ramirez R. et al. GCN Circ. 14685; *Cucchiara A. et al. GCN Circ. 14687"   
+GRB130514A  |    3.6    | bp |    +0.2 -0.2    |    "Schmidl S. et al. GCN Circ. 14634"   
+GRB130511A  |    1.3033    | ba |     N/A     |    "Cucchiara A. & Tanvir N.R. GCN Circ. 14621"   
+GRB130505A  |    2.27    | ba |     N/A     |    "Tanvir N.R. et al. GCN Circ. 14567"   
+GRB130427B  |    2.78    | ba |     N/A     |    "Flores H. et al. GCN Circ. 14493"   
+GRB130427A  |    0.3399    | ba |     N/A     |    "Levan A.J. et al. GCN Circ. 14455; Xu D. et al. GCN Circ. 14478; Flores H. et al. GCN Circ. 14491; Garnavich P. GCN Circ. 14605; Wiersema K. et al. GCN Circ. 14617; Sokolov V.V. et al. GCN Circ. 14669; *Xu D. et al. ApJ 776 98 (2013); Perley D.A. et al. ApJ 781 37 (2014)"   
+GRB130420A  |    1.297    | ba |     N/A     |    "de Ugarte Postigo A. et al. GCN Circ. 14437"   
+GRB130418A  |    1.218    | ba |     N/A     |    "*de Ugarte Postigo A. et al. GCN Circ. 14380; Kruehler T. et al. GCN Circ. 14390"   
+GRB130408A  |    3.758    | ba |     N/A     |    "*Hjorth J. et al. GCN Circ. 14365; Tanvir N.R. et al. GCN Circ. 14466"   
+GRB130215A  |    0.597    | ba |     N/A     |    "Cucchiara A. et al. GCN Circ. 14207"   
+GRB130131B  |    2.539    | he |     N/A     |    "Fynbo J.P.U. et al. GCN Circ. 14286"   
+GRB121229A  |    2.707    | ba |     N/A     |    "Fynbo J.P.U. et al. GCN Circ. 14120"   
+GRB121217A  |    3.1    | bp |    +0.1 -0.1     |    "Elliott J. et al. A&A 562 A100 (2014)"   
+GRB121211A  |    1.023    | ba |     N/A     |    "Perley D.A. et al. GCN Circ. 14059"   
+GRB121209A  |    2.1    | "Host Balmer break" |    +0.3 -0.3    |    "Krühler et al. A&A 581 A125 (2015)"   
+GRB121201A  |    3.385    | ba |     N/A     |    "Sanchez-Ramirez R. et al. GCN Circ. 14035"   
+GRB121128A  |    2.20    | ba |     N/A     |    "Tanvir N.R. et al. GCN Circ. 14009"   
+GRB121027A  |    1.773    | ba |     N/A     |    "Tanvir N.R. et al. GCN Circ. 13929; Kruehler T. et al. GCN Circ. 13930;  *Levan A.J. et al. ApJ 781 13 (2014)"   
+GRB121024A  |    2.298    | ba |     N/A     |    "Tanvir N.R. et al. GCN Circ. 13890"   
+GRB120923A  |    7.84    | "Burst afterglow Lyman-alpha break" |    +0.06 -0.12    |    "Tanvir N.R. arXiv:1703.09052 (2017)"   
+GRB120922A  |    3.1    | bp |    +0.2 -0.2    |    "Kunst F. et al. GCN Circ. 13810"   
+GRB120909A  |    3.93    | ba |     N/A     |    "Hartoog O.E. et al. GCN Circ. 13730"   
+GRB120907A  |    0.970    | ba |     N/A     |    "Sanchez-Ramirez R. et al. GCN Circ. 13723"   
+GRB120815A  |    2.3586    | ba |     N/A     |    "Malesani D. et al. GCN Circ. 13649; *Kruehler T. et al. A&A 557 A18 (2013)"   
+GRB120811C  |    2.671    | ba |     N/A     |    "*Thoene C.C. et al. GCN Circ. 13628; Fynbo J.P.U. et al. GCN Circ. 13632"   
+GRB120805A  |    3.1    | "Host Lyman-alpha break" |    +0.1 -0.1    |    "Krühler et al. A&A 581 A125 (2015)"   
+GRB120804A  |    1.3    |   hp   |    N/A N/A    |    "Berger E. et al. ApJ 765 121 (2013)"   
+GRB120802A  |    3.796    | ba |     N/A     |    "Tanvir N.R. et al. GCN Circ. 13562"   
+GRB120729A  |    0.80    | ba |     N/A     |    "Tanvir N.R. & Ball J. GCN Circ. 13532"   
+GRB120724A  |    1.48    | ba |     N/A     |    "Cucchiara A. et al. GCN Circ. 13512"   
+GRB120722A  |    0.9586    | he |     N/A     |    "D'Elia V. et al. GCN Circ. 13507"   
+GRB120714B  |    0.3984    | ba |     N/A     |    "Fynbo J.P.U. et al. GCN Circ. 13477"   
+GRB120712A  |    4.1745    | ba |     N/A     |    "Tanvir N.R. et al. GCN Circ. 13458; *Xu D. et al. GCN Circ. 13460"   
+GRB120624B  |    2.1974    | ba |     N/A     |    "de Ugarte Postigo A. et al. A&A 557 L18 (2013)"   
+GRB120521C  |    5.93    | bp |    +0.11 -0.14    |    "Tanvir N.R. et al. GCN Circ. 13348; *Laskar T. et al. ApJ 781 1 (2014)"   
+GRB120422A  |    0.28253    | ba |     N/A     |    "Tanvir N.R. et al. GCN Circ. 13251; Schulze S. et al. GCN Circ. 13257; *Schulze S. et al. A&A 566 A102 (2014)"   
+GRB120404A  |    2.876    | ba |     N/A     |    "*Cucchiara A. et al. GCN Circ. 13217; D'Elia V. et al. GCN Circ. 13227"   
+GRB120401A  |    4.5    | bp |    +0.5 -0.5    |    "Sudilovsky V. et al. GCN Circ. 13219"   
+GRB120327A  |    2.8145    | ba |     N/A     |    "Perley D.A. & Tanvir N.R. GCN Circ. 13133; Kruehler T. et al. GCN Circ. 13134; Sanchez-Ramirez R. et al. GCN Circ. 13146; *D'Elia V. et al. A&A 564 38 (2014)"   
+GRB120326A  |    1.798    | ba |     N/A     |    "Tello J.C. et al. GCN Circ. 13118"   
+GRB120224A  |     1.1     | "Host Balmer break" |    +0.2 -0.2    |    "Krühler et al. A&A 581 A125 (2015)"   
+GRB120211A  |     2.4     | "Host Lyman-alpha break" |    +0.1 -0.1    |    "Krühler et al. A&A 581 A125 (2015)"   
+GRB120119A  |    1.728    | ba |     N/A     |    "Cucchiara A. & Prochaska J.X. GCN Circ. 12865; Pancoast A. et al. GCN Circ. 12866; Milisavljevic D. et al. GCN Circ. 12876; *Morgan A.N. et al. MNRAS 440 1810 (2014)"   
+GRB120118B  |    2.943    | he |     N/A     |    "Malesani D. et al. GCN Circ. 14225"   
+GRB111229A  |    1.3805    | ba |     N/A     |    "Cucchiara A. et al. GCN Circ. 12777"   
+GRB111228A  |    0.71627    | ba |     N/A     |    "Dittman J. et al. GCN Circ. 12759; Cucchiara A. et al. GCN Circ. 12761; Palazzi E. et al. GCN Circ. 12763; Xu D. et al. GCN Circ. 12764; *Schulze S. et al. GCN Circ. 12770"   
+GRB111225A  |    0.297    | ba |     N/A     |    "Thoene C.C. & de Ugarte Postigo A. GCN Circ. 16079"   
+GRB111209A  |    0.677    | ba |     N/A     |    "Vreeswijk P. et al. GCN Circ. 12648; *Levan A.J. et al. ApJ 781 13 (2014)"   
+GRB111129A  |    1.0796    | he |    N/A    |    "Krühler et al. A&A 581 A125 (2015)"   
+GRB111123A  |    3.1516    | he |     N/A     |    "Xu D. et al. GCN Circ. 14273"   
+GRB111117A  |    2.211 or 1.3?    |   hp   |    +0.46 -0.23    |    " *Selsing et al. 2017 (z=2.211); Margutti R. et al. ApJ 756 63 (2012) (z=1.3); *Sakamoto T. et al. ApJ 766 41 (2013) (1.3)"   
+GRB111107A  |    2.893    | ba |     N/A     |    "*Chornock R. et al. GCN Circ. 12537; D'Avanzo P. et al. GCN Circ. 12542"   
+GRB111008A  |    4.99005    | ba |     N/A     |    "Levan A.J. et al. GCN Circ. 12429; Wiersema K. et al. GCN Circ. 12431; *Sparre M. et al. ApJ 785 150 (2014)"   
+GRB111005A  |    0.01326(?)    | redshift from the known galaxy |    N/A    |    "Levan et al. GCN Circ. 12414"   
+GRB110818A  |    3.36    | ba |     N/A     |    "D'Avanzo P. et al. GCN Circ. 12284"   
+GRB110808A  |    1.348    | ba |     N/A     |    "de Ugarte Postigo A. et al. GCN Circ. 12258"   
+GRB110801A  |    1.858    | ba |     N/A     |    "Cabrera Lavers A. et al. GCN Circ. 12234"   
+GRB110731A  |    2.83    | ba |     N/A     |    "Tanvir N.R. et al. GCN Circ. 12225"   
+GRB110726A  |    1.036    | ba |     N/A     |    "Cucchiara A. et al. GCN Circ. 12202"   
+GRB110715A  |    0.8224    | ba |     N/A     |    "Piranomonte S. et al. GCN Circ. 12164; *Sanchez-Ramirez R. et al. EAS 61 267 (2013)"   
+GRB110503A  |    1.613    | ba |     N/A     |    "*de Ugarte Postigo A. et al. GCN Circ. 11993; D'Avanzo P. et al. GCN Circ. 11997"   
+GRB110422A  |    1.770    | ba |     N/A     |    "Malesani D. et al. GCN Circ. 11977; *de Ugarte Postigo A. et al. GCN Circ. 11978"   
+GRB110213A  |    1.4607    | ba |     N/A     |    "Milne P.A. & Cenko S.B. GCN Circ. 11708; *Cucchiara A. et al. ApJ 743 154 (2011)"   
+GRB110205A  |    2.22    | ba |     N/A     |    "Cenko S.B. et al. GCN Circ. 11638; Vreeswijk P. et al. GCN Circ. 11640; *Cucchiara A. et al. ApJ 743 154 (2011)"   
+GRB110128A  |    2.339    | ba |     N/A     |    "Sparre M. et al. GCN Circ. 11607"   
+GRB110106B  |    0.618    | he |     N/A     |    "Chornock R. et al. GCN Circ. 11538"   
+GRB101225A  |    0.847    | he |     N/A     |    "Levan A.J. et al. ApJ 781 13 (2014)"   
+GRB101219B  |    0.55185    | ba |     N/A     |    "de Ugarte Postigo A. et al. GCN Circ. 11579; *Sparre M. et al. ApJ 735 L24 (2011)"   
+GRB101219A  |    0.718    | he |     N/A     |    "Chornock R. & Berger E. GCN Circ. 11518; *Fong W. et al. ApJ 769 56 (2013)"   
+GRB101213A  |    0.414    | he |     N/A     |    "Chornock R. & Berger E. GCN Circ. 11544"   
+GRB100906A  |    1.727    | ba |     N/A     |    "Tanvir N.R. et al. GCN Circ. 11230"   
+GRB100905A  |    7.88     |   hp   |   +0.75 -0.94   |    "Bolmer J. et al. (2017)"  
+GRB100901A  |    1.4084    | ba |     N/A     |    "Chornock R. et al. GCN Circ. 11164; *Hartoog O.E. et al. MNRAS 430 2739 (2013)"   
+GRB100816A  |    0.8049    | ba |     N/A     |    "*Tanvir N.R. et al. GCN Circ. 11123; Gorosabel J. et al. GCN Circ. 11125"   
+GRB100814A  |    1.44    | ba |     N/A     |    "O'Meara J. et al. GCN Circ. 11089"   
+GRB100728B  |    2.106    | ba |     N/A     |    "Flores H. et al. GCN Circ. 11317"   
+GRB100728A  |    1.567    | he |     N/A     |    "Kruehler T. et al. GCN Circ. 14500"   
+GRB100724A  |    1.288    | ba |     N/A     |    "Thoene C.C. et al. GCN Circ. 10971"   
+GRB100628A  |    0.102    | he |     N/A     |    "Cenko S.B. et al. GCN Circ. 10946"   
+GRB100625A  |    0.452    | he |     N/A     |    "Fong W. et al. ApJ 769 56 (2013)"   
+GRB100621A  |    0.542    | he |     N/A     |    "Milvang-Jensen B. et al. GCN Circ. 10876"   
+GRB100615A  |    1.398    | he |     N/A     |    "Kruehler T. et al. GCN Circ. 14264"   
+GRB100513A  |    4.772    | ba |     N/A     |    "Cenko S.B. et al. GCN Circ. 10752"   
+GRB100508A  |    0.5201    | he |    N/A    |    "Krühler et al. A&A 581 A125 (2015)"   
+GRB100425A  |    1.755    | ba |     N/A     |    "Malesani D. et al. GCN Circ. 10684"   
+GRB100424A  |    2.465    | he |     N/A     |    "Malesani D. et al. GCN Circ. 14291"   
+GRB100418A  |    0.6239    | ba |     N/A     |    "Antonelli L.A. et al. GCN Circ. 10620; Cucchiara A. & Fox D.B. GCN Circ. 10624; *de Ugarte Postigo A. et al. AN 332 297 (2011)"   
+GRB100316D  |    0.0591    | he |     N/A     |    "Vergani S.D. et al. GCN Circ. 10512; Chornock R. et al. arXiv:1104.2262 (2010); *Starling R.L.C. et al. MNRAS 411 2792 (2011)"   
+GRB100316B  |    1.180    | ba |     N/A     |    "Vergani S.D. et al. GCN Circ. 10495"   
+GRB100316A  |    3.155    | he |     N/A     |    "Sanchez-Ramirez R. et al. RMxAC 42 113 (2013)"   
+GRB100302A  |    4.813    | ba |     N/A     |    "Chornock R. et al. GCN Circ. 10466"   
+GRB100219A  |    4.66723    | ba |     N/A     |    "Groot P. at al. GCN Circ. 10441; Cenko S.B. et al GCN Circ. 10443; de Ugarte Postigo A. et al. GCN Circ. 10445; *Thoene C.C. et al. MNRAS 428 3590 (2013)"   
+GRB100213B  |    0.604    | he |     N/A     |    "Cucchiara A. et al. GCN Circ. 10422"   
+GRB100117A  |    0.915    | ba |     N/A     |    "Fong W. et al. ApJ 730 26 (2011)"   
+GRB091208B  |    1.0633    | ba |     N/A     |    "Wiersema K. et al. GCN Circ. 10263; *Perley D.A. et al. GCN Circ. 10272"   
+GRB091127  |    0.49044    | he |     N/A     |    "Cucchiara A. et al. GCN Circ. 10202; Thoene C.C. et al. GCN Circ. 10233; *Vergani S.D. et al. A&A 535 A127 (2011)"   
+GRB091109A  |    3.076    | ba |     N/A     |    "Rau A. et al. GCN Circ. 10350"   
+GRB091029  |    2.752    | ba |     N/A     |    "Chornock R. et al. GCN Circ. 10100"   
+GRB091024  |    1.092    | ba |     N/A     |    "*Cucchiara A. et al. GCN Circ. 10065; Cenko S.B. et al. GCN Circ. 10093"   
+GRB091020  |    1.71    | ba |     N/A     |    "Xu D. et al. GCN Circ. 10053"   
+GRB091018  |    0.9710    | ba |     N/A     |    "Chen H.-W. et al. GCN Circ. 10038; de Ugarte Postigo A. et al. GCN Circ. 10042; *Wiersema K. et al. MNRAS 426 2 (2012)"   
+GRB090927  |    1.37    | ba |     N/A     |    "Levan A.J. et al. GCN Circ. 9958"   
+GRB090926B  |    1.24    | ba |     N/A     |    "Fynbo J.P.U. et al. GCN Circ. 9947"   
+GRB090814A  |    0.696    | ba |     N/A     |    "Jakobsson P. et al. GCN Circ. 9797"   
+GRB090812  |    2.452    | ba |     N/A     |    "de Ugarte Postigo A. et al. GCN Circ. 9771"   
+GRB090809A  |    2.737    | ba |     N/A     |    "Malesani D. et al. GCN Circ. 9761"   
+GRB090726  |    2.71    | ba |     N/A     |    "Fatkhullin T. et al. GCN Circ. 9712"   
+GRB090715B  |    3.00    | ba |     N/A     |    "Wiersema K. et al. GCN Circ. 9673"   
+GRB090709A  |    1.8    |   hp   |    +0.54 -0.66    |    "Perley D.A. et al. ApJ 778 128 (2013)"   
+GRB090618  |    0.54    | ba |     N/A     |    "Cenko S.B. et al. GCN Circ. 9518; Fatkhullin T. et al. GCN Circ. 9542"   
+GRB090530  |    1.266    | ba |     N/A     |    "Goldoni P. et al. GCN Circ. 15571"   
+GRB090529A  |    2.625    | ba |     N/A     |    "Malesani D. et al. GCN Circ. 9457"   
+GRB090519  |    3.85    | ba |     N/A     |    "Levan A.J. et al. GCN Circ. 9409"   
+GRB090516A  |    4.109    | ba |     N/A     |    "de Ugarte Postigo A. et al. GCN Circ. 9383"   
+GRB090510  |    0.903    | he |     N/A     |    "Rau A. et al. GCN Circ. 9353; *McBreen S. et al. A&A 516 A71 (2010)"   
+GRB090429B  |    9.38    | bp |    +0.14 -0.32    |    "Cucchiara A. et al. ApJ 736 7 (2011)"   
+GRB090426  |    2.609    | ba |     N/A     |    "Levesque E.M. et al. GCN Circ. 9264; Thoene C.C. et al. GCN Circ. 9269; *Levesque E.M. et al. MNRAS 401 963 (2009)"   
+GRB090424  |    0.544    | ba |     N/A     |    "Chornock R. et al. GCN Circ. 9243; Wiersema K. et al. GCN Circ. 9250"   
+GRB090423  |    8.26    | ba |    N/A    |    "Tanvir N.R. et al. GCN Circ. 9219; *Tanvir N.R. et al. Nature 461 1254 (2009); Salvaterra R. et al. Nature 461 1258 (2009)"   
+GRB090418A  |    1.608    | ba |     N/A     |    "Chornock R. et al. GCN Circ. 9151"   
+GRB090417B  |    0.345    | he |     N/A     |    "Berger E. & Fox D.B. GCN Circ. 9156"   
+GRB090407  |    1.4485    | he |     N/A     |    "Kruehler T. et al. ApJ 758 46 (2012)"   
+GRB090404  |    2.87    |   hp   |    +0.96 -1.69    |    "Perley D.A. et al. ApJ 778 128 (2013)"   
+GRB090313  |    3.3736    | ba |     N/A     |    "Chornock R. et al. GCN 8994; Thoene C.C. et al. GCN Circ. 9012; de Ugarte Postigo A. et al. GCN Circ. 9015; *de Ugarte Postigo A. et al. A&A 513 A42 (2010)"   
+GRB090205  |    4.6497    | ba |     N/A     |    "Thoene C.C. et al GCN Circ. 8889; *Fugazza D. et al GCN Circ. 8892; D'Avanzo P. et al. A&A 522 A20 (2010); "   
+GRB090201  |    2.1    | he |    N/A    |    "Krühler et al. A&A 581 A125 (2015)"   
+GRB090113  |    1.7493    | he |     N/A     |    "Kruehler T. et al. ApJ 758 46 (2012)"   
+GRB090102  |    1.547    | ba |     N/A     |    "*de Ugarte Postigo A. et al. GCN Circ. 8766; Cenko S.B. et al. GCN Circ. 8773; Cucchiara A. & Fox D.B. GCN Circ. 8774"   
+GRB081230  |    2.03    | bp |    +0.16 -0.14    |    "Kruehler T. et al. A&A 526 A153 (2011)"   
+GRB081228  |    3.44    | bp |    +0.15 -0.32    |   "Afonso P. et al. GCN Circ. 8752; *Kruehler T. et al. A&A 526 A153 (2011)"   
+GRB081222  |    2.77    | ba |     N/A     |    "Breeveld A. et al. GCN Circ. 8712; *Cucchiara A. et al. GCN Circ. 8713;  Graham J.F. et al. GCN Circ. 8718"   
+GRB081221  |    2.26    | he |     N/A     |    "Salvaterra R. et al. ApJ 749 68 (2012)"   
+GRB081211B  |    0.216    | he |     N/A     |    "Perley D.A. et al. GCN Circ. 8914"   
+GRB081203A  |    2.05    | ba |     N/A     |    "Landsman W. et al. GCN Circ. 8601; *Kuin N.P.M. et al. MNRAS 395 L21 (2009)"   
+GRB081121  |    2.512    | ba |     N/A     |    "Berger E. & Rauch M. GCN Circ. 8542"   
+GRB081118  |    2.58    | ba |     N/A     |    "D'Elia V. et al. GCN Circ. 8531"   
+GRB081109A  |    0.9787    | he |     N/A     |    "Kruehler T. et al. A&A 534 A108 (2011)"   
+GRB081029  |    3.8479    | ba |     N/A     |    "*D'Elia V. et al. GCN Circ. 8438; Cucchiara A. et al. GCN Circ. 8448"   
+GRB081028A  |    3.038    | ba |     N/A     |    "Berger E. et al. GCN Circ. 8434"   
+GRB081008  |    1.9683    | ba |     N/A     |    "Cucchiara A. et al. GCN Circ. 8346; D'Avanzo P. et al. GCN Circ. 8350; *D'Elia V. et al. MSAIS 21 206 (2012)"   
+GRB081007  |    0.5295    | ba |     N/A     |    "Berger E. et al. GCN Circ. 8335"   
+GRB080928  |    1.6919    | ba |     N/A     |    "Vreeswijk P.M. et al. GCN Circ. 8301; Cucchiara A. & Fox D.B. GCN Circ. 8304; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080916A  |    0.6887    | ba |     N/A     |    "Fynbo J.P.U. et al. GCN Circ. 8254; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080913  |    6.733    | ba |     N/A     |    "Fynbo J.P.U. et al. GCN Circ. 8225; Greiner J. et al. ApJ 693 1610 (2009); *Patel M. et al. A&A 512 L3 (2010)"   
+GRB080906  |    2.13    | bp |    +0.14 -0.20     |    "Holland S. GCN Circ. 8212; *Kruehler T. et al. A&A 526 A153 (2011)"   
+GRB080905B  |    2.3739    | ba |    N/A     |   "Vreeswijk P.M. et al. GCN Circ. 8191; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080905A  |    0.1218   | he |   +0.0003 -0.0003   |   "Rowlinson A. et al. MNRAS 408 383(2010)"   
+GRB080810  |    3.3604    | ba |     N/A     |    "Prochaska J.X. et al. GCN Circ. 8083; Burenin R. et al. GCN Circ. 8088; de Ugarte Postigo A. et al. GCN Circ. 8089; Page K.L. et al. MNRAS 400 134 (2009); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080805  |    1.5042    | ba |     N/A     |    "Jakobsson P. et al. GCN Circ. 8077; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080804  |    2.2045    | ba |     N/A     |    "*Thoene C.C. et al. GCN Circ. 8058; Cucchiara A. et al. GCN Circ. 8065"   
+GRB080721  |    2.5914    | ba |     N/A     |    "D'Avanzo P. et al. GCN Circ. 7997; Jakobsson P. et al. GCN Circ. 7998; Starling R.L.C. et al. MNRAS 400 90 (2009); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080710  |    0.8454    | ba |     N/A     |    "Perley D.A. et al. GCN Circ. 7962; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080707  |    1.2322    | ba |     N/A     |    "Fynbo J.P.U. et al. GCN Circ. 7949; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080607  |    3.0368    | ba |     N/A     |    "Prochaska J.X. et al. GCN Circ. 7849; Prochaska J.X. et al. ApJ 691 L27 (2009); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080605  |    1.6403    | ba |     N/A     |    "Jakobsson P. et al. GCN Circ. 7832; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080604  |    1.4171    | ba |     N/A     |    "Wiersema K. et al. GCN Circ. 7818; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080603B  |    2.6892    | ba |     N/A     |    "Fynbo J. et al. GCN Circ. 7797; Cucchiara A. & Fox D.B. GCN Circ. 7815; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080602  |    1.8204    | he |    N/A    |    "Rossi A. et al. A&A 545 A77 (2012) (photo z=1.4+0.3-0.15); *Krühler et al. A&A 581 A125 (2015)"   
+GRB080520  |    1.5457    | ba |     N/A     |    "Jakobsson P. et al. GCN Circ. 7757; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080517  |    0.089    | he |    +0.003 -0.003    |    "Stanway et al. MNRAS 446 3911 (2015)"   
+GRB080516  |    3.2    | bp |    +0.3 -0.3    |    "Filgas R. et al. GCN Circ. 7747"   
+GRB080515  |    2.47(?)    | "Host Ly-apha break" |    N/A    |    "Preliminary Keck GRB Host Project (http://www.astro.caltech.edu/grbhosts/)"   
+GRB080430  |    0.767    | ba |     N/A     |    "de Ugarte Postigo A. et al. GCN Circ. 7650; *Cucchiara A. & Fox D.B. GCN Circ. 7654"   
+GRB080413B  |    1.1014    | ba |     N/A     |    "Vreeswijk P.M. et al. GCN Circ. 7601; Cucchiara A. et al. GCN Circ. 7615; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080413A  |    2.4330    | ba |     N/A     |    "Thoene C.C. et al. GCN Circ. 7602; Cucchiara A. et al. GCN Circ. 7616; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080411  |    1.0301    | ba |     N/A     |    "Thoene C.C. et al. GCN Circ. 7587; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080330  |    1.5119    | ba |     N/A     |    "Malesani D. et al. GCN Circ. 7544; Cucchiara A. & Fox D.B. GCN Circ. 7547; Guidorzi C. et al. A&A 499 439 (2009); D'Elia V. et al. A&A 503 437 (2009); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080325  |    1.78    | he |     N/A     |    "Perley D.A. et al. ApJ 778 128 (2013)"   
+GRB080319C  |    1.9492    | ba |     N/A     |    "Wiersema K. et al. GCN Circ. 7517; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080319B  |    0.9382    | ba |     N/A     |    "Vreeswijk P. et al. GCN Circ. 7444; Cucchiara A. & Fox D.B. GCN Circ. 7456; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB080310  |    2.42743    | ba |     N/A     |    "Prochaska J.X. et al. GCN Circ. 7388; Berger E. & Rauch M. GCN Circ. 7389; Vreeswijk P.M. et al. GCN Circ. 7391; Prochaska J.X. et al. GCN Circ. 7397; Fox A.J. et al. A&A 491 189 (2008); Fynbo J.P.U. et al. ApJS 185 526 (2009); *De Cia A. et al. A&A 545 A64 (2012)"   
+GRB080210  |    2.6419    | ba |     N/A     |    "Jakobsson P. et al. GCN Circ. 7286; Cucchiara A. & Fox D.B. GCN Circ. 7290; *Fynbo J.P.U. et al. ApJS 185 526 (2009); De Cia A. et al. MNRAS 412 2229 (2011)"   
+GRB080207  |    2.0858    | he |     N/A     |    "Kruehler T. et al. ApJ 758 46 (2012)"   
+GRB080129  |    4.349    | ba |     N/A     |    "Greiner J. et al. ApJ 693 1912 (2009)"   
+GRB071227  |    0.381    | he |     N/A     |    "D'Avanzo P. et al. GCN Circ. 7152; Berger E. et al. GCN Circ. 7154; *D'Avanzo P. et al. A&A 498 711 (2009)"   
+GRB071122  |    1.14    | ba |     N/A     |    "Cucchiara A. et al. GCN Circ. 7124"   
+GRB071117  |    1.3308    | he |     N/A     |    "Jakobsson P. et al. GCN Circ. 7117; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB071112C  |    0.8227    | ba |     N/A     |    "Jakobsson P. et al. GCN Circ. 7088; Cucchiara A. & Fox D.B. GCN Circ. 7086; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB071031  |    2.6918    | ba |     N/A     |    "Ledoux C. et al. GCN Circ. 7023; Fox A.J. et al. A&A 491 189 (2008); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB071028B  |    0.94    |   hp   |    +0.05 -0.10    |    "Clemens C. et al. A&A 529 A110 (2011)"   
+GRB071025  |    5.2    | ba |    N/A    |    "Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB071021  |    2.4520    | he |    N/A    |   "Kruehler T. et al. ApJ 758 46 (2012)"   
+GRB071020  |    2.1462    | ba |     N/A     |    "Jakobsson P. et al. GCN Circ. 6952; Fatkhullin T.A. et al. GCN Circ. 6984; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB071010B  |    0.947    | ba |     N/A     |    "*Cenko S.B. et al. GCN Circ. 6888; Prochaska J.X. et al. GCN Circ. 6890; Stern D. et al. GCN Circ. 6928"   
+GRB071010A  |    0.985    | ba |     N/A     |    "Prochaska J.X. et al. GCN Circ. 6864; *Covino S. et al. MNRAS 388 347 (2008)"   
+GRB071003  |    1.60435    | ba |     N/A     |    "Perley D.A. et al. ApJ 688 470 (2008)"   
+GRB070810A  |    2.17    | ba |     N/A     |    "Thoene C.C. et al. GCN Circ. 6741"   
+GRB070809  |    0.2187    | he |     N/A     |    "Perley D.A. et al. GCN Circ. 7889"   
+GRB070802  |    2.4541    | ba |     N/A     |    "Prochaska J.X. et al. GCN Circ. 6698; Eliasdottir A. et al. ApJ 697 1725 (2009); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB070724A  |    0.4571    | he |     N/A     |    "Cucchiara A. et al. GCN Circ. 6665; Covino S. et al. GCN Circ. 6666; *Berger E. ApJ 690 231 (2009)"   
+GRB070721B  |    3.6298    | ba |     N/A     |    "Malesani D. et al. GCN Circ. 6651; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB070714B  |    0.9225    | he |     N/A     |    "Graham J.F. et al. GCN Circ. 6836; *Cenko S.B. et al. arXiv:0802.0874 (2008); Graham J.F. et al. AIPC 1000 289 (2008)"   
+GRB070714A  |    1.58(?)    | he |    N/A    |    "Preliminary Keck GRB Host Project (http://www.astro.caltech.edu/grbhosts/)"   
+GRB070612A  |    0.617    | he |     N/A     |    "Cenko S.B. et al. GCN Circ. 6556"   
+GRB070611  |    2.0394    | ba |     N/A     |    "Thoene C.C. et al. GCN Circ. 6499; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB070529  |    2.4996    | ba |     N/A     |    "Berger E. et al. GCN Circ. 6470"   
+GRB070521  |    2.0865    | he |    N/A    |    "Perley D.A. et al. AJ 138 1690 (2009); Perley D.A. et al. ApJ 778 128 (2013); *Krühler et al. A&A 581 A125 (2015)"   
+GRB070518  |    1.16(?)    | he |    N/A    |    "Preliminary Keck GRB Host Project (http://www.astro.caltech.edu/grbhosts/)"   
+GRB070508  |    0.82    | he |     N/A     |    "Jakobsson P. et al. GCN Circ. 6398"   
+GRB070506  |    2.3090    | ba |     N/A     |    "Thoene C.C. et al. GCN Circ. 6379; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB070429B  |    0.9023    | he |     N/A     |    "Perley D.A. et al. GCN Circ. 7140; *Cenko S.B. et al. arXiv:0802.0874 (2008)"   
+GRB070420  |    3.01    | bp |    +0.96 -0.68    |    "Oates S. R. et al. MNRAS 395 490 (2009)"   
+GRB070419B  |    1.9588    | he |    N/A    |    "Kruehler, T. et al. ApJ, 758, 46 (2012)"   
+GRB070419A  |    0.9705    | ba |     N/A     |    "Cenko S.B. et al. GCN Circ. 6322; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB070411  |    2.9538    | ba |     N/A     |    "Jakobsson P. et al. GCN Circ. 6283; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB070328  |    2.06      | he |     N/A     |    "Krühler et al. A&A 581 A125 (2015); *Schulze et al. ApJ 808 73 (2015)"   
+GRB070318  |    0.8397    | ba |     N/A     |    "Jaunsen A.O. et al. GCN Circ. 6216; Chen H.-W. et al. GCN Circ. 6217; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB070306  |    1.49594    | he |     N/A     |    "Jaunsen A.O. et al. GCN Circ. 6202; *Jaunsen A.O. et al. ApJ 681 453 (2008); Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB070224  |    1.99    | he |     N/A     |    "Krühler et al. A&A 581 A125 (2015); *Schulze et al. ApJ 808 73 (2015)"   
+GRB070208  |    1.165    | ba |     N/A     |    "Cucchiara A. et al. GCN Circ. 6083"   
+GRB070129  |    2.3384    | he |     N/A     |    "Jakobsson P. et al. ApJ 752 62 (2012); *Kruehler T. et al. ApJ 758 46 (2012)"   
+GRB070125  |    1.5477    | ba |     N/A     |    "Fox D.B. et al. GCN Circ. 6071; *Cenko S.B. et al. ApJ 677 441 (2008); Updike A.C. et al. ApJ 685 361 (2008); Fynbo J.P.U. et al. ApJS 185 526 (2009); *De Cia A. et al. MNRAS 418 129 (2011)"   
+GRB070110  |    2.3521    | ba |     N/A     |    "Jaunsen A.O. et al. GCN Circ. 6010; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB070103  |    2.6208    | he |     N/A     |    "Kruehler T. et al. ApJ 758 46 (2012)"   
+GRB061222B  |    3.355    | ba |     N/A     |    "Berger E. GCN Circ. 5962"   
+GRB061222A  |    2.088    | he |     N/A     |    "Perley D.A. et al. AJ 138 1690 (2009)"   
+GRB061217  |    0.8270    | he |     N/A     |    "Berger E. GCN Circ. 5965; *Berger E. et al. ApJ 664 1000 (2007)"   
+GRB061210  |    0.4095    | he |     N/A     |    "Cenko S.B. et al. GCN Circ. 5946; *Berger E. et al. ApJ 664 1000 (2007)"   
+GRB061201  |    0.0865 (ref 1) or 0.111 (ref 2) (?)    | he |    N/A    |    "Ref 1: Blondin et al. GCN Circ. 5944; Ref 2: Berger et al. GCN Circ. 5952"   
+GRB061126  |    1.1588    | he |     N/A     |    "Perley D.A. et al. ApJ 672 449 (2008)"   
+GRB061121  |    1.3145    | ba |     N/A     |    "Bloom J.S. et al. GCN Circ. 5826; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB061110B  |    3.4344    | ba |     N/A     |    "Fynbo J.P.U. et al. GCN Circ. 5809; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB061110A  |    0.7578    | ba |     N/A     |    "Thoene C.C. et al. GCN Circ. 5812; Fynbo J.P.U. et al. GCN Circ. 6759; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB061021  |    0.3463    | ba |     N/A     |    "*Fynbo J.P.U. et al. ApJS 185 526 (2009); Jakobsson P. et al. ApJ 752 62 (2012) "   
+GRB061007  |    1.2622    | ba |     N/A     |    "Osip D. et al. GCN Circ. 5715; Jakobsson P. et al. GCN Circ. 5716; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB061006  |    0.4377    | he |     N/A     |    "*Berger E. et al. ApJ 664 1000 (2007); D'Avanzo P. et al. A&A 498 711 (2009)"   
+GRB060927  |    5.4636    | ba |     N/A     |    "Fynbo J.P.U. et al. GCN Circ. 5651; Ruiz-Velasco A.E. et al. ApJ 669 1 (2007); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB060926  |    3.2086    | ba |     N/A     |    "Piranomonte S. et al. GCN Circ. 5626; D'Elia V. et al. GCN Circ. 5637; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB060923A  |    2.47    |   hp   |    +0.33 -0.52    |    "Perley D.A. et al. ApJ 778 128 (2013); *Schulze et al. ApJ 808 73 (2015)"   
+GRB060923B  |    1.51    | he |     N/A     |    "Krühler et al. A&A 581 A125 (2015); *Schulze et al. ApJ 808 73 (2015)"   
+GRB060912A  |    0.937    | he |     N/A     |    "Jakobsson P. et al. GCN Circ. 5617;  *Levan A.J. et al. MNRAS 378 1439 (2007)"   
+GRB060908  |    1.8836    | ba |    N/A     |    "*Fynbo J.P.U. et al. ApJS 185 526 (2009); Jakobsson P. et al. ApJ 752 62 (2012)"   
+GRB060906  |    3.6856    | ba |     N/A     |   "Vreeswijk P. et al. GCN Circ. 5535; Jakobsson P. et al. A&A 460 L13 (2006); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB060904B  |    0.7029    | ba |     N/A     |    "Fugazza D. et al. GCN Circ. 5513; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB060904A  |    2.55    |   hp   |    1.21 -0.75     |    "Xiao L. & Schaefer B.E. ApJ 731 103 (2011)"   
+GRB060814  |    1.9229    | he |    N/A    |    "Salvaterra R. et al. ApJ 749 68 (2012); Jakobsson P. et al. ApJ 752 62 (2012); *Kruehler T. et al. ApJ 758 46 (2012)"   
+GRB060805A  |    2.3633(?)    | he |    N/A    |    "Krühler et al. A&A 581 A125 (2015)"   
+GRB060801  |    1.1304    | he |     N/A     |    "Cucchiara A. et al. GCN Circ. 5470; *Berger E. et al. ApJ 664 1000 (2007)"   
+GRB060729  |    0.5428    | ba |     N/A     |    "Thoene C.C. et al. GCN Circ. 5373; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB060719  |    1.5320    | he |     N/A     |    "Kruehler T. et al. ApJ 758 46 (2012)"   
+GRB060714  |    2.7108    | ba |     N/A     |    "Jakobsson P. et al. GCN Circ. 5320; Jakobsson P. et al. A&A 460 L13 (2006); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB060708  |    1.92    |   hp   |    +0.12 -0.12     |    "Oates S. R. et al. MNRAS 395 490 (2009); *Schulze et al. ApJ 808 73 (2015)"   
+GRB060707  |    3.4240    | ba |     N/A     |   "Jakobsson P. et al. GCN Circ. 5298; Jakobsson P. et al. A&A 460 L13 (2006); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB060614  |    0.1254    | he |     N/A     |    "Price P.A. et al. GCN Circ. 5275; Fugazza D. et al. GCN Circ. 5276; *Della Valle M. et al. Nature 444 1050 (2006)"   
+GRB060607A  |    3.0749    | ba |     N/A     |    "Ledoux C. et al. GCN Circ. 5237; *Fox A.J. et al. A&A 491 189 (2008); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB060605  |    3.773    | ba |     N/A     |    "Peterson B. & Schmidt B. GCN Circ. 5223; Still M. et al. GCN Circ. 5226; Savaglio S. et al. GCN Circ. 6166; *Ferrero P. et al. A&A 497 729 (2009)"   
+GRB060604  |    2.1357    | he |    N/A      |    "Kruehler T. et al. ApJ 758 46 (2012)"   
+GRB060602A  |    0.787    | he |    N/A     |   "Jakobsson P. et al. GCN Circ. 6997"   
+GRB060526  |    3.2213    | ba |     N/A     |    "Berger E. & Gladders M. GCN Circ. 5170; Jakobsson P. et al. A&A 460 L13 (2006); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB060522  |    5.11    | ba |     N/A     |    "Cenko S.B. et al. GCN Circ. 5155"   
+GRB060512  |    2.1    | ba |    N/A     |    "Starling R. et al. GCN Circ. 5149; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB060510B  |    4.941    | ba |    N/A    |   "Price P.A. et al. GCN Circ. 5104; *Price P.A. et al. ApJ 663 L57 (2007)"   
+GRB060505  |    0.0889    | he |     N/A     |    "Thoene C.C. et al. GCN Circ. 5161; Ofek E.O. et al. ApJ 662 1129 (2007); *Theone C.C. et al. ApJ 676 1151 (2008)"   
+GRB060502B  |    0.287    | he |     N/A     |    "Bloom J.S. et al. GCN Circ. 5238; *Bloom J.S. et al. ApJ 654 878 (2007)"   
+GRB060502A  |    1.5026    | ba |     N/A     |    "Cucchiara A. et al. GCN Circ. 5052; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB060428B  |    0.348    | he |     N/A     |    "Perley D.A. et al. AIPC 937 526 (2007)"   
+GRB060418  |    1.49000    | ba |     N/A     |    "Dupree A.K. et al. GCN Circ. 4969; Vreeswijk P. et al. GCN Circ. 4974; Prochaska J.X. et al. GCN Circ. 5002; Piranomonte S. et al. NCimB 121 1561 (2006); *Vreeswijk P.M. et al. A&A 468 83 (2007)"   
+GRB060319  |    1.172    | he |     N/A     |    "Perley D.A. et al. ApJ 778 128 (2013)"   
+GRB060306  |    1.559    | he |    N/A    |    "Jakobsson P. et al. ApJ 752 62 (2012); Kruehler T. et al. ApJ 758 46 (2012); Perley D.A. et al. ApJ 778 128 (2013); Krühler et al. A&A 581 A125 (2015); *Schulze et al. ApJ 808 73 (2015)"   
+GRB060223A  |    4.41    | ba |     N/A     |    "Berger E. et al. GCN Circ. 4815"   
+GRB060218  |    0.03342    | he |     N/A     |    "Mirabal N. & Halpern J.P. GCN Circ. 4792; Masetti N. et al. GCN Circ. 4803; Soderberg A.M. et al. GCN Circ. 4804; Fatkhullin T.A. et al. GCN Circ. 4809; Foley R.J. et al. GCN Circ. 5376; Modjaz M. et al. ApJ 645 L21 (2006); Sollerman J. et al. A&A 454 503 (2006); *Pian E. et al. Nature 442 1011 (2006)"   
+GRB060210  |    3.9122    | ba |     N/A     |    "Cucchiara A. et al. GCN Circ. 4729; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB060206  |    4.0559    | ba |     N/A     |    "Fynbo J.P.U. et al. GCN Circ. 4692; Prochaska J.X. et al. GCN Circ. 4701; Aoki K. et al. GCN Circ. 4703; Fynbo J.P.U. et al. A&A 451 L47 (2006); Thoene C.C. et al. A&A 489 37 (2008); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB060202  |    0.783    | he |     N/A     |    "Butler N.R. ApJ 656 1001 (2007); Perley D.A. et al. ApJ 778 128 (2013)"   
+GRB060124  |    2.3000    | ba |     N/A     |    "Mirabal N. & Halpern J.P. GCN Circ. 4591; Cenko S.B. et al. GCN Circ. 4592; Prochaska J.X. et al. GCN Circ. 4593; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB060123  |    1.099 (ref 1), 0.193 (ref 1), 0.562 (ref 1), or 0.56 (ref 2) (?)    | he |    N/A    |    "Ref 1: Berger et al. GCN Circ. 4622; Ref 2: Preliminary Keck GRB Host Project (http://www.astro.caltech.edu/grbhosts/)"   
+GRB060117  |    4.6    | bp |    +0.5 -0.5    |    "de Ugarte Postigo A. et al. ApJ 648 L83 (2006)"   
+GRB060116  |    6.60    | bp |    +0.15 -0.15    |    "Grazian A. et al. GCN Circ. 4545"  
+GRB060115  |    3.5328    | ba |     N/A     |    "Piranomonte S. et al. GCN Circ. 4520; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB060111A  |    2.32(?)    | "Host Lyman-alpha" |    N/A    |    "Preliminary Keck GRB Host Project (http://www.astro.caltech.edu/grbhosts/)"   
+GRB060108  |    2.03    | bp |     0.67 N/A     |    "Melandri A. et al. GCN Circ. 4539"   
+GRB051221A  |    0.5464    | he |     N/A     |    "Berger E. & Soderberg A.M. GCN Circ. 4384; *Soderberg A.M. et al. ApJ 650 261 (2006)"   
+GRB051117B  |    0.481    | he |     N/A     |    "Jakobsson P. et al. ApJ 752 62 (2012)"   
+GRB051111  |    1.54948    | ba |     N/A     |    "Hill G. et al. GCN Circ. 4255; *Penprase B.E. et al. ApJ 646 358 (2006)"   
+GRB051109B  |    0.080    | he |     N/A     |    "Perley D.A. et al. GCN Circ. 5387"   
+GRB051109A  |    2.346    | ba |     N/A     |    "Quimby R. et al. GCN Circ. 4221"   
+GRB051016B  |    0.9364    | he |     N/A     |    "Soderberg A.M. et al. GCN Circ. 4186"   
+GRB051008  |    2.77    |   hp   |    +0.15 -0.20    |    "Perley D.A. et al. ApJ 778 128 (2013); *Volnova A.A. et al. MNRAS 442 2586 (2014)"   
+GRB051006  |    1.059    | he |     N/A     |    "Jakobsson P. et al. ApJ 752 62 (2012)"   
+GRB051001  |    2.4296    | he |     N/A     |    "Jakobsson P. et al. ApJ 752 62 (2012); *Kruehler T. et al. ApJ 758 46 (2012)"   
+GRB050922C  |    2.1995    | ba |     N/A     |    "Jakobsson P. et al. GCN Circ. 4029; Piranomonte S. et al. GCN Circ. 4032; D'Elia V. et al. GCN Circ. 4044; Jakobsson P. et al. A&A 460 L13 (2006); Piranomonte S. et al. NCimB 121 1561 (2006); Fox A.J. et al. A&A 491 189 (2008); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB050922B  |    4.5     | he |    +0.5 -0.5    |    "*Schulze et al. ApJ 808 73 (2015)"   
+GRB050915A  |    2.5273    | he |     N/A     |    "Jakobsson P. et al. ApJ 752 62 (2012); *Kruehler T. et al. ApJ 758 46 (2012)"   
+GRB050908  |    3.3467    | ba |     N/A     |    "Fugazza D. et al. GCN Circ. 3948; Foley R.J. et al. GCN Circ. 3949; Prochaska J.X. et al. GCN Circ. 3971; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB050904  |    6.295    | ba |     N/A     |    "Kawai N. et al. GCN Circ. 3937; *Kawai N. et al. Nature 440 184 (2006)"   
+GRB050826  |    0.296    | he |     N/A     |    "Halpern J.P. & Mirabal N. GCN Circ. 5982; *Mirabal N. et al. ApJ 661 L127 (2007)"   
+GRB050824  |    0.8278    | ba |     N/A     |    "Fynbo J.P.U. et al. GCN Circ. 3874; Sollerman J. et al. A&A 466 839 (2007); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB050822  |    1.434    | he |     N/A     |    "Jakobsson P. et al. ApJ 752 62 (2012)"   
+GRB050820A  |    2.6147    | ba |     N/A     |    "Prochaska J.X. et al. GCN Circ. 3833; Ledoux C. et al. GCN Circ. 3860; *Fox A.J. et al. A&A 491 189 (2008); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB050819  |    2.5043    | he |     N/A     |    "Kruehler T. et al. ApJ 758 46 (2012)"   
+GRB050814  |    5.3    | bp |     +0.3 -0.3     |    "Jakobsson P. et al. AIPC 836 552 (2006)"   
+GRB050813  |    0.722    | he |     N/A     |   "Berger E. GCN Circ. 3801; Foley R.J. et al. GCN Circ. 3808; Prochaska J.X. et al. ApJ 642 989 (2006)"   
+GRB050803  |    3.5       | he |    +0.5 -0.5    |    "*Schulze et al. ApJ 808 73 (2015)"   
+GRB050802  |    1.7102    | ba |     N/A     |    "Fynbo J.P.U. et al. GCN Circ. 3749; *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB050801  |    1.38    |   hp   |    +0.07 -0.07     |    "Oates S. R. et al. MNRAS 395 490 (2009); *Schulze et al. ApJ 808 73 (2015)"   
+GRB050730  |    3.9693    | ba |     N/A     |   "Chen H.-W. et al. GCN Circ. 3709; Rol E. et al. GCN Circ. 3710; Holman M. et al. GCN Circ. 3716; Prochaska J.X. et al. GCN Circ. 3732; Starling R.L.C. et al. A&A 442 L21 (2005); Chen H.-W. et al. ApJ 634 L25 (2005); Piranomonte S. et al. NCimB 121 1561 (2006); D'Elia V. et al. A&A 467 629 (2007); Fox A.J. et al. A&A 491 189 (2008); Ledoux C. et al. A&A 506 661 (2009); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB050726  |    0.1646    | he |     N/A     |    "Berger E. et al. ApJ 660 496 (2007)"   
+GRB050724  |    0.257    | ba |     N/A     |    "Prochaska J.X. et al. GCN Circ. 3700; *Berger E. et al. Nature 438 988 (2005)"   
+GRB050714B  |    2.438    | he |     N/A     |    "Krühler et al. A&A 581 A125 (2015); *Schulze et al. ApJ 808 73 (2015)"   
+GRB050603  |    2.821    | he |     N/A     |    "Berger E. & Becker G. GCN Circ. 3520"   
+GRB050525A  |    0.606    | ba |     N/A     |    "Foley R.J. et al. GCN Circ. 3483; *Della Valle M. et al. ApJ 642 L103 (2006)"   
+GRB050509B  |    0.2249    | he |     N/A     |    "Prochaska J.X. et al. GCN Circ. 3399"   
+GRB050505  |    4.2748    | ba |     N/A     |    "Berger E. et al. GCN Circ. 3368; *Berger E. et al. ApJ 642 979 (2006)"   
+GRB050502B  |    5.2    |   hp   |    +0.3 -0.3    |    "Afonso P. et al. A&A 526 A154 (2011); *Schulze et al. ApJ 808 73 (2015)"   
+GRB050416A  |    0.6528    | he |     N/A     |    "Cenko S.B. et al. GCN Circ. 3542; *Soderberg A.M. et al. ApJ 661 982 (2007)"   
+GRB050406  |    2.7    |   hp   |    +0.29 -0.41     |    "Schady P. et al. ApJ 643 276; *Schulze et al. ApJ 808 73 (2015)"   
+GRB050401  |    2.8983    | ba |     N/A     |    "Fynbo J.P.U. et al. GCN Circ. 3176; Watson D. et al. ApJ 752 1011 (2006); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB050319  |    3.2425    | ba |     N/A     |    "Fynbo J.P.U. et al. GCN Circ. 3136; Jakobsson P. et al. A&A 460 L13 (2006); *Fynbo J.P.U. et al. ApJS 185 526 (2009)"   
+GRB050318  |    1.4436    | ba |     N/A     |    "Berger E. et al. GCN Circ. 3122; *Berger E. et al. ApJ 634 501 (2005)"   
+GRB050315  |    1.9500    | ba |     N/A     |    "Kelson D. & Berger E. GCN Circ. 3101; *Berger E. et al. ApJ 634 501 (2005)"   
+GRB050223  |    0.584    | he |     N/A     |    "Berger E. et al. GCN Circ. 5283; *Pellizza L.J. et al. A&A 459 L5 (2006)"   
+GRB050219A  |    0.2115    | he |     N/A     |    "Rossi A. et al. in preparation (2014)"   
+GRB050215B  |    2.52    | "Host Ly-alpha" |    N/A    |    "Preliminary Keck GRB Host Project (http://www.astro.caltech.edu/grbhosts/)"   
+GRB050126  |    1.29    | he |     N/A     |    "Berger E. et al. GCN Circ. 3088"   

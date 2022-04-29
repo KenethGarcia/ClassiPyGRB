@@ -245,7 +245,6 @@ class SwiftGRBWorker:
             axs1[1].plot(freq[len(freq) // 3:], sp_one_side[len(freq) // 3:], linewidth=0.1, c='k')
             axs1[1].set_xlim(left=freq[len(freq)//3], right=freq[-1])
             axs1[1].set_xlabel('Frequency (Hz)', weight='bold').set_fontsize('10')
-            dft_fig.supylabel('Amplitude', weight='bold').set_fontsize('10')
             return sp_one_side, dft_fig
         else:
             return sp_one_side

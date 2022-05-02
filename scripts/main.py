@@ -5,8 +5,12 @@ import numpy as np  # Import numpy module to read tables, manage data, etc
 import concurrent.futures  # Import module to do threading over the bursts
 import matplotlib.pyplot as plt  # Import module to do figures, animations
 from tqdm import tqdm  # Script to check progress bar in concurrency steps
+from IPython import display  # Import module to display html animations
 from scripts import helpers  # Script to do basics functions to data
 from scipy import integrate  # Module to integrate using Simpson's rule
+from tsne_animate import tsneAnimate  # Module to do Animations in tSNE
+from openTSNE import TSNE as open_TSNE  # Alternative module to do tSNE
+from sklearn.manifold import TSNE as sklearn_TSNE  # Module to do tSNE
 from scipy.fft import next_fast_len, fft, fftfreq  # Function to look for the best suitable array size to do FFT
 
 
@@ -16,6 +20,7 @@ class SwiftGRBWorker:
     original_data_path = data_path + '\Original_Data'  # Specific path to add Original Data
     results_path = os.getcwd() + '\Results'  # Specific path to add Results
     table_path = os.getcwd() + '\Tables'  # The path where tables are
+    animations_path = os.getcwd() + '\Animations'  # The path where animations will be saved
     res = 64  # Resolution for the Light Curve Data in ms, could be 2, 8, 16, 64 (default), 256 and 1 (this last in s)
 
     def __init__(self):
@@ -300,3 +305,23 @@ class SwiftGRBWorker:
         """
         helpers.directory_maker(self.results_path)
         np.savez_compressed(os.path.join(self.results_path, file_name), GRB_Names=names, Data=data)
+
+    @staticmethod
+    def tsne_animation(data, durations_data, pp=30, lr='auto'):
+        """
+        Function to see convergence in t-SNE algorithm
+        :param data: Array of data GRB features
+        :param durations_data: Array of classification of GRBs in the sample (T_90 separation recommended)
+        :param pp: Perplexity to evaluate t-SNE
+        :param lr: Learning Rate to evaluate t-SNE
+        :return: t-SNE convergence Animation, same as FuncAnimation instance of Matplotlib
+        """
+        tsne = tsneAnimate(sklearn_TSNE(n_components=2, perplexity=pp, n_jobs=-1, learning_rate=lr, init='random'))
+        color_values = np.array([0 if value < 2 else 1 for value in durations_data])
+        anim = tsne.animate(data, color_values, useTqdm=1)
+        video = anim.to_html5_video()  # Converting to a html5 video
+        html = display.HTML(video)  # Embedding for the video
+        display.display(html)  # Draw the animation
+        plt.close()
+        anim.save(f"animation_tSNE.mp4")
+        return anim

@@ -13,13 +13,16 @@ from openTSNE import TSNE as open_TSNE  # Alternative module to do tSNE
 from sklearn.manifold import TSNE as sklearn_TSNE  # Module to do tSNE
 from scipy.fft import next_fast_len, fft, fftfreq  # Function to look for the best suitable array size to do FFT
 
+import matplotlib
+matplotlib.use("TkAgg")
+
 
 class SwiftGRBWorker:
 
     data_path = os.getcwd() + '\Data'  # The path to add Original and Pre-processed data
     original_data_path = data_path + '\Original_Data'  # Specific path to add Original Data
     results_path = os.getcwd() + '\Results'  # Specific path to add Results
-    table_path = os.getcwd() + '\Tables'  # The path where tables are
+    table_path = os.getcwd() + '\Tables'  # The path where animations will be saved
     animations_path = os.getcwd() + '\Animations'  # The path where animations will be saved
     res = 64  # Resolution for the Light Curve Data in ms, could be 2, 8, 16, 64 (default), 256 and 1 (this last in s)
 
@@ -323,5 +326,110 @@ class SwiftGRBWorker:
         html = display.HTML(video)  # Embedding for the video
         display.display(html)  # Draw the animation
         plt.close()
-        anim.save(f"animation_tSNE.mp4")
         return anim
+
+    @staticmethod
+    def perform_tsne(names, data, durations_data, pp=30, lr=200, plot=True, redshift=None, special=None,
+                     library="openTSNE", metric='euclidean', save=False):
+        """
+        Function to do tSNE to Swift processed Data
+        :param names: List of GRB Names, only needed to plot data
+        :param data: Array of processed Swift Data
+        :param durations_data: Array with durations of data, only needed to plot
+        :param pp: The perplexity is related to the number of nearest neighbors that is used in tSNE
+        :param lr: The learning rate for t-SNE is usually in the range [10.0, 1000.0]
+        :param plot: Boolean to indicate if plot and save results, default is False, and it only should be used one time
+        :param redshift: Array of [GRB_i(z)] to size markers in plot, for GRBs without z use z=0 to depreciate it in the
+        plot (use size marker to do this). If redshift is None (default), then this quantity is not took in account
+        :param special: Array of special GRBs to highlight in plot, default is None
+        :param library: Library used to do tSNE, can be 'openTSNE'(default) or 'sklearn'
+        :param metric: The metric to use when calculating distance between instances in a feature array. If metric is a
+        string, it must be one of the options allowed by scipy.spatial.distance.pdist, default is 'euclidean'
+        :param save: Boolean to indicate if save plot, plot=True is needed to save
+        :return: 2-Dimensional embedded data needed to further analysis, with another column for log(T_90) of GRB
+        """
+        # Create an object to initialize tSNE in any library, with default values and other variables needed:
+        if library.lower() == 'opentsne':  # OpenTSNE has by default init='pca'
+            tsne = open_TSNE(n_components=2, perplexity=pp, n_jobs=-1, learning_rate=lr, random_state=42, metric=metric)
+            data_reduced_tsne = tsne.fit(data)  # Perform tSNE to data
+        elif library.lower() == 'sklearn':  # However, sklearn_TSNE has by default init='random'
+            tsne = sklearn_TSNE(n_components=2, perplexity=pp, n_jobs=-1, learning_rate=lr, random_state=42,
+                                metric=metric, init='random')
+            data_reduced_tsne = tsne.fit_transform(data)  # Perform tSNE to data
+        else:
+            print(f"Error when trying library={library}, it only can be 'openTSNE'(default) or 'sklearn'...")
+            raise ValueError
+
+        if plot:  # If needed, plot and save
+            # If we need to re-size using redshift, then we need to do a special size array:
+            if redshift is None:
+                redshift = []
+            size = np.ones(len(data)) * 20 if len(redshift) == 0 else np.array(
+                [value * 300 / max(redshift) for value in redshift])
+            # Define the x and y values to scatter:
+            x_plot_values, y_plot_values = data_reduced_tsne[:, 0], data_reduced_tsne[:, 1]
+            # Plot instances (change by default plotting if you don't need 2 subplots, or, if you don't need share_y)
+            fig2 = plt.figure(figsize=[10, 4.8], dpi=300)
+            gs = fig2.add_gridspec(ncols=2, wspace=0, width_ratios=[1, 1.25])
+            (ax_j, ax_i) = gs.subplots(sharey='row')
+            fig2.suptitle(f'{library} tSNE Results: {len(data)} GRB (PP={pp}, LR={lr}, metric={metric})',
+                          weight='bold').set_fontsize('12')
+            ax_i.set_xlabel('Dimension 1', weight='bold').set_fontsize('10')
+            ax_j.set_xlabel('Dimension 1', weight='bold').set_fontsize('10')
+            ax_j.set_ylabel('Dimension 2', weight='bold').set_fontsize('10')
+            if special is None:
+                plot = ax_i.scatter(x_plot_values, y_plot_values, s=size, c=np.log10(durations_data))
+                ax_j.scatter(x_plot_values[np.where(durations_data < 2)], y_plot_values[np.where(durations_data < 2)],
+                             s=size[np.where(durations_data < 2)], c='m', label=r"$T_{90}<2$", alpha=0.75, cmap='jet')
+                ax_j.scatter(x_plot_values[np.where(durations_data > 2)], y_plot_values[np.where(durations_data > 2)],
+                             s=size[np.where(durations_data > 2)], c='limegreen', label=r"$T_{90}>2$", alpha=0.75,
+                             cmap='jet')
+                ax_j.legend()
+            else:
+                # If there are special cases, we need to define some booleans arrays to separate these GRBs:
+                bool_array = [True if value in special else False for value in names]
+                # We set the same color scale for all the scatter plots using Normalize:
+                minimum, maximum = min(np.log10(durations_data)), max(np.log10(durations_data))
+                normalize = plt.Normalize(minimum, maximum)
+                # Re-define scatter points, excluding the special GRBs:
+                new_x_plot_values = x_plot_values[np.invert(bool_array)]
+                new_y_plot_values = y_plot_values[np.invert(bool_array)]
+                # Re-define durations for non-excluded GRBs:
+                new_durations = durations_data[np.invert(bool_array)]
+                plot = ax_i.scatter(new_x_plot_values, new_y_plot_values, s=size[np.invert(bool_array)],
+                                    c=np.log10(durations_data)[np.invert(bool_array)], norm=normalize, cmap='jet')
+                # Color array indexing if T_90 is for short or large GRB:
+                plot2_colors = np.array(['m' if value < 2 else 'limegreen' for value in durations_data])
+                ax_j.scatter(new_x_plot_values[np.where(new_durations < 2)],
+                             new_y_plot_values[np.where(new_durations < 2)], alpha=0.75, cmap='jet',
+                             s=size[np.invert(bool_array)][np.where(new_durations < 2)],
+                             c=plot2_colors[np.invert(bool_array)][np.where(new_durations < 2)], label=r"$T_{90}<2$")
+                ax_j.scatter(new_x_plot_values[np.where(new_durations > 2)],
+                             new_y_plot_values[np.where(new_durations > 2)], alpha=0.75, cmap='jet',
+                             s=size[np.invert(bool_array)][np.where(new_durations > 2)],
+                             c=plot2_colors[np.invert(bool_array)][np.where(new_durations > 2)], label=r"$T_{90}>2$")
+                # Scatter the special GRB one by one, using its attributes:
+                markers = matplotlib.lines.Line2D.filled_markers[1:] * 10  # Define multiple markers
+                left_x_plot_values, left_y_plot_values = x_plot_values[bool_array], y_plot_values[
+                    bool_array]  # x, y points
+                special_names, special_sizes = names[bool_array], size[
+                    bool_array]  # GRB special names and sizes for legend
+                special_colors = np.log10(durations_data)[bool_array]
+                for i in range(len(left_x_plot_values)):
+                    ax_i.scatter(left_x_plot_values[i], left_y_plot_values[i], edgecolor="k", label=special_names[i],
+                                 marker=markers[i], c=special_colors[i], zorder=2.5, norm=normalize, s=special_sizes[i],
+                                 cmap='jet')
+                    ax_j.scatter(left_x_plot_values[i], left_y_plot_values[i], edgecolor="k", marker=markers[i],
+                                 c=plot2_colors[bool_array][i], zorder=2.5, s=special_sizes[i], cmap='jet')
+                ax_i.legend(fontsize='x-small')
+                ax_j.legend()
+            cbar = fig2.colorbar(plot)
+            cbar.set_label(r'$Log\left(T_{90}\right)$')
+            if save:
+                base_name = f'{library}_tSNE{len(data)}GRB_Perp{pp}_LR{lr}_{metric}'
+                file_name = f"{base_name}.png" if len(redshift) == 0 else f"{base_name}_redshifted.png"
+                fig2.savefig(os.path.join(os.getcwd() + r'\tSNE_images\images', file_name))
+            return fig2, np.concatenate((data_reduced_tsne, np.log10(durations_data.reshape(-1, 1))), axis=1)
+        else:
+            return np.concatenate((data_reduced_tsne, np.log10(durations_data.reshape(-1, 1))), axis=1)
+

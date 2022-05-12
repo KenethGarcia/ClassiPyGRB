@@ -1,8 +1,11 @@
 import os  # Import os to handle folders and files
 import gzip  # Module to compress files
+import inspect  # Module to get information about live objects such as modules, classes
 import requests  # Import the module needed to download from the website
+import matplotlib  # Import module to edit and create plots
 import numpy as np  # Import numpy module to read tables, manage data, etc
 import concurrent.futures  # Import module to do threading over the bursts
+import moviepy.editor as mpy  # Module to do Matplotlib animations
 import matplotlib.pyplot as plt  # Import module to do figures, animations
 from tqdm import tqdm  # Script to check progress bar in concurrency steps
 from IPython import display  # Import module to display html animations
@@ -12,8 +15,7 @@ from tsne_animate import tsneAnimate  # Module to do Animations in tSNE
 from openTSNE import TSNE as open_TSNE  # Alternative module to do tSNE
 from sklearn.manifold import TSNE as sklearn_TSNE  # Module to do tSNE
 from scipy.fft import next_fast_len, fft, fftfreq  # Function to look for the best suitable array size to do FFT
-
-import matplotlib
+from moviepy.video.io.bindings import mplfig_to_npimage  # Function to do mpy images
 matplotlib.use("TkAgg")
 
 
@@ -23,7 +25,7 @@ class SwiftGRBWorker:
     original_data_path = data_path + '\Original_Data'  # Specific path to add Original Data
     results_path = os.getcwd() + '\Results'  # Specific path to add Results
     table_path = os.getcwd() + '\Tables'  # The path where animations will be saved
-    animations_path = os.getcwd() + '\Animations'  # The path where animations will be saved
+    animations_path = results_path + '\Animations'  # The path where animations will be saved
     res = 64  # Resolution for the Light Curve Data in ms, could be 2, 8, 16, 64 (default), 256 and 1 (this last in s)
 
     def __init__(self):
@@ -96,24 +98,39 @@ class SwiftGRBWorker:
                     for name, value in results:
                         f.write(f"{name}|{value}\n") if value is not None else None
 
-    def names_durations(self, name=None, t=100, file_name="summary_burst_durations.txt"):
-        """
-        Function to extract the durations intervals for Swift Data (summary_burst_durations file is required in current
-        working directory)
-        :param name: Name of GRB if only one is needed, default is none
-        :param t: Duration interval needed, default is 100 (can be 50, 90, 100)
-        :param file_name: name of Summary burst durations, default is summary_burst_durations.txt
-        :return: An array of (name, t_start, t_end) for all GRB needed (default is all GRBs)
-        """
+    def durations_checker(self, name=None, t=100, durations_table="summary_burst_durations.txt", ):
         columns = {50: (0, 7, 8), 90: (0, 5, 6), 100: (0, 3, 4)}  # Dictionary to extract the correct columns
+        path = os.path.join(self.table_path, durations_table)
+        keys_extract = np.genfromtxt(path, delimiter="|", dtype=str, usecols=columns.get(t), autostrip=True)
         # Extract all values from summary_burst_durations.txt:
-        path = os.path.join(self.table_path, file_name)
-        durations = np.genfromtxt(path, delimiter="|", dtype=str, usecols=columns.get(t), autostrip=True)
-        if name:  # If a specific name is entered, then we search the value in the array
-            rows, columns = np.where(durations == name)
-            return durations[rows]
-        else:  # Else return all data from summary_burst_durations.txt
-            return durations
+        if isinstance(name, str):  # If a specific name is entered, then we search the value in the array
+            return helpers.check_name(name, keys_extract)
+        elif isinstance(name, (np.ndarray, list, tuple)):  # If a name's array is specified, search them recursively
+            with concurrent.futures.ProcessPoolExecutor() as executor:  # Parallelization
+                results = list(
+                    tqdm(executor.map(helpers.check_name, name, np.array([keys_extract] * len(name))), total=len(name),
+                         desc='Finding Durations: ', unit='GRB'))
+                return np.array(results)
+        else:  # Else return data for all GRBs
+            return keys_extract
+
+    def redshifts_checker(self, name=None, redshift_table="GRBlist_redshift_BAT.txt"):
+        path = os.path.join(self.table_path, redshift_table)
+        keys_extract = np.genfromtxt(path, delimiter="|", dtype=str, usecols=(0, 1), autostrip=True)
+        # Extract all values from summary_burst_durations.txt:
+        if isinstance(name, str):  # If a specific name is entered, then we search the redshift in the array
+            return helpers.check_name(name, keys_extract)
+        elif isinstance(name, (np.ndarray, list, tuple)):  # If a name's array is specified, search them recursively
+            with concurrent.futures.ProcessPoolExecutor() as executor:  # Parallelization
+                results = list(
+                    tqdm(executor.map(helpers.check_name, name, np.array([keys_extract] * len(name))), total=len(name),
+                         desc='Finding Redshifts: ', unit='GRB'))
+                returns = []
+                for i in range(len(name)):
+                    returns.append(results[i][0]) if len(results[i]) != 0 else returns.append([name[i], None])
+                return np.array(returns)
+        else:  # Else return data for all GRBs
+            return keys_extract
 
     def lc_limiter(self, name, t=100, limits=None):
         """
@@ -125,7 +142,7 @@ class SwiftGRBWorker:
         """
         try:
             if limits is None:  # If not have been defined any limits, then use T_{t} durations from file
-                limit_interval = self.names_durations(name, t)  # Upload the values of t_start and t_durations
+                limit_interval = self.durations_checker(name, t)  # Upload the values of t_start and t_durations
                 t_start, t_end = float(limit_interval[0, 1]), float(limit_interval[0, 2])
             else:
                 t_start, t_end, *other = limits
@@ -260,7 +277,7 @@ class SwiftGRBWorker:
     def so_much_fourier(self, arrays):
         """
          Function to do faster DFT to so much GRB data from Swift, data need to be normalized before executed here
-         :param arrays: GRB list data array to be transformed, it would be sent in swift format (11 columns with time first)
+         :param arrays: GRB data array to be transformed, it would be sent in swift format (11 columns with time first)
          :return: An array with the DFT Amplitude of total data
          """
         with concurrent.futures.ProcessPoolExecutor() as executor:  # Parallelization
@@ -268,11 +285,12 @@ class SwiftGRBWorker:
                                    desc='Performing DFT: ', unit='GRB'))
         return np.array(sp_results)
 
-    def plot_any_grb(self, name, t=100):
+    def plot_any_grb(self, name, t=100, limits=None):
         """
         Function to plot any GRB out of i-esim duration (can be 50, 90, 100), default is T_90
         :param name: GRB name
         :param t: Duration interval needed, default is 100 (can be 50, 90, 100, else plot all light curve)
+        :param limits: List of customized [t_start, t_end] if needed (default is None)
         :return: Returns the figure, axis created
         """
         fig5 = plt.figure(dpi=150)
@@ -282,8 +300,8 @@ class SwiftGRBWorker:
         end = f"{self.res}ms" if self.res in (2, 8, 16, 64, 256) else f"1s"
         bands = (r"$15-25\,keV$", r"$25-50\,keV$", r"$50-100\,keV$", r"$100-350\,keV$", r"$15-350\,keV$")
         colors = ('k', 'r', 'lime', 'b', 'tab:pink')
-        if t in (50, 90, 100):  # Limit Light Curve if is needed
-            data = self.lc_limiter(name=name, t=t)
+        if t in (50, 90, 100) or limits is not None:  # Limit Light Curve if is needed
+            data = self.lc_limiter(name=name, t=t, limits=limits)
             axs[0].set_title(fr"{end} Swift {name} out of $T\_{t}$", weight='bold').set_fontsize('12')
             if isinstance(data[0], str):  # If an error occurs when limit out of T_{t}
                 print(f"Error when limiting {name} Light Curve out of t={t}, plotting all data")
@@ -309,8 +327,7 @@ class SwiftGRBWorker:
         helpers.directory_maker(self.results_path)
         np.savez_compressed(os.path.join(self.results_path, file_name), GRB_Names=names, Data=data)
 
-    @staticmethod
-    def tsne_animation(data, durations_data, pp=30, lr='auto'):
+    def tsne_convergence_animation(self, data, durations_data, pp=30, lr='auto'):
         """
         Function to see convergence in t-SNE algorithm
         :param data: Array of data GRB features
@@ -319,9 +336,12 @@ class SwiftGRBWorker:
         :param lr: Learning Rate to evaluate t-SNE
         :return: t-SNE convergence Animation, same as FuncAnimation instance of Matplotlib
         """
-        tsne = tsneAnimate(sklearn_TSNE(n_components=2, perplexity=pp, n_jobs=-1, learning_rate=lr, init='random'))
+        tsne = tsneAnimate(sklearn_TSNE(n_components=2, perplexity=pp, n_jobs=-1, learning_rate=lr, init='random',
+                                        method='exact', verbose=100))
         color_values = np.array([0 if value < 2 else 1 for value in durations_data])
-        anim = tsne.animate(data, color_values, useTqdm=1)
+        anim = tsne.animate(data, color_values)
+        filename = os.path.join(self.results_path, 'tsne_animation.gif')
+        anim.save(filename, dpi=80, writer='imagemagick')
         video = anim.to_html5_video()  # Converting to a html5 video
         html = display.HTML(video)  # Embedding for the video
         display.display(html)  # Draw the animation
@@ -329,107 +349,98 @@ class SwiftGRBWorker:
         return anim
 
     @staticmethod
-    def perform_tsne(names, data, durations_data, pp=30, lr=200, plot=True, redshift=None, special=None,
-                     library="openTSNE", metric='euclidean', save=False):
-        """
-        Function to do tSNE to Swift processed Data
-        :param names: List of GRB Names, only needed to plot data
-        :param data: Array of processed Swift Data
-        :param durations_data: Array with durations of data, only needed to plot
-        :param pp: The perplexity is related to the number of nearest neighbors that is used in tSNE
-        :param lr: The learning rate for t-SNE is usually in the range [10.0, 1000.0]
-        :param plot: Boolean to indicate if plot and save results, default is False, and it only should be used one time
-        :param redshift: Array of [GRB_i(z)] to size markers in plot, for GRBs without z use z=0 to depreciate it in the
-        plot (use size marker to do this). If redshift is None (default), then this quantity is not took in account
-        :param special: Array of special GRBs to highlight in plot, default is None
-        :param library: Library used to do tSNE, can be 'openTSNE'(default) or 'sklearn'
-        :param metric: The metric to use when calculating distance between instances in a feature array. If metric is a
-        string, it must be one of the options allowed by scipy.spatial.distance.pdist, default is 'euclidean'
-        :param save: Boolean to indicate if save plot, plot=True is needed to save
-        :return: 2-Dimensional embedded data needed to further analysis, with another column for log(T_90) of GRB
-        """
+    def perform_tsne(data, library="openTSNE", **kwargs):
         # Create an object to initialize tSNE in any library, with default values and other variables needed:
         if library.lower() == 'opentsne':  # OpenTSNE has by default init='pca'
-            tsne = open_TSNE(n_components=2, perplexity=pp, n_jobs=-1, learning_rate=lr, random_state=42, metric=metric)
+            tsne = open_TSNE(n_components=2, n_jobs=-1, random_state=42, **kwargs)
             data_reduced_tsne = tsne.fit(data)  # Perform tSNE to data
         elif library.lower() == 'sklearn':  # However, sklearn_TSNE has by default init='random'
-            tsne = sklearn_TSNE(n_components=2, perplexity=pp, n_jobs=-1, learning_rate=lr, random_state=42,
-                                metric=metric, init='random')
+            tsne = sklearn_TSNE(n_components=2, n_jobs=-1, random_state=42, **kwargs)
             data_reduced_tsne = tsne.fit_transform(data)  # Perform tSNE to data
         else:
             print(f"Error when trying library={library}, it only can be 'openTSNE'(default) or 'sklearn'...")
             raise ValueError
+        return data_reduced_tsne
 
-        if plot:  # If needed, plot and save
-            # If we need to re-size using redshift, then we need to do a special size array:
-            if redshift is None:
-                redshift = []
-            size = np.ones(len(data)) * 20 if len(redshift) == 0 else np.array(
-                [value * 300 / max(redshift) for value in redshift])
-            # Define the x and y values to scatter:
-            x_plot_values, y_plot_values = data_reduced_tsne[:, 0], data_reduced_tsne[:, 1]
-            # Plot instances (change by default plotting if you don't need 2 subplots, or, if you don't need share_y)
-            fig2 = plt.figure(figsize=[10, 4.8], dpi=300)
-            gs = fig2.add_gridspec(ncols=2, wspace=0, width_ratios=[1, 1.25])
-            (ax_j, ax_i) = gs.subplots(sharey='row')
-            fig2.suptitle(f'{library} tSNE Results: {len(data)} GRB (PP={pp}, LR={lr}, metric={metric})',
-                          weight='bold').set_fontsize('12')
-            ax_i.set_xlabel('Dimension 1', weight='bold').set_fontsize('10')
-            ax_j.set_xlabel('Dimension 1', weight='bold').set_fontsize('10')
-            ax_j.set_ylabel('Dimension 2', weight='bold').set_fontsize('10')
-            if special is None:
-                plot = ax_i.scatter(x_plot_values, y_plot_values, s=size, c=np.log10(durations_data))
-                ax_j.scatter(x_plot_values[np.where(durations_data < 2)], y_plot_values[np.where(durations_data < 2)],
-                             s=size[np.where(durations_data < 2)], c='m', label=r"$T_{90}<2$", alpha=0.75, cmap='jet')
-                ax_j.scatter(x_plot_values[np.where(durations_data > 2)], y_plot_values[np.where(durations_data > 2)],
-                             s=size[np.where(durations_data > 2)], c='limegreen', label=r"$T_{90}>2$", alpha=0.75,
-                             cmap='jet')
-                ax_j.legend()
-            else:
-                # If there are special cases, we need to define some booleans arrays to separate these GRBs:
-                bool_array = [True if value in special else False for value in names]
-                # We set the same color scale for all the scatter plots using Normalize:
-                minimum, maximum = min(np.log10(durations_data)), max(np.log10(durations_data))
-                normalize = plt.Normalize(minimum, maximum)
-                # Re-define scatter points, excluding the special GRBs:
-                new_x_plot_values = x_plot_values[np.invert(bool_array)]
-                new_y_plot_values = y_plot_values[np.invert(bool_array)]
-                # Re-define durations for non-excluded GRBs:
-                new_durations = durations_data[np.invert(bool_array)]
-                plot = ax_i.scatter(new_x_plot_values, new_y_plot_values, s=size[np.invert(bool_array)],
-                                    c=np.log10(durations_data)[np.invert(bool_array)], norm=normalize, cmap='jet')
-                # Color array indexing if T_90 is for short or large GRB:
-                plot2_colors = np.array(['m' if value < 2 else 'limegreen' for value in durations_data])
-                ax_j.scatter(new_x_plot_values[np.where(new_durations < 2)],
-                             new_y_plot_values[np.where(new_durations < 2)], alpha=0.75, cmap='jet',
-                             s=size[np.invert(bool_array)][np.where(new_durations < 2)],
-                             c=plot2_colors[np.invert(bool_array)][np.where(new_durations < 2)], label=r"$T_{90}<2$")
-                ax_j.scatter(new_x_plot_values[np.where(new_durations > 2)],
-                             new_y_plot_values[np.where(new_durations > 2)], alpha=0.75, cmap='jet',
-                             s=size[np.invert(bool_array)][np.where(new_durations > 2)],
-                             c=plot2_colors[np.invert(bool_array)][np.where(new_durations > 2)], label=r"$T_{90}>2$")
-                # Scatter the special GRB one by one, using its attributes:
-                markers = matplotlib.lines.Line2D.filled_markers[1:] * 10  # Define multiple markers
-                left_x_plot_values, left_y_plot_values = x_plot_values[bool_array], y_plot_values[
-                    bool_array]  # x, y points
-                special_names, special_sizes = names[bool_array], size[
-                    bool_array]  # GRB special names and sizes for legend
-                special_colors = np.log10(durations_data)[bool_array]
-                for i in range(len(left_x_plot_values)):
-                    ax_i.scatter(left_x_plot_values[i], left_y_plot_values[i], edgecolor="k", label=special_names[i],
-                                 marker=markers[i], c=special_colors[i], zorder=2.5, norm=normalize, s=special_sizes[i],
-                                 cmap='jet')
-                    ax_j.scatter(left_x_plot_values[i], left_y_plot_values[i], edgecolor="k", marker=markers[i],
-                                 c=plot2_colors[bool_array][i], zorder=2.5, s=special_sizes[i], cmap='jet')
-                ax_i.legend(fontsize='x-small')
-                ax_j.legend()
-            cbar = fig2.colorbar(plot)
-            cbar.set_label(r'$Log\left(T_{90}\right)$')
-            if save:
-                base_name = f'{library}_tSNE{len(data)}GRB_Perp{pp}_LR{lr}_{metric}'
-                file_name = f"{base_name}.png" if len(redshift) == 0 else f"{base_name}_redshifted.png"
-                fig2.savefig(os.path.join(os.getcwd() + r'\tSNE_images\images', file_name))
-            return fig2, np.concatenate((data_reduced_tsne, np.log10(durations_data.reshape(-1, 1))), axis=1)
+    @staticmethod
+    def tsne_scatter_plot(x, duration_s=None, names=None, special_cases=None, redshift=None, ax=None, animation=False):
+        """
+        Function to do versatile plots of tSNE results (only 2D embedding results)
+        :param x: tSNE results array
+        :param duration_s: Durations (T_90, T_100, etc.) dataset array to add color bar in scatter plot if needed
+        :param names: GRB Names array, used only if you need to highlight some GRBs
+        :param special_cases: Special GRBs array to highlight, names parameter is needed if there are special_cases
+        :param redshift: Redshift array for all GRBs, it is used to scale point size
+        :param ax: Custom Matplotlib axes element to scatter, if ax is None, it will be created
+        :param animation: Boolean to indicate if returns color bar to animate, only needed if
+        :return: Matplotlib axis object ax with plot changes
+        """
+        redshift = [] if redshift is None else redshift  # Check if variables are not None
+        special_cases = [] if special_cases is None else special_cases
+        names = [] if names is None else names
+        duration_s = [] if duration_s is None else duration_s
+        x_i, y_i = x[:, 0], x[:, 1]  # Unpack tSNE results
+        if ax is None:  # If there aren't any previous axes, create new one
+            tsne_figure, ax = plt.subplots(dpi=300)  # Create plot instances
+        sca, color_bar = [], ()  # Define a default array to group scatter for Legends and color bar
+        if len(redshift) == 0:  # If there aren't any redshift, then do the same size for all points
+            size = np.ones(len(x)) * 50
+        else:  # If there are redshift values, get sizes and legend them
+            redshift = helpers.size_maker(redshift)  # Get size for redshift returned in redshifts_checker function
+            size = redshift * 600 / max(redshift)  # Scale size to usual plotting values
+            for area in [1, 2, 4]:  # Do phantom scatter to put legend size
+                sca.append(ax.scatter([], [], c='k', alpha=0.3, s=area * 600 / max(redshift), label=f"z={area}"))
+            first_leg = ax.legend(handles=sca, scatterpoints=1, frameon=False, labelspacing=1, fontsize='small')
+            ax.add_artist(first_leg)  # Add legend to plot
+            sca.clear()  # Reset variable to add further legends later
+        match = np.where(np.isin(names, special_cases))[0]  # Check if there are special cases matching GRB Names
+        non_match = np.arange(0, len(x_i), 1) if len(names) == 0 else np.where(np.isin(names, special_cases, invert=True))[0]
+        if len(duration_s) != 0:  # If there are durations, then customize scatters and add color bar
+            ncolor = np.log10(duration_s)
+            minimum, maximum = min(ncolor), max(ncolor)
+            normalize = plt.Normalize(minimum, maximum)
+            main_scatter = ax.scatter(x_i[non_match], y_i[non_match], s=size[non_match], c=ncolor[non_match],
+                                      cmap='jet', norm=normalize)  # Scatter non-matched GRBs
+            markers = matplotlib.lines.Line2D.filled_markers[1:] * len(match)  # Define multiple markers
+            for it, marker_i in zip(match, markers):  # Scatter matched GRBs
+                if size[it] != 0:  # Skip special GRBs without redshift
+                    sca.append(ax.scatter(x_i[it], y_i[it], s=size[it], c=ncolor[it], edgecolor='k', norm=normalize,
+                                          zorder=2.5, label=f'{names[it][:3]} {names[it][3:]}', marker=marker_i, cmap='jet'))
+            if len(redshift) == 0:  # If there aren't redshift, put GRBs legend inside graph
+                leg_args = {'ncol': 2}
+            else:  # If there are redshift, put GRB legend outside graph
+                leg_args = {'ncol': 4, 'bbox_to_anchor': (0, 1.02, 1, 0.2), 'loc': 'lower left', 'borderaxespad': 0.}
+            second_legend = ax.legend(**leg_args, handles=sca, fontsize='small', frameon=False)
+            ax.add_artist(second_legend)  # Add second legend
+            color_bar = plt.colorbar(main_scatter, label=r'log$_{10}\left(T_{90}\right)$')  # Add color bar
+        else:  # If there aren't durations, do simple scatter plots
+            ax.scatter(x_i, y_i, s=size)
+        plt.tight_layout()  # Adjust plot to legends
+        plt.axis('off')  # Erase axis, it means nothing in tSNE
+        if animation:
+            return color_bar  # If animation are needed, return color bar to erase it later
         else:
-            return np.concatenate((data_reduced_tsne, np.log10(durations_data.reshape(-1, 1))), axis=1)
+            return ax  # Otherwise, return axis object
 
+    def tsne_animation(self, data, filename=None, iterable='perplexity', **kwargs):
+        fig, ax_i = plt.subplots()
+        fps = 2  # Images generated = fps*duration
+        array_it = kwargs.pop(iterable)  # Catch iterable array
+        duration = len(array_it) // fps  # Define the duration as len(iterable)/fps
+        scatter_args = set(inspect.signature(self.tsne_scatter_plot).parameters)  # Check for function parameters
+        scatter_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in scatter_args}  # Separate plot parameters
+
+        def make_frame(t):  # t has a step equal to 1/fps
+            ax_i.clear()  # Clear axes between iterations
+            dict_iterable = {iterable: array_it[int(t // (1 / fps))]}  # Define a unique i-esim parameter to pass tSNE
+            x_i = self.perform_tsne(data, **dict_iterable, **kwargs)  # Perform tSNE
+            bar = self.tsne_scatter_plot(x_i, **scatter_dict, ax=ax_i, animation=True)  # Scatter results
+            ax_i.set_title(f"{iterable}:{dict_iterable.get(iterable)}", loc='left', style='italic', fontsize=10)
+            fig.subplots_adjust(top=0.94)  # Resize fig to make title
+            frame = mplfig_to_npimage(fig)  # Convert to mpy
+            bar.remove()  # Remove bar
+            return frame  # Return frame fig
+
+        animation = mpy.VideoClip(make_frame, duration=duration)  # Create animation object
+        animation.write_gif(filename, fps=fps, program='imageio') if filename is not None else None  # Save animation
+        return animation

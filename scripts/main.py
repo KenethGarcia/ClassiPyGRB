@@ -1,5 +1,6 @@
 import os  # Import os to handle folders and files
 import gzip  # Module to compress files
+import sklearn  # Module to perform ML
 import inspect  # Module to get information about live objects such as modules, classes
 import requests  # Import the module needed to download from the website
 import matplotlib  # Import module to edit and create plots
@@ -7,7 +8,9 @@ import numpy as np  # Import numpy module to read tables, manage data, etc
 import concurrent.futures  # Import module to do threading over the bursts
 import moviepy.editor as mpy  # Module to do Matplotlib animations
 import matplotlib.pyplot as plt  # Import module to do figures, animations
+from time import time  # Import Module to check times
 from tqdm import tqdm  # Script to check progress bar in concurrency steps
+from numpy import linalg  # Function to help sklearn
 from IPython import display  # Import module to display html animations
 from scripts import helpers  # Script to do basics functions to data
 from scipy import integrate  # Module to integrate using Simpson's rule
@@ -17,6 +20,140 @@ from sklearn.manifold import TSNE as sklearn_TSNE  # Module to do tSNE
 from scipy.fft import next_fast_len, fft, fftfreq  # Function to look for the best suitable array size to do FFT
 from moviepy.video.io.bindings import mplfig_to_npimage  # Function to do mpy images
 matplotlib.use("TkAgg")
+
+
+def getSteps(data, **step_kwargs):
+    old_gradient = sklearn.manifold._t_sne._gradient_descent  # Save original gradient descent function
+    positions = []  # Array to save data positions
+
+    def _gradient_descent_scikit(objective, p0, it, n_iter, n_iter_check=1, n_iter_without_progress=300, momentum=0.8,
+                                 learning_rate=200.0, min_gain=0.01, min_grad_norm=1e-7, verbose=0, args=None,
+                                 kwargs=None):
+        """Batch gradient descent with momentum and individual gains.
+
+        Parameters
+        ----------
+        objective : callable
+            Should return a tuple of cost and gradient for a given parameter
+            vector. When expensive to compute, the cost can optionally
+            be None and can be computed every n_iter_check steps using
+            the objective_error function.
+
+        p0 : array-like of shape (n_params,)
+            Initial parameter vector.
+
+        it : int
+            Current number of iterations (this function will be called more than
+            once during the optimization).
+
+        n_iter : int
+            Maximum number of gradient descent iterations.
+
+        n_iter_check : int, default=1
+            Number of iterations before evaluating the global error. If the error
+            is sufficiently low, we abort the optimization.
+
+        n_iter_without_progress : int, default=300
+            Maximum number of iterations without progress before we abort the
+            optimization.
+
+        momentum : float within (0.0, 1.0), default=0.8
+            The momentum generates a weight for previous gradients that decays
+            exponentially.
+
+        learning_rate : float, default=200.0
+            The learning rate for t-SNE is usually in the range [10.0, 1000.0]. If
+            the learning rate is too high, the data may look like a 'ball' with any
+            point approximately equidistant from its nearest neighbours. If the
+            learning rate is too low, most points may look compressed in a dense
+            cloud with few outliers.
+
+        min_gain : float, default=0.01
+            Minimum individual gain for each parameter.
+
+        min_grad_norm : float, default=1e-7
+            If the gradient norm is below this threshold, the optimization will
+            be aborted.
+
+        verbose : int, default=0
+            Verbosity level.
+
+        args : sequence, default=None
+            Arguments to pass to objective function.
+
+        kwargs : dict, default=None
+            Keyword arguments to pass to objective function.
+
+        Returns
+        -------
+        p : ndarray of shape (n_params,)
+            Optimum parameters.
+
+        error : float
+            Optimum.
+
+        i : int
+            Last iteration.
+        """
+        if args is None:
+            args = []
+        if kwargs is None:
+            kwargs = {}
+
+        p = p0.copy().ravel()
+        update = np.zeros_like(p)
+        gains = np.ones_like(p)
+        error = np.finfo(float).max
+        best_error = np.finfo(float).max
+        best_iter = i = it
+
+        tic = time()
+        for i in range(it, n_iter):
+            positions.append(p.copy())  # Save the actual position
+            check_convergence = (i + 1) % n_iter_check == 0
+            # only compute the error when needed
+            kwargs["compute_error"] = check_convergence or i == n_iter - 1
+
+            error, grad = objective(p, *args, **kwargs)
+            grad_norm = linalg.norm(grad)
+
+            inc = update * grad < 0.0
+            dec = np.invert(inc)
+            gains[inc] += 0.2
+            gains[dec] *= 0.8
+            np.clip(gains, min_gain, np.inf, out=gains)
+            grad *= gains
+            update = momentum * update - learning_rate * grad
+            p += update
+
+            if check_convergence:
+                toc = time()
+                duration = toc - tic
+                tic = toc
+
+                if verbose >= 2:
+                    print("[t-SNE] Iteration %d: error = %.7f, gradient norm = %.7f (%s iterations in %0.3fs)"
+                          % (i + 1, error, grad_norm, n_iter_check, duration))
+
+                if error < best_error:
+                    best_error = error
+                    best_iter = i
+                elif i - best_iter > n_iter_without_progress:
+                    if verbose >= 2:
+                        print("[t-SNE] Iteration %d: did not make any progress during the last %d episodes. Finished."
+                              % (i + 1, n_iter_without_progress))
+                    break
+                if grad_norm <= min_grad_norm:
+                    if verbose >= 2:
+                        print("[t-SNE] Iteration %d: gradient norm %f. Finished." % (i + 1, grad_norm))
+                    break
+
+        return p, error, i
+
+    sklearn.manifold._t_sne._gradient_descent = _gradient_descent_scikit  # Change original gradient function
+    sklearn_TSNE(random_state=42, **step_kwargs).fit_transform(data)  # Perform tSNE
+    sklearn.manifold._t_sne._gradient_descent = old_gradient  # Return old gradient descent function
+    return np.array(positions)  # Return all positions, texts in format (iteration, message)
 
 
 class SwiftGRBWorker:
@@ -406,13 +543,11 @@ class SwiftGRBWorker:
                 if size[it] != 0:  # Skip special GRBs without redshift
                     sca.append(ax.scatter(x_i[it], y_i[it], s=size[it], c=ncolor[it], edgecolor='k', norm=normalize,
                                           zorder=2.5, label=f'{names[it][:3]} {names[it][3:]}', marker=marker_i, cmap='jet'))
-            if len(redshift) == 0:  # If there aren't redshift, put GRBs legend inside graph
-                leg_args = {'ncol': 2}
-            else:  # If there are redshift, put GRB legend outside graph
-                leg_args = {'ncol': 4, 'bbox_to_anchor': (0, 1.02, 1, 0.2), 'loc': 'lower left', 'borderaxespad': 0.}
-            second_legend = ax.legend(**leg_args, handles=sca, fontsize='small', frameon=False)
-            ax.add_artist(second_legend)  # Add second legend
-            color_bar = plt.colorbar(main_scatter, label=r'log$_{10}\left(T_{90}\right)$')  # Add color bar
+            if len(match != 0):  # If there are special cases to show, put a customized legend
+                leg_args = {'bbox_to_anchor': (-0.26, 0.7125), 'loc': 'lower left', 'borderaxespad': 0.}
+                second_legend = ax.legend(**leg_args, handles=sca, fontsize='small', frameon=False)
+                ax.add_artist(second_legend)
+            color_bar = plt.colorbar(main_scatter, label=r'log$_{10}\left(T_{90}\right)$')
         else:  # If there aren't durations, do simple scatter plots
             ax.scatter(x_i, y_i, s=size)
         plt.tight_layout()  # Adjust plot to legends
@@ -443,4 +578,27 @@ class SwiftGRBWorker:
 
         animation = mpy.VideoClip(make_frame, duration=duration)  # Create animation object
         animation.write_gif(filename, fps=fps, program='imageio') if filename is not None else None  # Save animation
+        return animation
+
+    def convergence_animation(self, data, filename=None, **kwargs):
+        scatter_args = set(inspect.signature(self.tsne_scatter_plot).parameters)  # Check for function parameters
+        scatter_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in scatter_args}  # Separate plot parameters
+        positions_an = getSteps(data, **kwargs)  # Perform tSNE and save iterations
+        fps = 20  # Set gif fps
+        duration = len(positions_an) // fps  # Define the duration as len(iterable)/fps
+        conv_fig, conv_ax = plt.subplots()  # Create figure object
+
+        def make_iteration(t):
+            conv_ax.clear()
+            iteration = int(t // (1 / fps))
+            position_i = positions_an[iteration].reshape(-1, 2)
+            bar = self.tsne_scatter_plot(position_i, **scatter_dict, animation=True, ax=conv_ax)
+            conv_ax.set_title(f"Iteration: {iteration}", loc='left', style='italic', fontsize=10)
+            conv_fig.subplots_adjust(top=0.94)
+            frame = mplfig_to_npimage(conv_fig)  # Convert to mpy
+            bar.remove()  # Remove bar
+            return frame
+
+        animation = mpy.VideoClip(make_iteration, duration=duration)
+        animation.write_gif(filename, fps=fps, program='imageio') if filename is not None else None
         return animation

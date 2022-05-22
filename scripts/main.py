@@ -486,7 +486,14 @@ class SwiftGRBWorker:
         return anim
 
     @staticmethod
-    def perform_tsne(data, library="openTSNE", **kwargs):
+    def perform_tsne(data, library="sklearn", **kwargs):
+        """
+        Function to perform tSNE using scikit-Learn or openTSNE implementations
+        :param data: Pre-processed data to be embedded
+        :param library: Str to indicate which library will be used, can be 'sklearn' (default) or 'openTSNE'
+        :param kwargs: Additional arguments to configure tSNE implementation, avoid to use 'random_state' as arg
+        :return: 2D array with transformed values (x_i, y_i) for each data
+        """
         # Create an object to initialize tSNE in any library, with default values and other variables needed:
         if library.lower() == 'opentsne':  # OpenTSNE has by default init='pca'
             tsne = open_TSNE(n_components=2, n_jobs=-1, random_state=42, **kwargs)
@@ -509,7 +516,7 @@ class SwiftGRBWorker:
         :param special_cases: Special GRBs array to highlight, names parameter is needed if there are special_cases
         :param redshift: Redshift array for all GRBs, it is used to scale point size
         :param ax: Custom Matplotlib axes element to scatter, if ax is None, it will be created
-        :param animation: Boolean to indicate if returns color bar to animate, only needed if
+        :param animation: Boolean to indicate if returns color bar to animate, only needed if you will animate tSNE
         :return: Matplotlib axis object ax with plot changes
         """
         redshift = [] if redshift is None else redshift  # Check if variables are not None
@@ -532,12 +539,13 @@ class SwiftGRBWorker:
             sca.clear()  # Reset variable to add further legends later
         match = np.where(np.isin(names, special_cases))[0]  # Check if there are special cases matching GRB Names
         non_match = np.arange(0, len(x_i), 1) if len(names) == 0 else np.where(np.isin(names, special_cases, invert=True))[0]
+        alp = 0.7 if len(match) != 0 or animation else 1
         if len(duration_s) != 0:  # If there are durations, then customize scatters and add color bar
             ncolor = np.log10(duration_s)
             minimum, maximum = min(ncolor), max(ncolor)
             normalize = plt.Normalize(minimum, maximum)
             main_scatter = ax.scatter(x_i[non_match], y_i[non_match], s=size[non_match], c=ncolor[non_match],
-                                      cmap='jet', norm=normalize)  # Scatter non-matched GRBs
+                                      cmap='jet', norm=normalize, alpha=alp)  # Scatter non-matched GRBs
             markers = matplotlib.lines.Line2D.filled_markers[1:] * len(match)  # Define multiple markers
             for it, marker_i in zip(match, markers):  # Scatter matched GRBs
                 if size[it] != 0:  # Skip special GRBs without redshift
@@ -547,7 +555,7 @@ class SwiftGRBWorker:
                 leg_args = {'bbox_to_anchor': (-0.26, 0.7125), 'loc': 'lower left', 'borderaxespad': 0.}
                 second_legend = ax.legend(**leg_args, handles=sca, fontsize='small', frameon=False)
                 ax.add_artist(second_legend)
-            color_bar = plt.colorbar(main_scatter, label=r'log$_{10}\left(T_{90}\right)$')
+            color_bar = plt.colorbar(main_scatter if len(match) == 0 else sca[0], label=r'log$_{10}\left(T_{90}\right)$')
         else:  # If there aren't durations, do simple scatter plots
             ax.scatter(x_i, y_i, s=size)
         plt.tight_layout()  # Adjust plot to legends
@@ -558,8 +566,17 @@ class SwiftGRBWorker:
             return ax  # Otherwise, return axis object
 
     def tsne_animation(self, data, filename=None, iterable='perplexity', **kwargs):
+        """
+        Instance to perform animations using any iterable of scikit-Learn implementation of TSNE
+        :param data: Pre-processed data to be embedded
+        :param filename: Name of file to be saved, default value is None
+        :param iterable: Name of TSNE iterable in scikit Learn, it needs to be exact as TSNE arguments
+        :param kwargs: Iterable array and other additional arguments. It can be arguments for TSNE or tsne_scatter_plot
+        function, but it is necessary to add 'iterable' array as an argument
+        :return: Moviepy animation object to further editing
+        """
         fig, ax_i = plt.subplots()
-        fps = 2  # Images generated = fps*duration
+        fps = 1  # Images generated = fps*duration
         array_it = kwargs.pop(iterable)  # Catch iterable array
         duration = len(array_it) // fps  # Define the duration as len(iterable)/fps
         scatter_args = set(inspect.signature(self.tsne_scatter_plot).parameters)  # Check for function parameters
@@ -581,6 +598,13 @@ class SwiftGRBWorker:
         return animation
 
     def convergence_animation(self, data, filename=None, **kwargs):
+        """
+        Instance to perform TSNE convergence animations using scikit-Learn implementation
+        :param data: Pre-processed data to be embedded
+        :param filename: Name of file to be saved, default value is None
+        :param kwargs: Other additional arguments, can be TSNE or tsne_scatter_plot function arguments
+        :return: Moviepy animation object to further editing
+        """
         scatter_args = set(inspect.signature(self.tsne_scatter_plot).parameters)  # Check for function parameters
         scatter_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in scatter_args}  # Separate plot parameters
         positions_an = getSteps(data, **kwargs)  # Perform tSNE and save iterations

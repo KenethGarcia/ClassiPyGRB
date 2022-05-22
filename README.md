@@ -436,7 +436,7 @@ print(f"There are {len(GRB_names)} GRBs loaded: {GRB_names}")
      'GRB181027A']
     
 
-Now, we will index GRBs durations (using the `durations_checker` instance) to see the dependence of the results with this feature:
+Now, we will index GRBs durations (using the `durations_checker` instance) to see the results dependence with this feature:
 
 
 ```python
@@ -445,7 +445,7 @@ start_times, end_times = durations_data_array[:, :, 1].astype(float), durations_
 durations = np.reshape(end_times - start_times, len(durations_data_array))  # T_90 is equal to t_end - t_start
 ```
 
-    Finding Durations: 100%|██████████| 1300/1300 [00:02<00:00, 465.13GRB/s]
+    Finding Durations: 100%|██████████| 1300/1300 [00:02<00:00, 540.51GRB/s] 
     
 
 Then we set the standard _perplexity_ value (30) from [Jespersen et al. (2020)](https://ui.adsabs.harvard.edu/abs/2020ApJ...896L..20J/abstract), set auto _learning rate_ in scikit-Learn t-SNE implementation, and perform the animation:
@@ -501,10 +501,107 @@ object1.tsne_animation(features, duration_s=durations, perplexity=245, filename=
 
 For _learning_rate_ lower than $200$, the previous global structure preserves, but for some higher values, the tSNE algorithm gets stuck again in a bad local minimum. The conclusion here is that in Swift Data, the learning_rate does not play a relevant role in tSNE convergence.
 
+# Relevant subsets
+
+In this study, we are interested in seeing patterns in tSNE embeddings. Then we searched different relevant subsets of GRBs motivated by the tSNE convergence variation explained in the previous section. In particular, we try to separate two groups (usually named short and long) by their underlying physical process. The following subsections review the main findings made in this task:
+
+## Removing suspicious GRBs
+In the [lists of GRBs with special comments](https://swift.gsfc.nasa.gov/results/batgrbcat/summary_cflux/summary_GRBlist), there is some info about failed or partially failed GRB measuring. These GRBs can distract the tSNE algorithm, and fill the spaces between defined groups, broking their general structure.
+
+The GRBs removed are part of the lists:
+1. `GRBlist_not_enough_evt_data.txt`:  The event data are only available for part of the burst duration.
+2. `GRBlist_tentative_detection_with_note.txt` and `GRBlist_tentative_detection.txt`: GRBs with tentative detection.
+3. `Obvious_data_gap.txt`: Obvious data gap within the burst duration.
+
+You can download these tables using the `summary_tables_download` instance:
+
 
 ```python
-
+tables = ('GRBlist_not_enough_evt_data.txt', 'GRBlist_tentative_detection_with_note.txt', 'GRBlist_tentative_detection.txt', 'Obvious_data_gap.txt')
+[object1.summary_tables_download(name=name, other=True) for name in tables]
 ```
+
+Read the tables and index the GRB names:
+
+
+```python
+tables_path = object1.table_path
+excluded_names = np.array([])
+for table in tables:
+    names_i = np.genfromtxt(os.path.join(tables_path, table), usecols=(0, 1), dtype=str)[:, 0]
+    excluded_names = np.append(excluded_names, names_i)
+excluded_names = np.unique(excluded_names)
+print(f"There are {len(excluded_names)} GRBs to be excluded")
+```
+
+    There are 116 GRBs to be excluded
+    
+
+Remove elements from the original GRB names and features array:
+
+
+```python
+non_match = np.where(np.isin(GRB_names, excluded_names, invert=True))[0]
+GRB_names = GRB_names[non_match]
+features = features[non_match]
+durations = durations[non_match]
+print(f"Now there are {len(GRB_names)} GRBs to perform tSNE")
+```
+
+    Now there are 1210 GRBs to perform tSNE
+    
+
+With these GRB, now the tSNE embedding follows:
+
+
+```python
+tsne_reduced = object1.perform_tsne(features, perplexity=4, init='random', verbose=100)
+object1.tsne_scatter_plot(tsne_reduced, duration_s=durations)
+```
+
+    [t-SNE] Computing 13 nearest neighbors...
+    [t-SNE] Indexed 1210 samples in 0.168s...
+    [t-SNE] Computed neighbors for 1210 samples in 4.076s...
+    [t-SNE] Computed conditional probabilities for sample 1000 / 1210
+    [t-SNE] Computed conditional probabilities for sample 1210 / 1210
+    [t-SNE] Mean sigma: 16.434406
+    [t-SNE] Computed conditional probabilities in 0.029s
+    [t-SNE] Iteration 50: error = 88.6639252, gradient norm = 0.4014133 (50 iterations in 3.106s)
+    [t-SNE] Iteration 100: error = 84.0424347, gradient norm = 0.3644353 (50 iterations in 2.738s)
+    [t-SNE] Iteration 150: error = 81.1205597, gradient norm = 0.3840486 (50 iterations in 2.450s)
+    [t-SNE] Iteration 200: error = 81.4090729, gradient norm = 0.3765063 (50 iterations in 2.619s)
+    [t-SNE] Iteration 250: error = 80.7687988, gradient norm = 0.3683825 (50 iterations in 2.704s)
+    [t-SNE] KL divergence after 250 iterations with early exaggeration: 80.768799
+    [t-SNE] Iteration 300: error = 2.0273073, gradient norm = 0.0027116 (50 iterations in 2.270s)
+    [t-SNE] Iteration 350: error = 1.7351900, gradient norm = 0.0010265 (50 iterations in 2.152s)
+    [t-SNE] Iteration 400: error = 1.6369183, gradient norm = 0.0004986 (50 iterations in 1.875s)
+    [t-SNE] Iteration 450: error = 1.5854030, gradient norm = 0.0004545 (50 iterations in 2.056s)
+    [t-SNE] Iteration 500: error = 1.5552773, gradient norm = 0.0002690 (50 iterations in 1.905s)
+    [t-SNE] Iteration 550: error = 1.5359926, gradient norm = 0.0002256 (50 iterations in 2.058s)
+    [t-SNE] Iteration 600: error = 1.5224233, gradient norm = 0.0001924 (50 iterations in 1.869s)
+    [t-SNE] Iteration 650: error = 1.5121573, gradient norm = 0.0001885 (50 iterations in 1.903s)
+    [t-SNE] Iteration 700: error = 1.5032912, gradient norm = 0.0001748 (50 iterations in 1.993s)
+    [t-SNE] Iteration 750: error = 1.4960387, gradient norm = 0.0001557 (50 iterations in 1.867s)
+    [t-SNE] Iteration 800: error = 1.4904945, gradient norm = 0.0001357 (50 iterations in 2.095s)
+    [t-SNE] Iteration 850: error = 1.4852208, gradient norm = 0.0001885 (50 iterations in 1.823s)
+    [t-SNE] Iteration 900: error = 1.4810259, gradient norm = 0.0001429 (50 iterations in 1.771s)
+    [t-SNE] Iteration 950: error = 1.4780662, gradient norm = 0.0001141 (50 iterations in 1.912s)
+    [t-SNE] Iteration 1000: error = 1.4752235, gradient norm = 0.0001076 (50 iterations in 1.966s)
+    [t-SNE] KL divergence after 1000 iterations: 1.475224
+    
+
+
+
+
+    <AxesSubplot:>
+
+
+
+
+    
+![png](README_files/README_62_2.png)
+    
+
 
 
 ```python

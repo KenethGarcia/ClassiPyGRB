@@ -11,10 +11,8 @@ import matplotlib.pyplot as plt  # Import module to do figures, animations
 from time import time  # Import Module to check times
 from tqdm import tqdm  # Script to check progress bar in concurrency steps
 from numpy import linalg  # Function to help sklearn
-from IPython import display  # Import module to display html animations
 from scripts import helpers  # Script to do basics functions to data
 from scipy import integrate  # Module to integrate using Simpson's rule
-from tsne_animate import tsneAnimate  # Module to do Animations in tSNE
 from openTSNE import TSNE as open_TSNE  # Alternative module to do tSNE
 from sklearn.manifold import TSNE as sklearn_TSNE  # Module to do tSNE
 from scipy.fft import next_fast_len, fft, fftfreq  # Function to look for the best suitable array size to do FFT
@@ -235,7 +233,7 @@ class SwiftGRBWorker:
                     for name, value in results:
                         f.write(f"{name}|{value}\n") if value is not None else None
 
-    def durations_checker(self, name=None, t=100, durations_table="summary_burst_durations.txt", ):
+    def durations_checker(self, name=None, t=100, durations_table="summary_burst_durations.txt"):
         columns = {50: (0, 7, 8), 90: (0, 5, 6), 100: (0, 3, 4)}  # Dictionary to extract the correct columns
         path = os.path.join(self.table_path, durations_table)
         keys_extract = np.genfromtxt(path, delimiter="|", dtype=str, usecols=columns.get(t), autostrip=True)
@@ -463,27 +461,6 @@ class SwiftGRBWorker:
         """
         helpers.directory_maker(self.results_path)
         np.savez_compressed(os.path.join(self.results_path, file_name), GRB_Names=names, Data=data)
-
-    def tsne_convergence_animation(self, data, durations_data, pp=30, lr='auto'):
-        """
-        Function to see convergence in t-SNE algorithm
-        :param data: Array of data GRB features
-        :param durations_data: Array of classification of GRBs in the sample (T_90 separation recommended)
-        :param pp: Perplexity to evaluate t-SNE
-        :param lr: Learning Rate to evaluate t-SNE
-        :return: t-SNE convergence Animation, same as FuncAnimation instance of Matplotlib
-        """
-        tsne = tsneAnimate(sklearn_TSNE(n_components=2, perplexity=pp, n_jobs=-1, learning_rate=lr, init='random',
-                                        method='exact', verbose=100))
-        color_values = np.array([0 if value < 2 else 1 for value in durations_data])
-        anim = tsne.animate(data, color_values)
-        filename = os.path.join(self.results_path, 'tsne_animation.gif')
-        anim.save(filename, dpi=80, writer='imagemagick')
-        video = anim.to_html5_video()  # Converting to a html5 video
-        html = display.HTML(video)  # Embedding for the video
-        display.display(html)  # Draw the animation
-        plt.close()
-        return anim
 
     @staticmethod
     def perform_tsne(data, library="sklearn", **kwargs):

@@ -331,9 +331,7 @@ print(x)
     +----------+----------+--------+----------+--------+-----------+--------+------------+--------+-----------+--------+
     
 
-!Note that normalized data are only limited data divided by 15-350keV integrated flux. So, the next step is to do this for all limited GRBs, to get a much faster performance of execution, we can use the `so_much_normalize` function. To check if this instance is doing its job well, we are going to compare (for the random GRB selected before) if the data stored in _normalized_data_random_GRB_ and obtained in parallelizing are equal:>
-
-We repeat for every GRB using the `so_much_normalize` function. We verify this step by comparing if the data stored (in this case we used the same random GRB than before) in _normalized_data_random_GRB_ and obtained in parallelizing are equal
+We repeat for every GRB using the `so_much_normalize` function. We verify this step by comparing if the data stored (in this case we used the same random GRB than before) in _normalized_data_random_GRB_ and obtained in parallelizing are equal:
 
 ```python
 normalized_data = object1.so_much_normalize(limited_data)  # Normalizing all light curves
@@ -348,7 +346,7 @@ print(f"Are both arrays equal? Answer={np.array_equal(normalized_data_random_GRB
     
 
 ## Third step: Zero Padding
-With all GRBs limited out of $T_{100}$ and normalized, we need now to zero-pad their light curves to place them on the same time basis. The `zero_pad` instance performs this job by checking the max length of a data set and looking for the best suitable array size to do Fast Fourier Transform (FFT, the next step in data pre-processing).
+With all GRBs limited out of $T_{100}$ and normalized, we need to zero-pad their light curve to place them on the same time basis. The `zero_pad` instance performs this by checking the max length of a data set and looking for the best suitable array size to do Fast Fourier Transform (FFT, the next step in data pre-processing).
 
 Here, we are going to see how this function zero pad the data at its end for the random selected GRB before:
 
@@ -387,7 +385,7 @@ print(x)
     
 
 ## Final Step: Discrete Fourier Transform
-Finally, the last step of Swift data pre-processing is to perform a Fast Fourier Transform to zero-padded normalized data out of $T_{100}$. There are so many python packages to do this job, particularly in this notebook, we are going to use _scipy_ in the `fourier_concatenate` instance, but before that, this function concatenate all energy band measurements in one single array, as required to execute DFT:
+Finally, the last step of Swift data pre-processing is to perform a Fast Fourier Transform to zero-padded normalized data out of $T_{100}$. There are so many python packages to do this job. In this notebook, we are going to use _scipy_ in the `fourier_concatenate` instance, but before that, this function concatenate all energy band measurements in one single array, as required to execute DFT:
 
 
 ```python
@@ -422,7 +420,7 @@ object1.save_data(f"DFT_Preprocessed_data_{object1.res}ms", names=GRB_names, dat
 ```
 
 # t-SNE in Swift Data
-t-Distributed Stochastic Neighbor Embedding (or t-SNE) is a popular non-linear dimensionality reduction technique used for visualizing high dimensional data sets. After pre-processing Swift data in the $x_i$ vectors with Fourier Amplitudes, we want to perform this method by taking so much care when we read the results. Why? The t-SNE algorithm doesn’t always produce similar output on successive runs, and it depends on some hyperparameters related to the optimization process.
+t-Distributed Stochastic Neighbor Embedding (or t-SNE) is a popular non-linear dimensionality reduction technique used for visualizing high dimensional data sets. After pre-processing Swift data in the $x_i$ vectors with Fourier Amplitudes as it was explained in previous sections, we to perform this method by taking so much care in the interpretations of the images (results). One of the reasons is because of the t-SNE algorithm doesn’t always produce similar output on successive runs, and it depends on some hyperparameters related to the optimization process.
 
 In this study, the most relevant hyperparameters on the cost function are (following the scikit-Learn and open-TSNE packages documentation):
 * __Perplexity__: The perplexity is related to the number of nearest neighbors that is used in other manifold learning algorithms. Larger datasets usually require a larger perplexity. Note that perplexity linearly impacts runtime i.e. higher values of perplexity will incur longer execution time.
@@ -430,7 +428,7 @@ In this study, the most relevant hyperparameters on the cost function are (follo
 * __metric__: The metric to use when calculating distance between instances in a feature array.
 
 ## t-SNE convergency
-First of all, we want to see how t-SNE converges in the pre-processed data. To do this, we use the `convergence_animation` function, it is based in [tsne_animate](https://github.com/sophronesis/tsne_animate) package from GitHub in its `tsne_animation` function. But, before we need to load the pre-processing data saved:
+Firstly, we want to see how t-SNE converges in the pre-processed data. To do this, we use the `convergence_animation` function, it is based on [tsne_animate](https://github.com/sophronesis/tsne_animate) package from GitHub in its `tsne_animation` function. But, before we need to load the pre-processing data saved:
 
 
 ```python
@@ -465,9 +463,9 @@ object1.convergence_animation(features, filename=file_name, perplexity=30, durat
 
 ![](README_files/convergence_animation_pp_30.gif)
 
-As you can see, there is a clear dependence on $T_{90}$ duration and GRB position in the final plot (except for some GRBs, i. e. GRB190718A). Additionally, we can see that after iteration 250, the scatter pattern converges so fast. It is because (after this iteration) the TSNE instance in _scikit Learn_ updates the Kullback–Leibler divergence and `early_exaggeration` parameter.
+In this figure is a clear dependence on $T_{90}$ duration and GRB position in the final plot (except for some GRBs, i. e. GRB190718A). Furthermore, we show that after iteration 250, the scatter pattern converges so fast. It is because (after this iteration) the TSNE instance in _scikit Learn_ updates the Kullback–Leibler divergence and `early_exaggeration` parameter.
 
-To do more complex analysis, we can highlight custom GRBs, see redshift dependence in marker size (however, there isn't much redshift info in Swift data), and configure the TSNE running instance. For example, the tSNE convergence setting $215$ in _perplexity_, 'auto' in _learning_rate_, and 'cosine' as metric follows:
+To do more complex analysis, we can highlight (label) custom GRBs, see redshift dependence in marker size (however, there isn't much redshift info in Swift data), and configure the TSNE running instance. For example, the tSNE convergence setting $215$ in _perplexity_, 'auto' in _learning_rate_, and 'cosine' as metric follows:
 
 
 ```python
@@ -479,7 +477,7 @@ object1.convergence_animation(features, filename=file_name, perplexity=215, lear
 
 ## tSNE Hyperparameter review
 
-As pioneered by [Wattenberg et al. 2016](https://distill.pub/2016/misread-tsne/), tSNE results cannot be understood only by seeing one scatter plot in 2D. As they said: "_Getting the most from t-SNE may mean analyzing multiple plots with different perplexities._" For this job, you can use the `tsne_animation` instance to iterate over any hyperparameter in sklearn or openTSNE, for example, setting default values in sklearn tSNE and iterating over **perplexity** $\in$ $[5, 500]$:
+As is discussed by [Wattenberg et al. 2016](https://distill.pub/2016/misread-tsne/), tSNE results cannot be understood only by seeing one scatter plot in 2D. They said: "_Getting the most from t-SNE may mean analyzing multiple plots with different perplexities._" For a better understanding of this, we suggest you use the `tsne_animation` to iterate over any hyperparameter in sklearn or openTSNE, for example, setting default values in sklearn tSNE and iterating over **perplexity** $\in$ $[5, 500]$:
 
 
 ```python
@@ -492,11 +490,11 @@ object1.tsne_animation(features, iterable='perplexity', perplexity=pp, library='
 
 Note that in some perplexities (i. e. 205), there are "pinched" shapes in the middle plot region. Following [Wattenberg et al. 2016](https://distill.pub/2016/misread-tsne/) analysis: _"chances are the process was stopped too early"_ or this may be because the t-SNE algorithm gets stuck in a bad local minimum.
 
-In general, lower perplexities focus on the substructure of data, and higher perplexities plots are less sensitive to small structures. By contrast, the plot structure does not change globally after perplexity = 245 (except for pinched runs), so we can use this value as default in the following hyperparameters.
+In general, lower perplexities focus on the substructure of data, and higher perplexities plots are less sensitive to small structures. On the other hand, the plot structure does not change globally after perplexity = 245 (except for pinched runs), so we can use this value as default in the following hyperparameters.
 
 The reason why high perplexity values converge better is that noisier datasets (as Swift) will require larger perplexity values to encompass enough local neighbors to see beyond the background noise (see [optimizing tSNE sklearn section](https://scikit-learn.org/stable/modules/manifold.html#t-distributed-stochastic-neighbor-embedding-t-sne)).
 
-Now, we can see what happens if **learning_rate** changes within $10$ and $1000$ (values recommended in [sklearn documentation](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html#sklearn.manifold.TSNE)):
+We also modified the **learning_rate** within $10$ and $1000$ (values recommended in [sklearn documentation](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html#sklearn.manifold.TSNE)):
 
 
 ```python
@@ -506,7 +504,7 @@ object1.tsne_animation(features, duration_s=durations, perplexity=245, filename=
 
 ![](README_files/learning_rate_animation.gif)
 
-For _learning_rate_ lower than $200$, the previous global structure preserves, but for some higher values, the tSNE algorithm gets stuck again in a bad local minimum. The conclusion here is that in Swift Data, the learning_rate does not play a relevant role in tSNE convergence.
+For _learning_rate_ lower than $200$, the previous global structure preserves, but for some higher values, the tSNE algorithm gets stuck again in a bad local minimum. The conclusion here is that in Swift Data, the learning_rate does not play a significant role in tSNE convergence.
 
 # Relevant subsets
 

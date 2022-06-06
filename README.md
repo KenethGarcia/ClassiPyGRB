@@ -331,9 +331,9 @@ print(x)
     +----------+----------+--------+----------+--------+-----------+--------+------------+--------+-----------+--------+
     
 
-#Note that normalized data are only limited data divided by 15-350keV integrated flux. So, the next step is to do this for all limited GRBs, to get a much faster performance of execution, we can use the `so_much_normalize` function. To check if this instance is doing its job well, we are going to compare (for the random GRB selected before) if the data stored in _normalized_data_random_GRB_ and obtained in parallelizing are equal:
+%Note that normalized data are only limited data divided by 15-350keV integrated flux. So, the next step is to do this for all limited GRBs, to get a much faster performance of execution, we can use the `so_much_normalize` function. To check if this instance is doing its job well, we are going to compare (for the random GRB selected before) if the data stored in _normalized_data_random_GRB_ and obtained in parallelizing are equal:
 
-We repeat for every GRB using the `so_much_normalize` function. We verify this step by comparin (for the random GRB selected before) if the data stored in _normalized_data_random_GRB_ and obtained in parallelizing are equal
+We repeat for every GRB using the `so_much_normalize` function. We verify this step by comparing if the data stored (in this case we used the same random GRB than before) in _normalized_data_random_GRB_ and obtained in parallelizing are equal
 
 ```python
 normalized_data = object1.so_much_normalize(limited_data)  # Normalizing all light curves

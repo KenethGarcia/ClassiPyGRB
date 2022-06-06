@@ -8,10 +8,15 @@ from prettytable import PrettyTable  # Import module to do tables
 ```
 
 # T-distributed Stochastic Neighbor Embedding (t-SNE) in Swift Data
-## Introduction
+## Introduction GRBs
+Gamma-ray bursts are the brightest events in the universe. Regardind their duration, GRBs shows a binomial distribution with a cut off around 2 seconds. At the beginning, this suggested the presence of two kind of populations, and therefore, two kind of progenitors. Nevertheless, this classifications is very ambiguous. 
+
+
+#Previous works in Machine Learning of Classification
 As suggested by [Jespersen et al. (2020)](https://ui.adsabs.harvard.edu/abs/2020ApJ...896L..20J/abstract), Swift GRBs can be separated into two groups when t-SNE is performed. In this Jupyter notebook, we replicate this work by adding more recent data and an in-depth analysis of t-SNE performance. Moreover, we hope to add synthetic GRB performed using Machine Learning instances and join into Swift and other GRB data packages.
 
-Through this document, we will use two scripts named `main.py` and `helpers.py`, the first script do the main things about implementing tSNE and preparing the data, while the last only do some repetitive tasks and minor jobs. Before continuing, the `main.py` script needs to download some tables previously to work, doing this is so easy, you only need to use the `summary_tables_download` instance in `main.py`, but, before doing this, you need to create an object to initialize `SwiftGRBWorker` class:
+In this document, we create two scripts named `main.py` and `helpers.py`. The first one does the main things about implementing tSNE and preparing the data, whereas the second one only do some repetitive tasks and minor jobs. 
+Note: the `main.py` script needs to download some tables previously to work, doing this is so easy, you only need to use the `summary_tables_download` instance in `main.py`, but, before doing this, you need to create an object to initialize `SwiftGRBWorker` class:
 
 
 ```python
@@ -21,7 +26,7 @@ object1 = main.SwiftGRBWorker()
 ```
 
 ## Swift Data Download
-First of all, we need to download all the data from [Swift Database](https://swift.gsfc.nasa.gov/results/batgrbcat/) to prepare them to perform t-SNE. For this, we want first to download only data for one GRB, then it is needed to use `download_data` instance from `main.py` class and pass it a name, TRIGGER_ID, and observation resolution, that we get from `summary_general` table:
+Firstly, we get all the available data from [Swift Database](https://swift.gsfc.nasa.gov/results/batgrbcat/) to prepare them to perform t-SNE. For this, In the case were, we only wanted to download only data for one GRB, it is needed to use `download_data` instance from `main.py` class and pass it a name, TRIGGER_ID, and observation resolution, that we get from `summary_general` table:
 
 
 ```python
@@ -37,7 +42,7 @@ print(f"IDs: {ids}")
     IDs: ['993768' '992099' '987745' ... '100368' '100307' '100116']
     
 
-Now, download $64ms$ data for a random GRB listed before:
+Then, we download $64ms$ data for a random GRB listed before:
 
 
 ```python
@@ -49,7 +54,7 @@ while result_GRB[1] is not None:
     print(f"{result_GRB[0]} has been downloaded") if not result_GRB[1] else print(f"Error downloading {GRB_names[random_position]} data")
 ```
 
-When we see the GRB table, we note the following columns:
+Columns of this table refer to:
 * Time since BAT Trigger time (s)
 * Intensity and its error in bands 15-25keV, 25-50keV, 50-100keV, 100-350keV, 15-350keV in counts/sec/det
 
@@ -77,7 +82,7 @@ print(x)
     +----------+----------+-------+----------+-------+-----------+-------+------------+-------+-----------+-------+
     
 
-Additionally, if you want to plot the original light curves for this GRB, you can use the `plot_any_grb` function using the argument _t_ in False (indicating that you don't need to filter the LC). In this case, it takes the form:
+Additionally, if you want to reproduce the original light curves for this GRB, you can use the `plot_any_grb` function using the argument _t_ in False (indicating that you don't need to filter the LC). In this case, it takes the form:
 
 
 ```python
@@ -91,7 +96,7 @@ fig, axes = object1.plot_any_grb(result_GRB[0], t=False)  # Plot all extension o
     
 
 
-Now, if you need to download hundreds of data files (that is my case), it is faster to do Threading over all names and IDs that loop one by one (e.g. `for` instance), so you can indeed use `so_much_downloads` function:
+In order to download hundreds of data files (that is my case), it is faster to do Threading over all names and IDs that repeat the process one by one (e.g. `for` instance), so , I propose to use the `so_much_downloads` function:
 
 
 ```python
@@ -103,7 +108,7 @@ if None:  # Change None to any True variable in if statement if you need to down
     print(f"Downloaded {len(GRB_names)-len(GRB_errors)} light curves in {round(time2-time1, 2)}s (Total = {len(GRB_names)})")
 ```
 
-As you saw, this function can take a little time to run, but it is so much faster than loop using `for` instance. Additionally, some GRBs could not be downloaded, you can check them using the `Errors.txt` file, we want to delete this GRBs for the total name list:
+This function can take a little time to run, but it is so much faster than a loop. Additionally, some GRBs could not be downloaded, you can check them using the `Errors.txt` file, we want to delete this GRBs for the total name list:
 
 
 ```python
@@ -113,7 +118,7 @@ GRB_names = list(set(GRB_names) - set(GRB_errors))
 Initial_GRB_names = GRB_names  # Array with all initial GRBs downloaded
 ```
 
-    38 GRBs get download error: ['GRB170131A' 'GRB160623A' 'GRB160506A' 'GRB160409A' 'GRB151118A'
+    38 GRBs get a "download error": ['GRB170131A' 'GRB160623A' 'GRB160506A' 'GRB160409A' 'GRB151118A'
      'GRB150407A' 'GRB140909A' 'GRB140611A' 'GRB131031A' 'GRB130913A'
      'GRB130816B' 'GRB130604A' 'GRB130518A' 'GRB121226A' 'GRB120817B'
      'GRB120728A' 'GRB111103A' 'GRB111005A' 'GRB110604A' 'GRB101204A'
@@ -123,11 +128,11 @@ Initial_GRB_names = GRB_names  # Array with all initial GRBs downloaded
      'GRB050714B' 'GRB041219A']
     
 
-In summary, these errors occur for two reasons:
-* First, the GRB doesn't have any Trigger ID
-* Second, the GRB has Trigger ID, but it doesn't have any data to download
+In summary, these errors could occur for two reasons:
+* Firstly, the GRB doesn't have any Trigger ID
+* Secondly, the GRB has Trigger ID, but no data.
 
-By this, we close this section by remarking that original size data can use 2.67GB of free space on disk approximately (in decompress mode). But, compressing data using `gzip` library, now:
+We close this section by remarking that original size data can use 2.67GB of free space on disk approximately (in decompress mode). Nevertheless, compressing data using `gzip` library will save much room:
 
 
 ```python
@@ -143,7 +148,7 @@ print(f"There are {round(size/(1024*1024), 3)} MB of data")
     
 
 # Swift Data Pre-processing
-Now, we want to process the data to prepare it for tSNE implementation. This process consists of 4 phases, following:
+In order to prepare data for tSNE implementation, we follow four steps:
 * Limit all GRBs out of $T_{100}$
 * Normalize light curves (lc) by total fluence in 15-350keV band
 * Pad with zeros all GRBs, putting then in the same time standard basis
@@ -152,7 +157,7 @@ Now, we want to process the data to prepare it for tSNE implementation. This pro
 In the next sections, we are going to describe these processes and show how to use some functions to do these steps.
 
 ## First step: Limit lc out of $T_{100}$
-In this step, we need to extract the durations for all GRBs available in `summary_burst_durations.txt` using the `durations_checker` instance. If you don't pass any GRB name, this function returns a list containing three values for each GRB in the table: Name, $T_{i}$ start and end times (in seconds), where $i$ can be 50, 90, or 100 (default value), but if you pass it a name, then it returns these values only by this GRB:
+We extract the durations for all GRBs available in the file `summary_burst_durations.txt` using the `durations_checker` instance. If you don't pass any GRB name, this function returns a list containing three values for each GRB in the table: Name, $T_{i}$ start and end times (in seconds), where $i$ can be 50, 90, or 100 (default value), but if you pass it a name, then it returns these values only by this GRB:
 
 
 ```python

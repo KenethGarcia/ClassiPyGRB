@@ -168,7 +168,7 @@ print(f"{durations_times[0, 0]} has T_100={round(float(durations_times[0, 2])-fl
     GRB060614 has T_100=180.576s (T_100 start=-1.496s, T_100 end=179.080s)
     
 
-With these values, we can limit our GRB lc using the instance `lc_limiter`.  In this function, it is possible directly set the time limiters in seconds or pass it an integer to indicate what duration we need (however, these integers can be only 50, 90, and 100). So, we try to extract the lc out of $T_{100}$ by using an integer and setting limits manually, then comparing both:
+With these values, we can limit our GRB lc using the instance `lc_limiter`.  In this function, it is possible directly constrains on the time or pass it an integer to indicate what duration we need (however, these integers can be only 50, 90, and 100). So, we try to extract the lc out of $T_{100}$ by using an integer and setting limits manually, then comparing both:
 
 
 ```python
@@ -283,7 +283,7 @@ print(y)
     +------------+---------+---------+------------+
     
 
-As you see, the function returns a tuple of limited arrays and errors for all GRBs. In this case, 51 GRBs have any of the following errors:
+This function returns a tuple of limited arrays and errors for all GRBs. In this case, 51 GRBs have any of the following errors:
 * _FileNotFoundError_ if GRB does not have any data file downloaded in the selected resolution.
 * _ValueError_ if the code can't get any limit values.
 * _IndexError_ if the GRB does not appear in the `summary_burst_durations` table.
@@ -292,7 +292,7 @@ As you see, the function returns a tuple of limited arrays and errors for all GR
 
 Additionally, the second argument returned by `so_much_lc_limiters` is a GRB names array indicating the order of results (the first argument returned). This order is now our `GRB_names` variable because it does not have the error names.
 
-To check if the `so_much_lc_limiters` instance is doing its job well, we are going to compare (for the random GRB selected before) if the data stored in _limited_data_1_ and obtained in parallelizing are equal:
+To verify that the `so_much_lc_limiters` instance is working properly, we compare (for the random GRB selected before) if the data stored in _limited_data_1_ and obtained in parallelizing are equal:
 
 
 ```python
@@ -305,7 +305,8 @@ print(f"Are both arrays equal? Answer={np.array_equal(limited_data_1, limited_da
     
 
 ## Second step: Normalizing Light Curves
-GRBs have one fact that is widely known: long GRBs typically but not always has higher fluence. To avoid t-SNE being distracted by this fact, we need to normalize our lc by total time-integrated flux, `lc_normalizer` instance does this job by using the Simpson's Rule in any array. This function returns a tuple normalized data, total time-integrated flux if _print_area_ parameter is _True_, otherwise only returns normalized data:
+
+In order to compare only the shape and behaviour of the light curves and not the fluences, we normalize our lc by total time-integrated flux, using the routine `lc_normalizer` which is based on the Simpson's Rule. This function returns a tuple normalized data, total time-integrated flux if _print_area_ parameter is _True_, otherwise only returns normalized data:
 
 
 ```python
@@ -330,8 +331,9 @@ print(x)
     +----------+----------+--------+----------+--------+-----------+--------+------------+--------+-----------+--------+
     
 
-Note that normalized data are only limited data divided by 15-350keV integrated flux. So, the next step is to do this for all limited GRBs, to get a much faster performance of execution, we can use the `so_much_normalize` function. To check if this instance is doing its job well, we are going to compare (for the random GRB selected before) if the data stored in _normalized_data_random_GRB_ and obtained in parallelizing are equal:
+#Note that normalized data are only limited data divided by 15-350keV integrated flux. So, the next step is to do this for all limited GRBs, to get a much faster performance of execution, we can use the `so_much_normalize` function. To check if this instance is doing its job well, we are going to compare (for the random GRB selected before) if the data stored in _normalized_data_random_GRB_ and obtained in parallelizing are equal:
 
+We repeat for every GRB using the `so_much_normalize` function. We verify this step by comparin (for the random GRB selected before) if the data stored in _normalized_data_random_GRB_ and obtained in parallelizing are equal
 
 ```python
 normalized_data = object1.so_much_normalize(limited_data)  # Normalizing all light curves

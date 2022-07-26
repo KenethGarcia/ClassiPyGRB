@@ -2,6 +2,7 @@ import os  # Import os to handle folders and files
 import gzip  # Module to compress files
 import sklearn  # Module to perform ML
 import inspect  # Module to get information about live objects such as modules, classes
+import warnings  # Module to print warnings
 import requests  # Import the module needed to download from the website
 import matplotlib  # Import module to edit and create plots
 import numpy as np  # Import numpy module to read tables, manage data, etc
@@ -12,11 +13,15 @@ from time import time  # Import Module to check times
 from tqdm import tqdm  # Script to check progress bar in concurrency steps
 from numpy import linalg  # Function to help sklearn
 from scripts import helpers  # Script to do basics functions to data
+from itertools import repeat  # Function to repeat some action
 from scipy import integrate  # Module to integrate using Simpson's rule
+from fabada import fabada  # Module to remove noise
+from scipy.interpolate import interp1d  # Module to interpolate data
 from openTSNE import TSNE as open_TSNE  # Alternative module to do tSNE
 from sklearn.manifold import TSNE as sklearn_TSNE  # Module to do tSNE
-from scipy.fft import next_fast_len, fft, fftfreq  # Function to look for the best suitable array size to do FFT
+from scipy.fft import next_fast_len, fft, fftfreq, fftshift  # Function to look the best suitable array size to do FFT
 from moviepy.video.io.bindings import mplfig_to_npimage  # Function to do mpy images
+
 matplotlib.use("TkAgg")
 
 
@@ -155,13 +160,16 @@ def getSteps(data, **step_kwargs):
 
 
 class SwiftGRBWorker:
-
-    data_path = os.getcwd() + '\Data'  # The path to add Original and Pre-processed data
-    original_data_path = data_path + '\Original_Data'  # Specific path to add Original Data
-    results_path = os.getcwd() + '\Results'  # Specific path to add Results
-    table_path = os.getcwd() + '\Tables'  # The path where animations will be saved
-    animations_path = results_path + '\Animations'  # The path where animations will be saved
+    data_path = os.getcwd() + r'\Data'  # The path to add Original and Pre-processed data
+    original_data_path = data_path + r'\Original_Data'  # Specific path to add Original Data
+    noise_data_path = data_path + r'\Noise_Filtered_Data'  # Specific path to add Original Data
+    results_path = os.getcwd() + r'\Results'  # Specific path to add Results
+    noise_images_path = results_path + r'\Noise_Filter_Images'  # Specific path to add Noise filtered images
+    table_path = os.getcwd() + r'\Tables'  # The path where animations will be saved
+    animations_path = results_path + r'\Animations'  # The path where animations will be saved
     res = 64  # Resolution for the Light Curve Data in ms, could be 2, 8, 16, 64 (default), 256 and 1 (this last in s)
+    end = f"{res}ms" if res in (2, 8, 16, 64, 256) else f"1s"  # Default string to end file saving
+    workers = os.cpu_count()  # Set how many workers you will use
 
     def __init__(self):
         pass
@@ -196,8 +204,7 @@ class SwiftGRBWorker:
         helpers.directory_maker(self.original_data_path)  # Try to create the folder, unless it already has been created
         # First, we join the url with GRB name and ID (checking if it has 6 o 11 digits)
         i_d = f"00{t_id}000" if len(t_id) == 6 else t_id
-        end = f"{self.res}ms" if self.res in (2, 8, 16, 64, 256) else f"1s"
-        url = f"https://swift.gsfc.nasa.gov/results/batgrbcat/{name}/data_product/{i_d}-results/lc/{end}_lc_ascii.dat"
+        url = f"https://swift.gsfc.nasa.gov/results/batgrbcat/{name}/data_product/{i_d}-results/lc/{self.end}_lc_ascii.dat"
         try:  # Try to access to Swift Page
             r = requests.get(url, timeout=5)
             r.raise_for_status()  # We use this code to elevate the HTTP errors (i.e. wrong links) to exceptions
@@ -205,7 +212,7 @@ class SwiftGRBWorker:
         except requests.exceptions.RequestException as err:  # Notification message for all errors
             return name, err  # Return a tuple of GRB Name and error description
         else:
-            file_name = f"{name}_{end}.gz"  # Define a unique file name for any name-resolution pair
+            file_name = f"{name}_{self.end}.gz"  # Define a unique file name for any name-resolution pair
             with gzip.open(os.path.join(self.original_data_path, file_name), mode="wb") as f:
                 f.write(r.content)
             return name, None  # Return a tuple of GRB Name and None to indicate that file was created
@@ -223,17 +230,24 @@ class SwiftGRBWorker:
         # FileNotFoundError with open(path) when the directory is created while Threading is executing
         helpers.directory_maker(self.original_data_path)
 
-        with concurrent.futures.ThreadPoolExecutor() as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.workers) as executor:
             results = tqdm(executor.map(self.download_data, names, t_ids),
                            total=len(names), desc='Downloading: ', unit='GRB')
 
             if error:
-                with open(os.path.join(self.original_data_path, f"Errors_{self.res}.txt"), 'w') as f:
+                with open(os.path.join(self.original_data_path, f"Errors_{self.end}.txt"), 'w') as f:
                     f.write("## GRB Name|Error Description\n")
                     for name, value in results:
                         f.write(f"{name}|{value}\n") if value is not None else None
 
     def durations_checker(self, name=None, t=100, durations_table="summary_burst_durations.txt"):
+        """
+        Function to extract GRB duration
+        :param name: GRB Name, if None then all GRBs available in durations table will be returned
+        :param t: Duration interval needed, can be 50, 90, 100 (default)
+        :param durations_table: Durations table name, related with table path class variable
+        :return: Array with format [[Name_i, T_initial, T_final], ...]
+        """
         columns = {50: (0, 7, 8), 90: (0, 5, 6), 100: (0, 3, 4)}  # Dictionary to extract the correct columns
         path = os.path.join(self.table_path, durations_table)
         keys_extract = np.genfromtxt(path, delimiter="|", dtype=str, usecols=columns.get(t), autostrip=True)
@@ -241,7 +255,7 @@ class SwiftGRBWorker:
         if isinstance(name, str):  # If a specific name is entered, then we search the value in the array
             return helpers.check_name(name, keys_extract)
         elif isinstance(name, (np.ndarray, list, tuple)):  # If a name's array is specified, search them recursively
-            with concurrent.futures.ProcessPoolExecutor() as executor:  # Parallelization
+            with concurrent.futures.ProcessPoolExecutor(max_workers=self.workers) as executor:  # Parallelization
                 results = list(
                     tqdm(executor.map(helpers.check_name, name, np.array([keys_extract] * len(name))), total=len(name),
                          desc='Finding Durations: ', unit='GRB'))
@@ -250,13 +264,19 @@ class SwiftGRBWorker:
             return keys_extract
 
     def redshifts_checker(self, name=None, redshift_table="GRBlist_redshift_BAT.txt"):
+        """
+        Function to extract GRB redshift, if available
+        :param name: GRB Name
+        :param redshift_table: Redshift table name, related with table path class variable
+        :return: Array with format [[Name_i, T_initial, T_final], ...]
+        """
         path = os.path.join(self.table_path, redshift_table)
         keys_extract = np.genfromtxt(path, delimiter="|", dtype=str, usecols=(0, 1), autostrip=True)
         # Extract all values from summary_burst_durations.txt:
         if isinstance(name, str):  # If a specific name is entered, then we search the redshift in the array
             return helpers.check_name(name, keys_extract)
         elif isinstance(name, (np.ndarray, list, tuple)):  # If a name's array is specified, search them recursively
-            with concurrent.futures.ProcessPoolExecutor() as executor:  # Parallelization
+            with concurrent.futures.ProcessPoolExecutor(max_workers=self.workers) as executor:  # Parallelization
                 results = list(
                     tqdm(executor.map(helpers.check_name, name, np.array([keys_extract] * len(name))), total=len(name),
                          desc='Finding Redshifts: ', unit='GRB'))
@@ -282,11 +302,11 @@ class SwiftGRBWorker:
             else:
                 t_start, t_end, *other = limits
                 t_start, t_end = float(t_start), float(t_end)
-        # Unpack the downloaded data for the file, if it exists:
-            end = f"{self.res}ms" if self.res in (2, 8, 16, 64, 256) else f"1s"
-            data = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{end}.gz"), autostrip=True)
+            # Unpack the downloaded data for the file, if it exists:
+            data = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{self.end}.gz"), autostrip=True)
             # Filter values between t_start and t_end in data:
-            data = np.array([value for value in data if t_end >= value[0] >= t_start])
+            data = data[(data[:, 0] > t_start) & (data[:, 0] < t_end)]
+            # data = np.array([value for value in data if t_end >= value[0] >= t_start])
         except FileNotFoundError:  # If file is not found, return error
             return name, ' ', ' ', 'FileNotFoundError'
         except ValueError:  # If there aren't any valid T_start or T_end, return error
@@ -315,24 +335,22 @@ class SwiftGRBWorker:
         new_names = []  # Define new_names array
 
         if limits is None:  # If no limits are entered, then only send None array
-            limits = [None]*len(names)
-        with concurrent.futures.ProcessPoolExecutor() as executor:  # Parallelization
-            results = list(tqdm(executor.map(self.lc_limiter, names, [t]*len(names), limits), total=len(names),
+            limits = repeat(None, len(names))
+        with concurrent.futures.ProcessPoolExecutor(max_workers=self.workers) as executor:  # Parallelization
+            results = list(tqdm(executor.map(self.lc_limiter, names, repeat(t, len(names)), limits), total=len(names),
                                 desc='LC Limiting: ', unit='GRB'))
-        if len(results) != len(names):  # Check if results and names have equal length
-            print(f"Oops, something got wrong: There are {len(names)} GRBs but {len(results)} light curves limited")
-            raise ValueError
-        else:
-            for i in range(len(results)):
-                array = results[i]
-                if isinstance(array[0], str):
-                    errors.append(array)
-                else:
-                    non_errors.append(array)
-                    new_names.append(names[i])
+        assert len(results) == len(names)
+        for i in range(len(results)):
+            array = results[i]
+            if isinstance(array[0], str):
+                errors.append(array)
+            else:
+                non_errors.append(array)
+                new_names.append(names[i])
         return non_errors, new_names, np.array(errors)
 
-    def lc_normalizer(self, data, print_area=False):
+    @staticmethod
+    def lc_normalizer(data, print_area=False):
         """
         Function to normalize GRB light curve data
         :param data: Array with data in format time, (band, error) for 15-25, 25-50, 50-100, 100-350 and 15-350 keV
@@ -340,7 +358,7 @@ class SwiftGRBWorker:
         :return: Array with values normalized using the 15-350 keV integral
         """
         data = np.array(data)
-        area = integrate.simpson(data[:, 9], dx=self.res*1e-3 if self.res != 1 else 1)  # Integral for 15-350 KeV data
+        area = integrate.simpson(data[:, 9], x=data[:, 0])  # Integral for 15-350 KeV data
         data[:, 1: 11: 1] /= area  # Normalize the light curve
         if print_area:
             return data, area
@@ -354,8 +372,8 @@ class SwiftGRBWorker:
         :param print_area: Boolean to indicate if returns Total time-integrated flux
         :return:
         """
-        with concurrent.futures.ProcessPoolExecutor() as executor:  # Parallelization
-            results = list(tqdm(executor.map(self.lc_normalizer, more_data, [print_area]*len(more_data)),
+        with concurrent.futures.ProcessPoolExecutor(max_workers=self.workers) as executor:  # Parallelization
+            results = list(tqdm(executor.map(self.lc_normalizer, more_data, repeat(print_area, len(more_data))),
                                 total=len(more_data), desc='LC Normalizing: ', unit='GRB'))
         return results
 
@@ -369,21 +387,47 @@ class SwiftGRBWorker:
         diff = length - len(data)  # Difference between actual and optimal array size
         data_plus_zeros = np.pad(data, ((0, diff), (0, 0)))  # Zero pad array
         initial_time_values = data_plus_zeros[:len(data), 0]  # Extract original time values
-        dt = round(self.res*1e-3, 3) if self.res in (2, 8, 16, 64, 256) else 1  # Define step for new times
-        add_time_values = np.arange(1, diff+1, 1)*dt + initial_time_values[-1]  # Set new time values
+        dt = round(self.res * 1e-3, 3) if self.res in (2, 8, 16, 64, 256) else 1  # Define step for new times
+        add_time_values = np.arange(1, diff + 1, 1) * dt + initial_time_values[-1]  # Set new time values
         data_plus_zeros[:, 0] = np.append(initial_time_values, add_time_values)  # Append new time values to original
         return data_plus_zeros
 
     def so_much_zero_pad(self, more_data):
-        with concurrent.futures.ProcessPoolExecutor() as executor:
+        """
+        Function to faster zero pad data using the zero_pad instance
+        :param more_data: Data arrays to be zero padded
+        :return: New array zero-padded, with added values of time basis for a given resolution
+        """
+        with concurrent.futures.ProcessPoolExecutor(max_workers=self.workers) as executor:
             lengths = set(executor.map(len, more_data))
             max_length = next_fast_len(max(lengths))
-            results = list(tqdm(executor.map(self.zero_pad, more_data, [max_length]*len(more_data)),
+            results = list(tqdm(executor.map(self.zero_pad, more_data, repeat(max_length, len(more_data))),
                                 total=len(more_data), desc='LC Zero-Padding: ', unit='GRB'))
         return np.array(results, dtype=float)
 
     @staticmethod
-    def fourier_concatenate(array, plot=False, name=None):
+    def only_concatenate(array):
+        """
+        Function to concatenate light curve energy bands in ascendant mode, only works on Swift data format
+        :param array: Data for a GRB, energy bands need to be in 2, 4, 6, 8 and 10th column
+        :return: One single array with concatenated data
+        """
+        energy_bands = np.delete(array, np.s_[::2], 1).transpose()[:-1]  # Erase the time-error columns and transpose
+        concatenate = np.reshape(energy_bands, len(energy_bands) * len(energy_bands[0]))  # Concatenate all data columns
+        return concatenate
+
+    def so_much_concatenate(self, arrays):
+        """
+        Function to faster concatenate data using the only_concatenate instance
+        :param arrays: Data array, energy bands need to be in 2, 4, 6, 8 and 10th column
+        :return: One single N-array with concatenated data (N = arrays length)
+        """
+        with concurrent.futures.ProcessPoolExecutor(max_workers=self.workers) as executor:  # Parallelization
+            cc_results = list(tqdm(executor.map(self.only_concatenate, arrays), total=len(arrays),
+                                   desc='Concatenating: ', unit='GRB'))
+        return np.array(cc_results)
+
+    def fourier_concatenate(self, array, plot=False, name=None):
         """
         Function to do DFT to a GRB data from Swift, data need to be normalized before executed here
         :param array: GRB data array to be transformed, it would be sent in swift format (11 columns with time first)
@@ -391,20 +435,21 @@ class SwiftGRBWorker:
         :param name: Name of GRB to save plot, default is None, it is needed if plot=True
         :return: An array with the Fourier Amplitude Spectrum of data
         """
-        energy_data = np.delete(array, np.s_[::2], 1).transpose()  # Erase the time-error columns and transpose matrix
-        concatenated = np.reshape(energy_data, len(energy_data)*len(energy_data[0]))  # Concatenate all columns of data
-        sp = np.abs(fft(concatenated))  # Perform DFT to data and get the Fourier Amplitude Spectrum
-        sp_one_side = sp[:len(sp)//2]  # Sampling below the Nyquist frequency
+        concatenated = self.only_concatenate(array)
+        sp = fftshift(np.abs(fft(concatenated)))  # Perform DFT to data and get the Fourier Amplitude Spectrum
+        sp_one_side = sp[:len(sp) // 2]  # Sampling below the Nyquist frequency
         if plot:
             t = array[:, 0]  # Take times from one band data
-            freq = fftfreq(sp.size, d=t[1] - t[0])[:len(sp)//2]  # Get frequency spectrum basis values for one side
+            freq = fftfreq(sp.size, d=t[1] - t[0])[:len(sp) // 2]  # Get frequency spectrum basis values for one side
             dft_fig, axs1 = plt.subplots(2, 1, dpi=150, figsize=[10, 6.4])
             axs1[0].set_title(fr"{name} DFT", weight='bold').set_fontsize('12')
-            axs1[0].plot(freq[:len(freq)//3], sp_one_side[:len(freq)//3], linewidth=0.1, c='k')
-            axs1[0].set_xlim(left=-0.1, right=freq[len(freq)//3])
-            axs1[1].plot(freq[len(freq) // 3:], sp_one_side[len(freq) // 3:], linewidth=0.1, c='k')
-            axs1[1].set_xlim(left=freq[len(freq)//3], right=freq[-1])
+            axs1[1].plot(freq[:4 * (len(freq) // 5)], sp_one_side[:4 * (len(freq) // 5)], linewidth=0.1, c='k')
+            axs1[1].set_xlim(left=-0.05, right=freq[4 * (len(freq) // 5)])
+            axs1[0].plot(freq[4 * (len(freq) // 5):], sp_one_side[4 * (len(freq) // 5):], linewidth=0.1, c='k')
+            axs1[0].set_xlim(left=freq[4 * (len(freq) // 5)])
             axs1[1].set_xlabel('Frequency (Hz)', weight='bold').set_fontsize('10')
+            axs1[1].set_ylabel('Amplitude', weight='bold').set_fontsize('10')
+            axs1[0].set_ylabel('Amplitude', weight='bold').set_fontsize('10')
             return sp_one_side, dft_fig
         else:
             return sp_one_side
@@ -415,39 +460,43 @@ class SwiftGRBWorker:
          :param arrays: GRB data array to be transformed, it would be sent in swift format (11 columns with time first)
          :return: An array with the DFT Amplitude of total data
          """
-        with concurrent.futures.ProcessPoolExecutor() as executor:  # Parallelization
+        with concurrent.futures.ProcessPoolExecutor(max_workers=self.workers) as executor:  # Parallelization
             sp_results = list(tqdm(executor.map(self.fourier_concatenate, arrays), total=len(arrays),
                                    desc='Performing DFT: ', unit='GRB'))
         return np.array(sp_results)
 
-    def plot_any_grb(self, name, t=100, limits=None):
+    def plot_any_grb(self, name, t=100, limits=None, interpolate=False):
         """
         Function to plot any GRB out of i-esim duration (can be 50, 90, 100), default is T_90
         :param name: GRB name
         :param t: Duration interval needed, default is 100 (can be 50, 90, 100, else plot all light curve)
         :param limits: List of customized [t_start, t_end] if needed (default is None)
+        :param interpolate: Boolean to customize plot, it sets the original data as background plot
         :return: Returns the figure, axis created
         """
-        fig5 = plt.figure(dpi=150)
+        fig_s = [7, 9] if interpolate else [6.4, 4.8]
+        fig5 = plt.figure(dpi=150, figsize=fig_s)
         gs = fig5.add_gridspec(nrows=5, hspace=0)
         axs = gs.subplots(sharex=True)
         axs[4].set_xlabel('Time since BAT Trigger time (s)', weight='bold').set_fontsize('10')
-        end = f"{self.res}ms" if self.res in (2, 8, 16, 64, 256) else f"1s"
         bands = (r"$15-25\,keV$", r"$25-50\,keV$", r"$50-100\,keV$", r"$100-350\,keV$", r"$15-350\,keV$")
         colors = ('k', 'r', 'lime', 'b', 'tab:pink')
         if t in (50, 90, 100) or limits is not None:  # Limit Light Curve if is needed
             data = self.lc_limiter(name=name, t=t, limits=limits)
-            axs[0].set_title(fr"{end} Swift {name} out of $T\_{t}$", weight='bold').set_fontsize('12')
+            axs[0].set_title(fr"{self.end} Swift {name} out of $T\_{t}$", weight='bold').set_fontsize('12')
             if isinstance(data[0], str):  # If an error occurs when limit out of T_{t}
                 print(f"Error when limiting {name} Light Curve out of t={t}, plotting all data")
-                data = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{end}.gz"), autostrip=True)
-                axs[0].set_title(f"{end} Swift {name} Total Light Curve", weight='bold').set_fontsize('12')
+                data = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{self.end}.gz"), autostrip=True)
+                axs[0].set_title(f"{self.end} Swift {name} Total Light Curve", weight='bold').set_fontsize('12')
         else:  # If not needed, only extract total data
-            data = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{end}.gz"), autostrip=True)
-            axs[0].set_title(f"{end} Swift {name} Total Light Curve", weight='bold').set_fontsize('12')
+            data = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{self.end}.gz"), autostrip=True)
+            axs[0].set_title(f"{self.end} Swift {name} Total Light Curve", weight='bold').set_fontsize('12')
         axs[4].set_xlim(left=data[0, 0], right=data[-1, 0])
         for i in range(5):
-            axs[i].plot(data[:, 0], data[:, 2*i+1], label=bands[i], linewidth=0.5, c=colors[i])
+            if interpolate:
+                axs[i].errorbar(data[:, 0], data[:, 2*i+1], yerr=data[:, 2*(i+1)], label=bands[i], alpha=0.3, fmt='.k', ms=0.5)
+            else:
+                axs[i].plot(data[:, 0], data[:, 2 * i + 1], label=bands[i], linewidth=0.5, c=colors[i])
             axs[i].legend(fontsize='xx-small', loc="upper right")
         return fig5, axs
 
@@ -471,16 +520,14 @@ class SwiftGRBWorker:
         :param kwargs: Additional arguments to configure tSNE implementation, avoid to use 'random_state' as arg
         :return: 2D array with transformed values (x_i, y_i) for each data
         """
+        assert library.lower() in ('opentsne', 'sklearn')
         # Create an object to initialize tSNE in any library, with default values and other variables needed:
         if library.lower() == 'opentsne':  # OpenTSNE has by default init='pca'
             tsne = open_TSNE(n_components=2, n_jobs=-1, random_state=42, **kwargs)
             data_reduced_tsne = tsne.fit(data)  # Perform tSNE to data
-        elif library.lower() == 'sklearn':  # However, sklearn_TSNE has by default init='random'
+        else:  # However, sklearn_TSNE has by default init='random'
             tsne = sklearn_TSNE(n_components=2, n_jobs=-1, random_state=42, **kwargs)
             data_reduced_tsne = tsne.fit_transform(data)  # Perform tSNE to data
-        else:
-            print(f"Error when trying library={library}, it only can be 'openTSNE'(default) or 'sklearn'...")
-            raise ValueError
         return data_reduced_tsne
 
     @staticmethod
@@ -515,7 +562,8 @@ class SwiftGRBWorker:
             ax.add_artist(first_leg)  # Add legend to plot
             sca.clear()  # Reset variable to add further legends later
         match = np.where(np.isin(names, special_cases))[0]  # Check if there are special cases matching GRB Names
-        non_match = np.arange(0, len(x_i), 1) if len(names) == 0 else np.where(np.isin(names, special_cases, invert=True))[0]
+        non_match = np.arange(0, len(x_i), 1) if len(names) == 0 else \
+            np.where(np.isin(names, special_cases, invert=True))[0]
         alp = 0.7 if len(match) != 0 or animation else 1
         if len(duration_s) != 0:  # If there are durations, then customize scatters and add color bar
             ncolor = np.log10(duration_s)
@@ -527,12 +575,14 @@ class SwiftGRBWorker:
             for it, marker_i in zip(match, markers):  # Scatter matched GRBs
                 if size[it] != 0:  # Skip special GRBs without redshift
                     sca.append(ax.scatter(x_i[it], y_i[it], s=size[it], c=ncolor[it], edgecolor='k', norm=normalize,
-                                          zorder=2.5, label=f'{names[it][:3]} {names[it][3:]}', marker=marker_i, cmap='jet'))
+                                          zorder=2.5, label=f'{names[it][:3]} {names[it][3:]}', marker=marker_i,
+                                          cmap='jet'))
             if len(match != 0):  # If there are special cases to show, put a customized legend
                 leg_args = {'bbox_to_anchor': (-0.26, 0.7125), 'loc': 'lower left', 'borderaxespad': 0.}
                 second_legend = ax.legend(**leg_args, handles=sca, fontsize='small', frameon=False)
                 ax.add_artist(second_legend)
-            color_bar = plt.colorbar(main_scatter if len(match) == 0 else sca[0], label=r'log$_{10}\left(T_{90}\right)$')
+            color_bar = plt.colorbar(main_scatter if len(match) == 0 else sca[0],
+                                     label=r'log$_{10}\left(T_{90}\right)$')
         else:  # If there aren't durations, do simple scatter plots
             ax.scatter(x_i, y_i, s=size)
         plt.tight_layout()  # Adjust plot to legends
@@ -603,3 +653,190 @@ class SwiftGRBWorker:
         animation = mpy.VideoClip(make_iteration, duration=duration)
         animation.write_gif(filename, fps=fps, program='imageio') if filename is not None else None
         return animation
+
+    def noise_reduction_fabada(self, name, plot=False, save_data=False, save_fig=True):
+        """
+        Function to perform non-parametric noise reduction technique from FABADA to any GRB
+        :param name: GRB Name
+        :param plot: Boolean to indicate if plotting is needed
+        :param save_data: Boolean to indicate if to save noise reduced data
+        :param save_fig: Boolean to indicate if to save plot
+        :return: noise reduced data array and figure object (if plot=True)
+        """
+        arr = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{self.end}.gz"), autostrip=True)
+        data = arr.copy()
+        limits = self.durations_checker(name=name)
+        # Filter values outside T_100 ( change < signs and add & to get inside)
+        outside_T100 = data[(data[:, 0] < float(limits[0, 1])) | (data[:, 0] > float(limits[0, 2]))]
+        outside_T100_non_zero = outside_T100[outside_T100[:, 1:].all(1)]  # Remove zero columns in data
+        if len(outside_T100_non_zero) != 0:  # If there aren't any values outside duration, let default values
+            for i in range(1, 11, 2):
+                band_i = np.array([outside_T100_non_zero[:, i]])  # Extract band outside T_100 and make 2D array
+                sigma = np.square(helpers.estimate_noise(band_i))  # Estimate noise variance outside T_100
+                data[:, i] = fabada(data[:, i], data_variance=sigma)  # Change values from i-esim band using fabada
+        if save_data:
+            file_name = f"{name}_{self.end}.gz"  # Define a unique file name for any name-resolution pair
+            np.savetxt(os.path.join(self.noise_data_path, file_name), data)  # Save file as gz
+        if plot:
+            arr_T100 = arr[(arr[:, 0] > float(limits[0, 1])) & (arr[:, 0] < float(limits[0, 2]))]
+            data_T100 = data[(data[:, 0] > float(limits[0, 1])) & (data[:, 0] < float(limits[0, 2]))]
+            fig5 = plt.figure(dpi=200, figsize=[2 * 6.4, 6])
+            gs = fig5.add_gridspec(nrows=5, ncols=2, hspace=0)
+            axs = gs.subplots()
+            [axs[4][i].set_xlabel('Time since BAT Trigger time (s)', weight='bold').set_fontsize('10') for i in (0, 1)]
+            bands = (r"$15-25\,keV$", r"$25-50\,keV$", r"$50-100\,keV$", r"$100-350\,keV$", r"$15-350\,keV$")
+            colors = ('k', 'r', 'lime', 'b', 'tab:pink')
+            fig5.suptitle(f"{self.end} Swift {name}", weight='bold').set_fontsize('10')
+            axs[0][0].set_title("Total Light Curve", weight='bold').set_fontsize('10')
+            axs[0][1].set_title(r"Inside $\mathbf{T_{100}}$", weight='bold').set_fontsize('10')
+            for j in range(5):
+                axs[j][1].plot(arr_T100[:, 0], arr_T100[:, 2 * j + 1], alpha=0.2, c='k')
+                axs[j][1].plot(data_T100[:, 0], data_T100[:, 2 * j + 1], label=bands[j], linewidth=0.75, c=colors[j])
+                axs[j][1].legend(fontsize='xx-small', loc="upper right")
+                axs[j][0].plot(arr[:, 0], arr[:, 2 * j + 1], alpha=0.2, c='k')
+                axs[j][0].plot(data[:, 0], data[:, 2 * j + 1], label=bands[j], linewidth=0.75, c=colors[j])
+                axs[j][0].legend(fontsize='xx-small', loc="upper right")
+                axs[j][0].set_xlim(left=data[0, 0], right=data[-1, 0])
+                axs[j][1].set_xlim(left=data_T100[0, 0], right=data_T100[-1, 0])
+            helpers.directory_maker(self.noise_images_path)
+            if save_fig:
+                fig5.savefig(os.path.join(self.noise_images_path, f"{name}_{self.end}.png"))
+                plt.close()
+            return data, fig5
+        else:
+            return data
+
+    def so_much_noise_filtering(self, names, plot=False, save_data=False, save_fig=True):
+        """
+        Function to faster perform non-parametric noise reduction technique from FABADA
+        :param names: A list with all GRB names
+        :param plot: Boolean to indicate if plotting is needed
+        :param save_data: Boolean to indicate if to save noise reduced data
+        :param save_fig: Boolean to indicate if to save plot
+        :return: Noise Filtered Data array, only if plot is False, else None
+        """
+        m = len(names)
+        helpers.directory_maker(self.noise_data_path)
+        with concurrent.futures.ProcessPoolExecutor(max_workers=self.workers) as executor:  # Parallelization
+            results = list(tqdm(executor.map(self.noise_reduction_fabada, names, repeat(plot, m), repeat(save_data, m),
+                                             repeat(save_fig, m)), total=m, desc='Filtering Noise: ', unit='GRB'))
+        if not plot:
+            return results
+
+    @staticmethod
+    def one_band_interpolate(times, counts, new_time, pack_num=10, kind='linear', name=None):
+        """
+        Function to interpolate one band from any GRB light curve
+        :param times: Original time array
+        :param counts: Original GRB counts array
+        :param new_time: New times array to be extrapolated
+        :param pack_num: The number of data grouped per packet to interpolate, a smaller number of points can improve
+        the results, but a value too large or small can lead to poor interpolation results. Deprecated if kind='linear'
+        :param kind: Specifies the kind of interpolation as a string or as an integer specifying the order
+        of the spline interpolator to use. The string has to be one of ‘linear’, ‘nearest’, ‘nearest-up’, ‘zero’,
+        ‘slinear’, ‘quadratic’, ‘cubic’, ‘previous’, or ‘next’ (took from Scipy Docs).
+        :return: Interpolated array for new_time
+        """
+        assert len(times) == len(counts)
+        new_counts = np.array([])
+        new_times = np.array([])
+        if kind.lower() == 'linear':  # In linear interpolation, the pack size doesn't matter
+            pack_num = len(times)
+        for i in range(0, len(times), pack_num):  # Iterate over all the time array
+            if i + pack_num < len(times):  # Check for right wall effect
+                time_i = times[i:i + pack_num + 1]
+                band_i = counts[i:i + pack_num + 1]
+            else:
+                time_i = times[i:]
+                band_i = counts[i:]
+            new_times_i = new_time[(new_time >= time_i[0]) & (new_time <= time_i[-1])]
+            new_times = np.append(new_times, new_times_i)
+            if len(new_times_i) != 0:
+                try:
+                    f = interp1d(time_i, band_i, kind=kind)  # Interpolate
+                except ValueError:  # If there are any error during the interpolation, try again using kind='linear'
+                    warnings.warn(f"{name} --> Error when using kind={kind}, changing to linear interpolation...")
+                    f = interp1d(time_i, band_i, kind='linear')
+                new_counts = np.append(new_counts, f(new_times_i))
+        assert len(new_counts) == len(new_time), f"The resulting arrays doesn't have the same size for {name}: " \
+                                                 f"{len(new_counts)} {len(new_time)}"
+        return new_counts
+
+    def one_grb_interpolate(self, name, resolution=1, pack_num=10, kind='linear', t=None, limits=None, plot=True,
+                            save_fig=True):
+        """
+        Function to interpolate all bands from one GRB
+        :param name: GRB Name
+        :param resolution: New resolution for data in ms, used to create new time array
+        :param pack_num: The number of data grouped per packet to interpolate, a smaller number of points can improve
+        the results, but a value too large or small can lead to poor interpolation results. Deprecated if kind='linear'
+        :param kind: Specifies the kind of interpolation as a string or as an integer specifying the order
+        of the spline interpolator to use. The string has to be one of ‘linear’, ‘nearest’, ‘nearest-up’, ‘zero’,
+        ‘slinear’, ‘quadratic’, ‘cubic’, ‘previous’, or ‘next’ (took from Scipy Docs).
+        :param t: GRB Duration interval to be interpolated, can be 50, 90, 100 (default) or None (total light curve)
+        :param limits: List of customized [t_start, t_end] to interpolate if needed (default is None)
+        :param plot: Boolean to indicate if plot is necessary
+        :param save_fig: Boolean to indicate if to save plot
+        :return: Interpolated array for custom resolution in all GRB bands
+        """
+        if t is None and limits is None:  # If there aren't limits use original data
+            data = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{self.end}.gz"), autostrip=True)
+        else:  # Else, limit data
+            data = self.lc_limiter(name, t=t, limits=limits)
+        if isinstance(data[0], str):
+            return data
+        else:
+            new_time = np.arange(data[:, 0][0], data[:, 0][-1], resolution * 1e-3)
+            new_data = np.zeros((len(new_time), 11))  # Create new array to allocate data
+            new_data[:, 0] = new_time
+            for i in range(1, 11, 2):
+                new_data[:, i] = self.one_band_interpolate(data[:, 0], data[:, i], new_time, pack_num, kind, name=name)
+            if plot:
+                fig_i, ax_k = self.plot_any_grb(name, t=t, limits=limits, interpolate=True)  # Get original plot
+                for i in range(5):
+                    ax_k[i].plot(new_data[:, 0], new_data[:, 2*i+1], linewidth=0.3, zorder=2.5, c='r')
+                if save_fig:
+                    path = self.results_path + r'\Interpolation_Images'
+                    helpers.directory_maker(path)
+                    fig_i.savefig(os.path.join(path, f"{name}_{self.end}.png"))
+                    plt.close()
+                return new_data, fig_i
+            else:
+                return new_data
+
+    def so_much_interpolate(self, names, resolution=1, pack_num=10, kind='linear', t=None, limits=None, plot=True,
+                            save_fig=True):
+        """
+        Function to faster interpolate all bands from several GRBs
+        :param names: GRB Names array
+        :param resolution: New resolution for data in ms, used to create new time array
+        :param pack_num: The number of data grouped per packet to interpolate, a smaller number of points can improve
+        the results, but a value too large or small can lead to poor interpolation results. Deprecated if kind='linear'
+        :param kind: Specifies the kind of interpolation as a string or as an integer specifying the order
+        of the spline interpolator to use. The string has to be one of ‘linear’, ‘nearest’, ‘nearest-up’, ‘zero’,
+        ‘slinear’, ‘quadratic’, ‘cubic’, ‘previous’, or ‘next’ (took from Scipy Docs).
+        :param t: GRB Duration interval to be interpolated, can be 50, 90, 100 (default) or None (total light curve)
+        :param limits: List of customized [t_start, t_end] to interpolate if needed (default is None)
+        :param plot: Boolean to indicate if plot is necessary
+        :param save_fig: Boolean to indicate if to save plot
+        :return: Interpolated array for custom resolution in all GRB bands
+        """
+        errors = []  # Define errors
+        non_errors = []  # Define non-errors array
+        new_names = []  # Define new_names array
+        m = len(names)
+        if limits is None:  # If no limits are entered, then only send None array
+            limits = repeat(None, m)
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            result = list(tqdm(executor.map(self.one_grb_interpolate, names, repeat(resolution, m), repeat(pack_num, m)
+                                            , repeat(kind, m), repeat(t, m), limits, repeat(plot, m),
+                                            repeat(save_fig, m)), total=m, desc='LC Interpolating: ', unit='GRB'))
+        assert len(result) == len(names)
+        for i in range(len(result)):
+            array = result[i]
+            if isinstance(array[0], str):
+                errors.append(array)
+            else:
+                non_errors.append(array)
+                new_names.append(names[i])
+        return non_errors, new_names, np.array(errors)

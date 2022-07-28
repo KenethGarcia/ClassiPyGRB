@@ -14,30 +14,28 @@ This repository requires Python 3.8 or high, and the packages from the [``requer
 ## What can you do with this repository?
 1. **Download Swift Data for different binnings.**
 
-![](https://github.com/KenethGarcia/GRB_ML/blob/d7565536d1780a7da892ad2dcf35270f97ea3d6f/Documentation/README_Images/GRB060614.png)
+![](https://github.com/KenethGarcia/GRB_ML/blob/4f5322be0ab14f37b968f98ba4400a52e0aa5eed/Documentation/README_Images/GRB060614.jpg)
 
 2. **Pre-process Swift Data following the guidelines from [Jespersen et al. (2020)](https://ui.adsabs.harvard.edu/abs/2020ApJ...896L..20J/abstract)**
 
-![](https://github.com/KenethGarcia/GRB_ML/blob/d7565536d1780a7da892ad2dcf35270f97ea3d6f/Documentation/README_Images/Limited_GRB060614.png)
+![](https://github.com/KenethGarcia/GRB_ML/blob/4f5322be0ab14f37b968f98ba4400a52e0aa5eed/Documentation/README_Images/Limited_GRB060614.jpg)
 
-3. **Perform t-SNE in high-level customization (thanks to [_openTSNE_](https://opentsne.readthedocs.io/en/latest/index.html) and [_scikit Learn_](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html) implementations)**
-
-
-4. **Create creative t-SNE animations showing its convergence:**
+3. **Perform t-SNE in high-level customization (thanks to [_openTSNE_](https://opentsne.readthedocs.io/en/latest/index.html) and [_scikit Learn_](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html) implementations):**
+- **Create creative t-SNE animations showing its convergence:**
 
 ![](https://github.com/KenethGarcia/GRB_ML/blob/51482eecd01d8bea10a951ba3e9b0b108cea3c08/Documentation/Animations/convergence_animation_pp_30.gif)
 
-**Or changing any hyperparameter (perplexity, learning rate, etc.):**
+- **Or changing any hyperparameter (perplexity, learning rate, etc.):**
 
 ![](https://github.com/KenethGarcia/GRB_ML/blob/51482eecd01d8bea10a951ba3e9b0b108cea3c08/Documentation/Animations/perplexity_animation_2.gif)
 
-5. **Reduce noise to any custom light curve using [FABADA](https://github.com/PabloMSanAla/fabada), checking its variance assuming a gray-scaled 1-pixel height image.**
+4. **Reduce noise to any custom light curve using [FABADA](https://github.com/PabloMSanAla/fabada), checking its variance assuming a gray-scaled 1-pixel height image.**
 
-![](https://github.com/KenethGarcia/GRB_ML/blob/d7565536d1780a7da892ad2dcf35270f97ea3d6f/Documentation/README_Images/Noise_Filtered_GRB060614.png)
+![](https://github.com/KenethGarcia/GRB_ML/blob/4f5322be0ab14f37b968f98ba4400a52e0aa5eed/Documentation/README_Images/Noise_Filtered_GRB060614.jpg)
 
-6. **Interpolate between light curve data points using any custom n-order polynomial.**
+5. **Interpolate between light curve data points using any custom n-order polynomial.**
 
-![](https://github.com/KenethGarcia/GRB_ML/blob/d7565536d1780a7da892ad2dcf35270f97ea3d6f/Documentation/README_Images/Interpolated_GRB060614.png)
+![](https://github.com/KenethGarcia/GRB_ML/blob/4f5322be0ab14f37b968f98ba4400a52e0aa5eed/Documentation/README_Images/Interpolated_GRB060614.jpg)
 
 ## Citation
 If you use this repository in a scientific publication, we would appreciate citations: 

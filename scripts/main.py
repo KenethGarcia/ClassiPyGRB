@@ -268,7 +268,7 @@ class SwiftGRBWorker:
         Function to extract GRB redshift, if available
         :param name: GRB Name
         :param redshift_table: Redshift table name, related with table path class variable
-        :return: Array with format [[Name_i, T_initial, T_final], ...]
+        :return: Array with format [[Name_i, Z], ...]
         """
         path = os.path.join(self.table_path, redshift_table)
         keys_extract = np.genfromtxt(path, delimiter="|", dtype=str, usecols=(0, 1), autostrip=True)

@@ -295,7 +295,7 @@ class SwiftGRBWorker:
         :param limits: List of customized [t_start, t_end] if needed (default is None)
         :return: A list with values into t_start and t_end, or None if data doesn't exist or has length < 4
         """
-        assert t in (50, 90, 100), f"Valid duration intervals: 50, 60, 90. Got: {t}"
+        assert t in (50, 90, 100), f"Valid duration intervals: 50, 90, 100. Got: {t}"
         try:
             if limits is None:  # If not have been defined any limits, then use T_{t} durations from file
                 limit_interval = self.durations_checker(name, t)  # Upload the values of t_start and t_durations

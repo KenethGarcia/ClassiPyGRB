@@ -295,6 +295,7 @@ class SwiftGRBWorker:
         :param limits: List of customized [t_start, t_end] if needed (default is None)
         :return: A list with values into t_start and t_end, or None if data doesn't exist or has length < 4
         """
+        assert t in (50, 90, 100), f"Valid duration intervals: 50, 60, 90. Got: {t}"
         try:
             if limits is None:  # If not have been defined any limits, then use T_{t} durations from file
                 limit_interval = self.durations_checker(name, t)  # Upload the values of t_start and t_durations
@@ -339,7 +340,7 @@ class SwiftGRBWorker:
         with concurrent.futures.ProcessPoolExecutor(max_workers=self.workers) as executor:  # Parallelization
             results = list(tqdm(executor.map(self.lc_limiter, names, repeat(t, len(names)), limits), total=len(names),
                                 desc='LC Limiting: ', unit='GRB'))
-        assert len(results) == len(names)
+        assert len(results) == len(names), f"The length of names array and returning data are not the same. Ending..."
         for i in range(len(results)):
             array = results[i]
             if isinstance(array[0], str):
@@ -520,7 +521,7 @@ class SwiftGRBWorker:
         :param kwargs: Additional arguments to configure tSNE implementation, avoid to use 'random_state' as arg
         :return: 2D array with transformed values (x_i, y_i) for each data
         """
-        assert library.lower() in ('opentsne', 'sklearn')
+        assert library.lower() in ('opentsne', 'sklearn'), f"Library only could be sklearn or openTSNE, got: {library}"
         # Create an object to initialize tSNE in any library, with default values and other variables needed:
         if library.lower() == 'opentsne':  # OpenTSNE has by default init='pca'
             tsne = open_TSNE(n_components=2, n_jobs=-1, random_state=42, **kwargs)
@@ -737,7 +738,7 @@ class SwiftGRBWorker:
         ‘slinear’, ‘quadratic’, ‘cubic’, ‘previous’, or ‘next’ (took from Scipy Docs).
         :return: Interpolated array for new_time
         """
-        assert len(times) == len(counts)
+        assert len(times) == len(counts), f"Expected equal time and counts array length: {len(times)}, {len(counts)}"
         new_counts = np.array([])
         new_times = np.array([])
         if kind.lower() == 'linear':  # In linear interpolation, the pack size doesn't matter
@@ -831,7 +832,8 @@ class SwiftGRBWorker:
             result = list(tqdm(executor.map(self.one_grb_interpolate, names, repeat(resolution, m), repeat(pack_num, m)
                                             , repeat(kind, m), repeat(t, m), limits, repeat(plot, m),
                                             repeat(save_fig, m)), total=m, desc='LC Interpolating: ', unit='GRB'))
-        assert len(result) == len(names)
+        assert len(result) == len(names), f"Expected equal number of names and results array, got: {len(names)} names" \
+                                          f"and {len(result)} results"
         for i in range(len(result)):
             array = result[i]
             if isinstance(array[0], str):

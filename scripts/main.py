@@ -16,6 +16,7 @@ from scripts import helpers  # Script to do basics functions to data
 from itertools import repeat  # Function to repeat some action
 from scipy import integrate  # Module to integrate using Simpson's rule
 from fabada import fabada  # Module to remove noise
+from scipy.spatial.distance import cdist  # Module to compute distance between points
 from scipy.interpolate import interp1d  # Module to interpolate data
 from openTSNE import TSNE as open_TSNE  # Alternative module to do tSNE
 from sklearn.manifold import TSNE as sklearn_TSNE  # Module to do tSNE
@@ -797,7 +798,7 @@ class SwiftGRBWorker:
                 for i in range(5):
                     ax_k[i].plot(new_data[:, 0], new_data[:, 2*i+1], linewidth=0.3, zorder=2.5, c='r')
                 if save_fig:
-                    path = self.results_path + r'\Interpolation_Images'
+                    path = self.results_path + r'/Interpolation_Images'
                     helpers.directory_maker(path)
                     fig_i.savefig(os.path.join(path, f"{name}_{self.end}.png"))
                     plt.close()
@@ -842,3 +843,36 @@ class SwiftGRBWorker:
                 non_errors.append(array)
                 new_names.append(names[i])
         return non_errors, new_names, np.array(errors)
+
+    def flux_calculator(self, name, band=1, t=None, limits=None):
+        assert band in (1, 3, 5, 7, 9), f"Expected band --> 1, 3, 5, 7, 9. Got: {band}"
+        # Unpack the downloaded data for the file, if it exists:
+        if t is None and limits is None:
+            data = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{self.end}.gz"), autostrip=True)
+        else:
+            data = self.lc_limiter(name, t=t, limits=limits)
+        assert isinstance(data[0], (list, np.ndarray)), f"{name}--> Expected array, got: {data}"
+        area = integrate.simpson(data[:, band], x=data[:, 0])  # Integral
+        return area
+
+    def hardness_proxy(self, names):
+        assert isinstance(names, (str, np.ndarray, list, tuple)), f"Expected name or names array, got: {type(names)}"
+        if isinstance(names, str):  # If a specific name is entered, then we search the value in the array
+            band_50_100 = self.flux_calculator(names, band=5, t=100)
+            band_25_50 = self.flux_calculator(names, band=3, t=100)
+        else:  # If a name's array is specified, search them recursively
+            with concurrent.futures.ProcessPoolExecutor(max_workers=self.workers) as executor:  # Parallelization
+                band_50_100 = list(executor.map(self.flux_calculator, names, repeat(5, len(names)), repeat(100, len(names))))
+                band_25_50 = list(executor.map(self.flux_calculator, names, repeat(3, len(names)), repeat(100, len(names))))
+        return np.array(band_50_100)/np.array(band_25_50)
+
+    @staticmethod
+    def nearest_neighbors(name, total_names, coord, num=5):
+        assert isinstance(num, (int, np.int)), f"Expected integer number of neighbors, got: {num}"
+        assert len(total_names) == len(coord), f"Expected names and coordinates arrays with the same length, got: " \
+                                               f"{len(total_names)}, {len(coord)}"
+        row_name = np.where(np.isin(total_names, name))[0]  # Index row of match GRB
+        distances = cdist(coord[row_name], coord)[0]
+        sort_array = np.sort(distances)[1:num + 1]
+        near_neighbors = np.where(np.isin(distances, sort_array))[0]
+        return np.sort(total_names[near_neighbors])

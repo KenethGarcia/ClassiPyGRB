@@ -161,19 +161,29 @@ def getSteps(data, **step_kwargs):
 
 
 class SwiftGRBWorker:
-    data_path = os.getcwd() + r'\Data'  # The path to add Original and Pre-processed data
-    original_data_path = data_path + r'\Original_Data'  # Specific path to add Original Data
-    noise_data_path = data_path + r'\Noise_Filtered_Data'  # Specific path to add Original Data
-    results_path = os.getcwd() + r'\Results'  # Specific path to add Results
-    noise_images_path = results_path + r'\Noise_Filter_Images'  # Specific path to add Noise filtered images
-    table_path = os.getcwd() + r'\Tables'  # The path where animations will be saved
-    animations_path = results_path + r'\Animations'  # The path where animations will be saved
-    res = 64  # Resolution for the Light Curve Data in ms, could be 2, 8, 16, 64 (default), 256 and 1 (this last in s)
-    end = f"{res}ms" if res in (2, 8, 16, 64, 256) else f"1s"  # Default string to end file saving
+    col_bands = (0, 1, 3, 5, 7, 9)  # Columns in data containing measurements
     workers = os.cpu_count()  # Set how many workers you will use
 
-    def __init__(self):
-        pass
+    def __init__(self, root_path, res=64, end=None, data_path=None, original_data_path=None, noise_data_path=None,
+                 results_path=None, noise_images_path=None, table_path=None, animations_path=None, n_bands=5):
+        self.n_bands = n_bands  # Number of bands to be used through the object
+        self.res = res
+        if end is None:
+            self.end = f"{res}ms" if res in (2, 8, 16, 64, 256) else f"1s"
+        else:
+            self.end = end
+        self.root_path = os.path.join(os.getcwd()) if root_path is None else root_path
+        self.table_path = os.path.join(self.root_path, r"Tables") if table_path is None else table_path
+        self.data_path = os.path.join(self.root_path, r"Data") if data_path is None else data_path
+        self.original_data_path = os.path.join(self.data_path, r"Original_Data") if original_data_path is None \
+            else original_data_path
+        self.noise_data_path = os.path.join(self.data_path, r"Noise_Filtered_Data") if noise_data_path is None \
+            else noise_data_path
+        self.results_path = os.path.join(self.root_path, r"Results") if results_path is None else results_path
+        self.noise_images_path = os.path.join(self.results_path, r"Noise_Filter_Images") if noise_images_path is None \
+            else noise_images_path
+        self.animations_path = os.path.join(self.results_path, r"Animations") if animations_path is None \
+            else animations_path
 
     def summary_tables_download(self, other=False, name=None):
         """
@@ -304,8 +314,9 @@ class SwiftGRBWorker:
             else:
                 t_start, t_end, *other = limits
                 t_start, t_end = float(t_start), float(t_end)
-            # Unpack the downloaded data for the file, if it exists:
-            data = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{self.end}.gz"), autostrip=True)
+            # Unpack the downloaded data for the file without errors, if it exists:
+            data = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{self.end}.gz"), autostrip=True,
+                                 usecols=self.col_bands)
             # Filter values between t_start and t_end in data:
             data = data[(data[:, 0] > t_start) & (data[:, 0] < t_end)]
             # data = np.array([value for value in data if t_end >= value[0] >= t_start])
@@ -351,21 +362,20 @@ class SwiftGRBWorker:
                 new_names.append(names[i])
         return non_errors, new_names, np.array(errors)
 
-    @staticmethod
-    def lc_normalizer(data, print_area=False):
+    def lc_normalizer(self, data, print_area=False):
         """
-        Function to normalize GRB light curve data
+        Function to normalize GRB light curve data, it needs to have the total time-integrated counts as last column
         :param data: Array with data in format time, (band, error) for 15-25, 25-50, 50-100, 100-350 and 15-350 keV
         :param print_area: Boolean to indicate if returns Total time-integrated flux
         :return: Array with values normalized using the 15-350 keV integral
         """
         data = np.array(data)
-        area = integrate.simpson(data[:, 9], x=data[:, 0])  # Integral for 15-350 KeV data
-        data[:, 1: 11: 1] /= area  # Normalize the light curve
+        area = integrate.simpson(data[:, -1], x=data[:, 0])  # Integral for 15-350 KeV data
+        data[:, 1:] /= area  # Normalize the light curve
         if print_area:
-            return data, area
+            return data[:, 1:self.n_bands+1], area
         else:
-            return data
+            return data[:, 1:self.n_bands+1]
 
     def so_much_normalize(self, more_data, print_area=False):
         """
@@ -379,19 +389,16 @@ class SwiftGRBWorker:
                                 total=len(more_data), desc='LC Normalizing: ', unit='GRB'))
         return results
 
-    def zero_pad(self, data, length):
+    @staticmethod
+    def zero_pad(data, length):
         """
-        Function to zero pad array preserving order in time axis
+        Function to zero pad array preserving order in time axis, it will delete time axis (assumed in first column)
         :param data: Data array to be zero-padded
         :param length: Length of the final array (need to be more than data length)
         :return: New array zero-padded, with added values of time basis for a given resolution
         """
         diff = length - len(data)  # Difference between actual and optimal array size
         data_plus_zeros = np.pad(data, ((0, diff), (0, 0)))  # Zero pad array
-        initial_time_values = data_plus_zeros[:len(data), 0]  # Extract original time values
-        dt = round(self.res * 1e-3, 3) if self.res in (2, 8, 16, 64, 256) else 1  # Define step for new times
-        add_time_values = np.arange(1, diff + 1, 1) * dt + initial_time_values[-1]  # Set new time values
-        data_plus_zeros[:, 0] = np.append(initial_time_values, add_time_values)  # Append new time values to original
         return data_plus_zeros
 
     def so_much_zero_pad(self, more_data):
@@ -411,10 +418,10 @@ class SwiftGRBWorker:
     def only_concatenate(array):
         """
         Function to concatenate light curve energy bands in ascendant mode, only works on Swift data format
-        :param array: Data for a GRB, energy bands need to be in 2, 4, 6, 8 and 10th column
+        :param array: Data for a GRB without error columns
         :return: One single array with concatenated data
         """
-        energy_bands = np.delete(array, np.s_[::2], 1).transpose()[:-1]  # Erase the time-error columns and transpose
+        energy_bands = array.transpose()  # Erase the time-error columns and transpose
         concatenate = np.reshape(energy_bands, len(energy_bands) * len(energy_bands[0]))  # Concatenate all data columns
         return concatenate
 
@@ -424,8 +431,9 @@ class SwiftGRBWorker:
         :param arrays: Data array, energy bands need to be in 2, 4, 6, 8 and 10th column
         :return: One single N-array with concatenated data (N = arrays length)
         """
+        m = len(arrays)
         with concurrent.futures.ProcessPoolExecutor(max_workers=self.workers) as executor:  # Parallelization
-            cc_results = list(tqdm(executor.map(self.only_concatenate, arrays), total=len(arrays),
+            cc_results = list(tqdm(executor.map(self.only_concatenate, arrays), total=m,
                                    desc='Concatenating: ', unit='GRB'))
         return np.array(cc_results)
 
@@ -441,13 +449,13 @@ class SwiftGRBWorker:
         sp = fftshift(np.abs(fft(concatenated)))  # Perform DFT to data and get the Fourier Amplitude Spectrum
         sp_one_side = sp[:len(sp) // 2]  # Sampling below the Nyquist frequency
         if plot:
-            t = array[:, 0]  # Take times from one band data
-            freq = fftfreq(sp.size, d=t[1] - t[0])[:len(sp) // 2]  # Get frequency spectrum basis values for one side
-            dft_fig, axs1 = plt.subplots(2, 1, dpi=150, figsize=[10, 6.4])
+            spacing = self.res * 1e-3 if self.res in (2, 8, 16, 64, 256) else 1  # Get resolution from object
+            freq = fftfreq(sp.size, d=spacing)[:len(sp) // 2]  # Get frequency spectrum basis values for one side
+            dft_fig, axs1 = plt.subplots(2, 1, dpi=150, figsize=[10, 7], gridspec_kw={'height_ratios': [0.7, 0.4]})
             axs1[0].set_title(fr"{name} DFT", weight='bold').set_fontsize('12')
-            axs1[1].plot(freq[:4 * (len(freq) // 5)], sp_one_side[:4 * (len(freq) // 5)], linewidth=0.1, c='k')
+            axs1[1].plot(freq[:4 * (len(freq) // 5)], sp_one_side[:4 * (len(freq) // 5)], linewidth=0.5, c='k')
             axs1[1].set_xlim(left=-0.05, right=freq[4 * (len(freq) // 5)])
-            axs1[0].plot(freq[4 * (len(freq) // 5):], sp_one_side[4 * (len(freq) // 5):], linewidth=0.1, c='k')
+            axs1[0].plot(freq[4 * (len(freq) // 5):], sp_one_side[4 * (len(freq) // 5):], linewidth=0.5, c='k')
             axs1[0].set_xlim(left=freq[4 * (len(freq) // 5)])
             axs1[1].set_xlabel('Frequency (Hz)', weight='bold').set_fontsize('10')
             axs1[1].set_ylabel('Amplitude', weight='bold').set_fontsize('10')
@@ -462,45 +470,68 @@ class SwiftGRBWorker:
          :param arrays: GRB data array to be transformed, it would be sent in swift format (11 columns with time first)
          :return: An array with the DFT Amplitude of total data
          """
+        m = len(arrays)
         with concurrent.futures.ProcessPoolExecutor(max_workers=self.workers) as executor:  # Parallelization
-            sp_results = list(tqdm(executor.map(self.fourier_concatenate, arrays), total=len(arrays),
+            sp_results = list(tqdm(executor.map(self.fourier_concatenate, arrays), total=m,
                                    desc='Performing DFT: ', unit='GRB'))
         return np.array(sp_results)
 
-    def plot_any_grb(self, name, t=100, limits=None, interpolate=False):
+    def plot_any_grb(self, name, t=100, limits=None, kind="Default", ax=None):
         """
         Function to plot any GRB out of i-esim duration (can be 50, 90, 100), default is T_90
         :param name: GRB name
         :param t: Duration interval needed, default is 100 (can be 50, 90, 100, else plot all light curve)
         :param limits: List of customized [t_start, t_end] if needed (default is None)
-        :param interpolate: Boolean to customize plot, it sets the original data as background plot
-        :return: Returns the figure, axis created
+        :param kind: String to indicate type of plot. It can be "Interpolated" (Change data to background-gray scaled),
+        "Concatenated" (set the 5 bands in one panel) or "Default" (default Swift mode)
+        :param ax: Custom Matplotlib axes element to scatter, if ax is None, it will be created
+        :return: Returns the axis created
         """
-        fig_s = [7, 9] if interpolate else [6.4, 4.8]
-        fig5 = plt.figure(dpi=150, figsize=fig_s)
-        gs = fig5.add_gridspec(nrows=5, hspace=0)
-        axs = gs.subplots(sharex=True)
-        axs[4].set_xlabel('Time since BAT Trigger time (s)', weight='bold').set_fontsize('10')
+        assert kind.lower() in ("interpolate", "concatenated", "default")
+        sizes = {"interpolate": [7, 9], "concatenated": [6.4, 2.4], "default": [6.4, 4.8]}
+        ax_bool = True if ax else False
+        if ax is None:  # If there aren't any previous axes, create new one
+            fig_s = sizes.get(kind.lower())
+            if kind.lower() == "concatenated":
+                fig5, ax = plt.subplots(dpi=150, figsize=fig_s)
+                ax.set_ylabel(r"Counts/sec/det", weight='bold').set_fontsize('10')
+            else:
+                fig5 = plt.figure(dpi=150, figsize=fig_s)
+                gs = fig5.add_gridspec(nrows=5, hspace=0)
+                ax = gs.subplots(sharex=True)
+            fig5.text(0.06, 0.5, r"Counts/sec/det", ha='center', va='center', rotation='vertical', weight='bold',
+                      fontsize=10)
+        low_sub = ax if kind.lower() == "concatenated" else ax[4]  # Define lower and upper panels in each case
+        high_sub = ax if kind.lower() == "concatenated" else ax[0]
+        low_sub.set_xlabel('Time since BAT Trigger time (s)', weight='bold').set_fontsize('10')
         bands = (r"$15-25\,keV$", r"$25-50\,keV$", r"$50-100\,keV$", r"$100-350\,keV$", r"$15-350\,keV$")
         colors = ('k', 'r', 'lime', 'b', 'tab:pink')
         if t in (50, 90, 100) or limits is not None:  # Limit Light Curve if is needed
             data = self.lc_limiter(name=name, t=t, limits=limits)
-            axs[0].set_title(fr"{self.end} Swift {name} out of $T\_{t}$", weight='bold').set_fontsize('12')
+            high_sub.set_title(fr"{self.end} Swift {name} out of $T\_{t}$", weight='bold').set_fontsize('12')
             if isinstance(data[0], str):  # If an error occurs when limit out of T_{t}
                 print(f"Error when limiting {name} Light Curve out of t={t}, plotting all data")
-                data = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{self.end}.gz"), autostrip=True)
-                axs[0].set_title(f"{self.end} Swift {name} Total Light Curve", weight='bold').set_fontsize('12')
+                data = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{self.end}.gz"), autostrip=True,
+                                     usecols=self.col_bands)
+                high_sub.set_title(f"{self.end} Swift {name} Total Light Curve", weight='bold').set_fontsize('12')
         else:  # If not needed, only extract total data
-            data = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{self.end}.gz"), autostrip=True)
-            axs[0].set_title(f"{self.end} Swift {name} Total Light Curve", weight='bold').set_fontsize('12')
-        axs[4].set_xlim(left=data[0, 0], right=data[-1, 0])
+            data = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{self.end}.gz"), autostrip=True,
+                                 usecols=self.col_bands)
+            high_sub.set_title(f"{self.end} Swift {name} Total Light Curve", weight='bold').set_fontsize('12')
+        low_sub.set_xlim(left=data[0, 0], right=data[-1, 0])
         for i in range(5):
-            if interpolate:
-                axs[i].errorbar(data[:, 0], data[:, 2*i+1], yerr=data[:, 2*(i+1)], label=bands[i], alpha=0.3, fmt='.k', ms=0.5)
+            if kind.lower() == "interpolate":
+                ax[i].plot(data[:, 0], data[:, i+1], label=bands[i], alpha=0.3, ms=0.5)
+            elif kind.lower() == "concatenated":
+                ax.plot(data[:, 0], data[:, i+1], label=bands[i], linewidth=0.5, c=colors[i]) if i < 4 else None
             else:
-                axs[i].plot(data[:, 0], data[:, 2 * i + 1], label=bands[i], linewidth=0.5, c=colors[i])
-            axs[i].legend(fontsize='xx-small', loc="upper right")
-        return fig5, axs
+                ax[i].plot(data[:, 0], data[:, i+1], label=bands[i], linewidth=0.5, c=colors[i])
+            ax[i].legend(fontsize='xx-small', loc="upper right") if kind.lower() != "concatenated" else None
+            ax.legend(fontsize='xx-small', loc="upper right") if (kind.lower() == "concatenated" and i == 4) else None
+        if not ax_bool:
+            return fig5, ax
+        else:
+            return ax
 
     def save_data(self, file_name, names, data):
         """
@@ -686,6 +717,8 @@ class SwiftGRBWorker:
             gs = fig5.add_gridspec(nrows=5, ncols=2, hspace=0)
             axs = gs.subplots()
             [axs[4][i].set_xlabel('Time since BAT Trigger time (s)', weight='bold').set_fontsize('10') for i in (0, 1)]
+            fig5.text(0.085, 0.5, r"Counts/sec/det", ha='center', va='center', rotation='vertical', weight='bold',
+                      fontsize=10)
             bands = (r"$15-25\,keV$", r"$25-50\,keV$", r"$50-100\,keV$", r"$100-350\,keV$", r"$15-350\,keV$")
             colors = ('k', 'r', 'lime', 'b', 'tab:pink')
             fig5.suptitle(f"{self.end} Swift {name}", weight='bold').set_fontsize('10')
@@ -737,6 +770,7 @@ class SwiftGRBWorker:
         :param kind: Specifies the kind of interpolation as a string or as an integer specifying the order
         of the spline interpolator to use. The string has to be one of ‘linear’, ‘nearest’, ‘nearest-up’, ‘zero’,
         ‘slinear’, ‘quadratic’, ‘cubic’, ‘previous’, or ‘next’ (took from Scipy Docs).
+        :param name: GRB Name
         :return: Interpolated array for new_time
         """
         assert len(times) == len(counts), f"Expected equal time and counts array length: {len(times)}, {len(counts)}"
@@ -782,21 +816,22 @@ class SwiftGRBWorker:
         :return: Interpolated array for custom resolution in all GRB bands
         """
         if t is None and limits is None:  # If there aren't limits use original data
-            data = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{self.end}.gz"), autostrip=True)
+            data = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{self.end}.gz"), autostrip=True,
+                                 usecols=self.col_bands)
         else:  # Else, limit data
             data = self.lc_limiter(name, t=t, limits=limits)
         if isinstance(data[0], str):
             return data
         else:
             new_time = np.arange(data[:, 0][0], data[:, 0][-1], resolution * 1e-3)
-            new_data = np.zeros((len(new_time), 11))  # Create new array to allocate data
+            new_data = np.zeros((len(new_time), len(data[0])))  # Create new array to allocate data
             new_data[:, 0] = new_time
-            for i in range(1, 11, 2):
+            for i in range(1, 6):
                 new_data[:, i] = self.one_band_interpolate(data[:, 0], data[:, i], new_time, pack_num, kind, name=name)
             if plot:
-                fig_i, ax_k = self.plot_any_grb(name, t=t, limits=limits, interpolate=True)  # Get original plot
+                fig_i, ax_k = self.plot_any_grb(name, t=t, limits=limits, kind="Interpolate")  # Get original plot
                 for i in range(5):
-                    ax_k[i].plot(new_data[:, 0], new_data[:, 2*i+1], linewidth=0.3, zorder=2.5, c='r')
+                    ax_k[i].plot(new_data[:, 0], new_data[:, i+1], linewidth=0.3, zorder=2.5, c='r')
                 if save_fig:
                     path = self.results_path + r'/Interpolation_Images'
                     helpers.directory_maker(path)
@@ -845,10 +880,11 @@ class SwiftGRBWorker:
         return non_errors, new_names, np.array(errors)
 
     def flux_calculator(self, name, band=1, t=None, limits=None):
-        assert band in (1, 3, 5, 7, 9), f"Expected band --> 1, 3, 5, 7, 9. Got: {band}"
+        assert band in (1, 2, 3, 4), f"Expected band --> 1, 2, 3, 4. Got: {band}"
         # Unpack the downloaded data for the file, if it exists:
         if t is None and limits is None:
-            data = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{self.end}.gz"), autostrip=True)
+            data = np.genfromtxt(os.path.join(self.original_data_path, f"{name}_{self.end}.gz"), autostrip=True,
+                                 usecols=self.col_bands)
         else:
             data = self.lc_limiter(name, t=t, limits=limits)
         assert isinstance(data[0], (list, np.ndarray)), f"{name}--> Expected array, got: {data}"
@@ -858,16 +894,16 @@ class SwiftGRBWorker:
     def hardness_proxy(self, names):
         assert isinstance(names, (str, np.ndarray, list, tuple)), f"Expected name or names array, got: {type(names)}"
         if isinstance(names, str):  # If a specific name is entered, then we search the value in the array
-            band_50_100 = self.flux_calculator(names, band=5, t=100)
-            band_25_50 = self.flux_calculator(names, band=3, t=100)
+            band_50_100 = self.flux_calculator(names, band=3, t=100)
+            band_25_50 = self.flux_calculator(names, band=2, t=100)
         else:  # If a name's array is specified, search them recursively
             with concurrent.futures.ProcessPoolExecutor(max_workers=self.workers) as executor:  # Parallelization
-                band_50_100 = list(executor.map(self.flux_calculator, names, repeat(5, len(names)), repeat(100, len(names))))
-                band_25_50 = list(executor.map(self.flux_calculator, names, repeat(3, len(names)), repeat(100, len(names))))
+                band_50_100 = list(executor.map(self.flux_calculator, names, repeat(3, len(names)), repeat(100, len(names))))
+                band_25_50 = list(executor.map(self.flux_calculator, names, repeat(2, len(names)), repeat(100, len(names))))
         return np.array(band_50_100)/np.array(band_25_50)
 
     @staticmethod
-    def nearest_neighbors(name, total_names, coord, num=5):
+    def nearest_neighbors(name, total_names, coord, num=5, sorted_d=False):
         assert isinstance(num, (int, np.int)), f"Expected integer number of neighbors, got: {num}"
         assert len(total_names) == len(coord), f"Expected names and coordinates arrays with the same length, got: " \
                                                f"{len(total_names)}, {len(coord)}"
@@ -875,4 +911,7 @@ class SwiftGRBWorker:
         distances = cdist(coord[row_name], coord)[0]
         sort_array = np.sort(distances)[1:num + 1]
         near_neighbors = np.where(np.isin(distances, sort_array))[0]
-        return np.sort(total_names[near_neighbors])
+        if sorted_d:
+            return np.sort(total_names[near_neighbors])
+        else:
+            return total_names[near_neighbors]

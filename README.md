@@ -1,4 +1,4 @@
-_This repository was put together by [Keneth Garcia](https://stivengarcia7113.wixsite.com/kenethgarcia) and supervised by **Dr. Rosa Becerra** and **Dr. Fabio De Colle**. Source and license info are on [GitHub](https://github.com/KenethGarcia/GRB_ML)._
+_This repository was put together by [Keneth Garcia](https://stivengarcia7113.wixsite.com/kenethgarcia). Source and license info are on [GitHub](https://github.com/KenethGarcia/GRB_ML)._
 - - -
 # T-distributed Stochastic Neighbor Embedding (t-SNE) in Swift Data
 As suggested by [Jespersen et al. (2020)](https://ui.adsabs.harvard.edu/abs/2020ApJ...896L..20J/abstract), Swift GRBs can be separated into two groups when t-SNE is performed. In this repository, we replicate this work by adding more recent data and an in-depth analysis of t-SNE performance. Moreover, we add synthetic GRBs performed using Machine Learning instances and join into Swift and other GRB data packages.

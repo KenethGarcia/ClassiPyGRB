@@ -29,7 +29,7 @@ warnings.filterwarnings('ignore', category=NaturalNameWarning)
 class SWIFT:
     """SWIFT
 
-    SWIFT is a tool to download, analyze and visualize data from SWIFT/BAT. There is a lot of options of binning modes
+    SWIFT is a tool to download, analyze and visualize data from SWIFT/BAT. There are several options of binning modes
     (covering from 2ms to 10s), visualization options (noise-reduction, band-by-band, concatenated, etc), and
     advanced tools (i.e., perform visualizations in real-time using animations). SWIFT has a wide variety of functions
     and path variables, where the user can customize step-by-step where to save data, results of processing these data
@@ -264,7 +264,7 @@ class SWIFT:
             >>> SWIFT.multiple_downloads(names=('GRB220715B', 'GRB060614'))
             None
         """
-        # Try to create the folder in the associated path, unless it already has been created.
+        # Creare the folder in the associated path, unless it already has been created.
         # It mitigates a FileNotFoundError with open(path) when the directory is created while Threading is executing.
         _tools.directory_maker(self.original_data_path)
 
@@ -1016,7 +1016,7 @@ class SWIFT:
             pack_num (int, optional): Number of data grouped per packet to interpolate. Defaults to 10.
 
         Returns:
-            A list of Pandas Dataframes with first column as time and the rest as interpolated counts.
+            A list of Pandas Dataframes where the first column presents the time and the rest are the interpolated counts.
         """
         if new_times is None:
             new_times = repeat(None)

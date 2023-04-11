@@ -42,7 +42,7 @@ The importance of the classification lies mainly in knowing the progenitors of t
 
 The detection of GRBs are carried by spatial mission such as Swift with its BAT instrument. Using the Swift-BAT GRB catalog, consisting of light curves (flux/time) in four energy bands (15-25 keV, 25-50 keV, 50-100 keV, 100-350 keV) for about 1250 events, we are able of analyzing the close-by regions (see Figure 1 from [@Jespersen2020]). 
 
-`ClassipyGRB` was designed to be used by astronomical researchers who carry out studies of GRBs. It provides interactive visualizations of the light curves of GRBs, and the similarities they share. This method allows the comparison in a few seconds with other events in order to find resembling GRBs through the proximity between them. 
+`ClassipyGRB` was designed to be used by astronomical researchers who carry out studies of GRBs. It provides interactive visualizations of the light curves of GRBs, and the similarities they share. This method allows the comparison in a few seconds with other events in order to find resembling GRBs through the proximity between them comparing their discrete Fourier transforms. 
 
 This method has been successfully applied for the correct identification of candidates for GRBs with extended emission that have not been previously identified by other groups, saving a lot of time and human effort \autoref[@Garcia-Cifuentes2023]. We locate extended emission GRBs reported by various authors under different criteria in our t-SNE maps (REF) and discuss its possible identification using only the gamma-ray data provided by the automatic pipeline of Swift/BAT (see \autoref{fig:fig1}). 
 

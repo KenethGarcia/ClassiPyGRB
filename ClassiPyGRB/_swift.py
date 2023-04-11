@@ -7,21 +7,21 @@
 # Details about Swift Data can be found in https://swift.gsfc.nasa.gov/about_swift/bat_desc.html
 
 import os
-
-import matplotlib.axes
 import tables
 import warnings
 import requests
 import numpy as np
 import pandas as pd
+import matplotlib.axes
 import concurrent.futures
+import matplotlib.pyplot as plt
 from . import _tools
 from tqdm import tqdm
 from typing import Union
 from itertools import repeat
-import matplotlib.pyplot as plt
 from scipy.fft import next_fast_len
 from tables import NaturalNameWarning
+from scipy.interpolate import interp1d
 from collections.abc import Sequence, Mapping
 warnings.filterwarnings('ignore', category=NaturalNameWarning)
 
@@ -52,7 +52,7 @@ class SWIFT:
 
     def __init__(
             self,
-            root_path: str,
+            root_path: str = None,
             res: int = 64,
             n_bands: Union[Sequence, np.ndarray] = (1, 2, 3, 4),
             data_path: str = None,
@@ -66,8 +66,8 @@ class SWIFT:
         Constructor of SWIFT Class
 
         Args:
-            root_path (str): Main path to save data/results from SWIFT.
-                Unique mandatory path to ensure the functionality of SWIFT Class.
+            root_path (str): Main path to save data/results from SWIFT. Defaults to None.
+                Unique mandatory path to ensure the functionality of saving data/figures in SWIFT Class.
             res (int): Binning resolution used to download/manipulate SWIFT data, expressed in ms. Defaults to 64.
                 Current supported resolutions are 2 (2 ms), 8 (8 ms), 16 (16 ms), 64 (64 ms), 256 (256 ms), 1000 (1 s),
                 and 10000 (10 s).
@@ -225,9 +225,9 @@ class SWIFT:
             None if the data download is successful, otherwise a string representing the RequestException description.
 
         Examples:
-            >>> SWIFT.single_download(name='GRB060614', t_id=1069788)
+            >>> SWIFT.single_download(name='GRB060614')
             None
-            >>> SWIFT.single_download(name='GRB220715B', t_id='1116441')
+            >>> SWIFT.single_download(name='GRB220715B')
             None
         """
         _tools.directory_maker(self.original_data_path)
@@ -259,9 +259,9 @@ class SWIFT:
             None
 
         Examples:
-            >>> SWIFT.multiple_downloads(names=['GRB060614', 'GRB220715B'], t_ids=[1069788, 1116441])
+            >>> SWIFT.multiple_downloads(names=['GRB060614', 'GRB220715B'])
             None
-            >>> SWIFT.multiple_downloads(names=('GRB220715B', 'GRB060614'), t_ids=('1116441', '1069788'))
+            >>> SWIFT.multiple_downloads(names=('GRB220715B', 'GRB060614'))
             None
         """
         # Try to create the folder in the associated path, unless it already has been created.
@@ -435,7 +435,7 @@ class SWIFT:
             >>>SWIFT.lc_limiter(name='GRB060614')  # Limit GRB060614 data between T_100
             >>>SWIFT.lc_limiter(name='GRB060510A')
             ('GRB060510A', -6.752, 16.748, 'Only zeros')
-            >>>SWIFT.lc_limiter(name='GRB060614', intervals=(-2, 100))  # Limit GRB060614 data between -2 to 100 s
+            >>>SWIFT.lc_limiter(name='GRB060614',limits=(-2, 100))  # Limit GRB060614 data between -2 to 100 s
             >>>SWIFT.lc_limiter(name='GRB050925', t=100)
             ('GRB050925', -0.036, 0.068, 'Length=2')
         """
@@ -827,13 +827,12 @@ class SWIFT:
             Array with all Fourier spectrum for each signal. The order is preserved.
         """
         with concurrent.futures.ProcessPoolExecutor(max_workers=self.workers) as executor:
-            sp = list(tqdm(executor.map(self.dft_spectrum, data), total=len(data), unit='Performing DFT',
-                           desc='Performing DFT: '))
+            sp = list(tqdm(executor.map(self.dft_spectrum, data), total=len(data), unit='GRB', desc='Performing DFT: '))
         return np.array(sp)
 
     def dft_plot(
             self,
-            spectrum: Union[Sequence, Mapping, np.ndarray, pd.DataFrame],
+            spectrum: Union[Sequence, Mapping, np.ndarray, pd.Series],
             ax: matplotlib.axes.Axes = None,
             name: str = None):
         """Plot the discrete Fourier transform (DFT) amplitude spectrum of a given signal.
@@ -857,7 +856,7 @@ class SWIFT:
             if len(ax) < 2:
                 raise ValueError(f"matplotlib.pyplot.axes needs to have at least two elements. "
                                  f"Received {len(ax)} element.")
-        if not isinstance(spectrum, (Sequence, Mapping, np.ndarray, pd.DataFrame)):
+        if not isinstance(spectrum, (Sequence, Mapping, np.ndarray, pd.Series)):
             raise ValueError(f"Spectrum needs to be an array-like (i.e., list, tuple). Received a {type(spectrum)}.")
         if ax is None:
             fig, ax = plt.subplots(2, 1, dpi=150, figsize=[10, 7], gridspec_kw={'height_ratios': [0.7, 0.4]})
@@ -875,7 +874,7 @@ class SWIFT:
             self,
             file_name: str,
             data: Union[Sequence, Mapping, np.ndarray, pd.DataFrame],
-            names: Union[Sequence, Mapping, np.ndarray, pd.DataFrame],
+            names: Union[Sequence, Mapping, np.ndarray, pd.Series],
             **kwargs):
         """Saves the given data and names to a npz file in the results path of the SWIFT class instance.
 
@@ -888,9 +887,141 @@ class SWIFT:
             Returns:
                 None
         """
-        if not isinstance(data, (Sequence, Mapping, np.ndarray)):
+        if not isinstance(data, (Sequence, Mapping, np.ndarray, pd.DataFrame)):
             raise ValueError(f"Data needs to be an array-like (i.e., list, tuple). Received a {type(data)}.")
-        if not isinstance(names, (Sequence, Mapping, np.ndarray)):
+        if not isinstance(names, (Sequence, Mapping, np.ndarray, pd.Series)):
             raise ValueError(f"Data needs to be an array-like (i.e., list, tuple). Received a {type(data)}.")
         _tools.directory_maker(self.results_path)
         np.savez(os.path.join(self.results_path, file_name), names=names, data=data, **kwargs)
+
+    @staticmethod
+    def grb_interpolate(
+            data: Union[Sequence, Mapping, np.ndarray, pd.Series],
+            new_time: Union[Sequence, Mapping, np.ndarray, pd.Series] = None,
+            res: float = 64,
+            kind: str = 'linear',
+            pack_num: int = 10,
+    ):
+        """Function to interpolate one band from any GRB light curve
+
+        Interpolate a light curve in a Pandas DataFrame or an array where the time data is in the first column, and the
+        band measurements are in the next columns. If a non-linear interpolation is selected, it can use an additional
+        input to indicate how much points per band will be used to interpolate.
+
+        Args:
+            data (array-like): Input data array.
+                The time data is assumed to be in the first column, and the band measurements are in the next columns.
+            new_time (array-like, optional): Output Time Array.
+            res (float, optional): Resolution of the data interpolated in milliseconds. Defaults to 64.
+            kind (str, optional): Kind of interpolation. Defaults to 'linear'.
+                From Scipy Docs: Specifies the kind of interpolation as a string or as an integer specifying the order
+                of the spline interpolator to use. The string has to be one of ‘linear’, ‘nearest’, ‘nearest-up’, ‘zero’
+                , ‘slinear’, ‘quadratic’, ‘cubic’, ‘previous’, or ‘next’.
+            pack_num (int, optional): Number of data grouped per packet to interpolate. Defaults to 10.
+
+        Returns:
+            Pandas Dataframe with first column as time and the rest as interpolated counts.
+
+        Raises:
+            ValueError: If data is not an array, if kind is not a string, if pack_num is not an integer, and if
+            new_time is not an array-like object or res is not an integer or float.
+        """
+        if not isinstance(data, (Sequence, Mapping, np.ndarray, pd.DataFrame)):
+            raise ValueError(f"Data needs to be an array-like (i.e., list, tuple). Received a {type(data)}.")
+        if not isinstance(kind, str):
+            raise ValueError(f"Kind needs to be an string. Received a {type(kind)}.")
+        if not isinstance(pack_num, int):
+            raise ValueError(f"pack_num needs to be an integer. Received a {type(pack_num)}.")
+        if res is not None:
+            if not isinstance(res, (int, float)):
+                raise ValueError(f"Resolution needs to be an integer or float. Received a {type(res)}.")
+        if new_time is not None:
+            if not isinstance(new_time, (Sequence, Mapping, np.ndarray, pd.Series)):
+                raise ValueError(f"Output time needs to be an array-like (i.e., list, tuple). Received a {type(new_time)}.")
+        else:
+            if res is None:
+                raise ValueError("If new_time is None, resolution interval cannot be NoneType.")
+            else:
+                # If there is not any new_time but a resolution, create a new time array:
+                new_time = np.arange(data.iloc[0, 0], data.iloc[-1, 0], res/1000)
+                if len(new_time) < 2:
+                    raise ValueError("Resolution interval is so high that it does not allow to interpolate the data. "
+                                     f"Received resolution: {res} ms, but data has a time interval of "
+                                     f"{round((data.iloc[-1, 0] - data.iloc[0, 0])*1000, 5)} ms.")
+        if not isinstance(data, pd.DataFrame):
+            columns = []
+            data = pd.DataFrame(data)
+        else:
+            columns = data.columns
+        time_data = np.asarray(data.iloc[:, 0])
+        band_data = np.asarray(data.iloc[:, 1:])
+        # Improve the interpolation intervals by removing redundant intervals:
+        limits = _tools.get_index(time_data, new_time)
+        time_data = time_data[limits[0]:limits[1]]
+        # Interpolate the light curve:
+        lc_interp = []
+        time_intervals = _tools.slice_array(time_data, length=pack_num) if kind.lower() != 'linear' else None
+        for i in range(band_data.shape[1]):
+            band_i = band_data[:, i]
+            band_i = band_i[limits[0]:limits[1]]
+            if kind.lower() == 'linear':
+                f = interp1d(time_data, band_i, kind=kind, fill_value="extrapolate")
+                lc_interp.append(f(new_time))
+            else:
+                inter_i = np.array([])
+                band_intervals = _tools.slice_array(band_i, length=pack_num)
+                for j in range(0, len(time_intervals)):
+                    time_j = np.asarray(time_intervals[j])
+                    band_i_j = np.asarray(band_intervals[j])
+                    try:
+                        f = interp1d(time_j, band_i_j, kind=kind)
+                    except ValueError:
+                        warnings.warn(f"Error when using kind={kind} in {j} step, changing to linear interpolation.")
+                        f = interp1d(time_j, band_i_j, kind='linear')
+                    if j == 0:
+                        new_times_j = new_time[(new_time <= time_j[-1]) & (new_time >= time_j[0])]
+                    else:
+                        new_times_j = new_time[(new_time <= time_j[-1]) & (new_time > time_j[0])]
+                    inter_i = np.append(inter_i, f(new_times_j))
+                lc_interp.append(inter_i)
+        lc_interp = np.column_stack([new_time, *lc_interp])
+        # Convert to Pandas Dataframe
+        try:
+            lc_interp = pd.DataFrame(lc_interp, columns=columns)
+        except ValueError:
+            lc_interp = pd.DataFrame(lc_interp)
+        return lc_interp
+
+    def parallel_grb_interpolate(
+            self,
+            data: Union[Sequence, Mapping, np.ndarray, pd.DataFrame],
+            new_times: Union[Sequence, Mapping, np.ndarray, pd.DataFrame] = None,
+            res: float = 64,
+            kind: str = 'linear',
+            pack_num: int = 10,
+    ):
+        """Function to interpolate GRBs in a parallel way.
+
+        Args:
+            data (array-like): Input data array.
+                The time data is assumed to be in the first column and the band measurements are in the next columns
+                of each i-esim element of data.
+            new_times (array-like): Output Time Array.
+                It is assumed that the time array has the same length as data.
+            res (float, optional): Resolution of the data interpolated in milliseconds. Defaults to 64.
+            kind (str, optional): Kind of interpolation. Defaults to 'linear'.
+                From Scipy Docs: Specifies the kind of interpolation as a string or as an integer specifying the order
+                of the spline interpolator to use. The string has to be one of ‘linear’, ‘nearest’, ‘nearest-up’, ‘zero’
+                , ‘slinear’, ‘quadratic’, ‘cubic’, ‘previous’, or ‘next’.
+            pack_num (int, optional): Number of data grouped per packet to interpolate. Defaults to 10.
+
+        Returns:
+            A list of Pandas Dataframes with first column as time and the rest as interpolated counts.
+        """
+        if new_times is None:
+            new_times = repeat(None)
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            results = list(tqdm(executor.map(self.grb_interpolate, data, new_times, repeat(res), repeat(kind),
+                                             repeat(pack_num)), total=len(data), unit='GRB', desc='Interpolating: '))
+
+        return results

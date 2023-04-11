@@ -117,8 +117,6 @@ def get_index(array_1, array_2):
     index = np.where(array <= other[0])[0]
     index2 = np.where(array >= other[-1])[0]
     if len(index) == 0:
-        if np.allclose(array[0], other[0]):
-            print('Index es falso')
         raise ValueError(f"Array does not contain any element lower or equal to {other[0]}.")
     elif len(index2) == 0:
         if np.allclose(array[-1], other[-1]):

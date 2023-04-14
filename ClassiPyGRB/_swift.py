@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 from . import _tools
 from tqdm import tqdm
 from typing import Union
+from fabada import fabada
 from itertools import repeat
 from scipy.fft import next_fast_len
 from tables import NaturalNameWarning
@@ -232,13 +233,11 @@ class SWIFT:
         """
         _tools.directory_maker(self.original_data_path)
         file_name = f"{name}_{self.end}.h5"
-        path = os.path.join(self.original_data_path, file_name)
         try:
-            os.remove(path) if os.path.exists(path) else None
             df = self.obtain_data(name=name)
             if not isinstance(df, pd.DataFrame):
                 return df
-            df.to_hdf(path_or_buf=path, key=name, complevel=0, format='fixed')
+            _tools.save_data(data=df, name=name, filename=file_name, directory=self.original_data_path)
         except tables.exceptions.HDF5ExtError as e:
             return e
         else:
@@ -264,7 +263,7 @@ class SWIFT:
             >>> SWIFT.multiple_downloads(names=('GRB220715B', 'GRB060614'))
             None
         """
-        # Creare the folder in the associated path, unless it already has been created.
+        # Try to create the folder in the associated path, unless it already has been created.
         # It mitigates a FileNotFoundError with open(path) when the directory is created while Threading is executing.
         _tools.directory_maker(self.original_data_path)
 
@@ -526,6 +525,7 @@ class SWIFT:
             kind: str = 'Default',
             ax=None,
             legend: bool = True,
+            check_disk: bool = False,
             **fig_kwargs
     ):
         """Function to plot any GRB.
@@ -542,6 +542,7 @@ class SWIFT:
             ax (matplotlib.axes.Axes, optional): The Axes object to plot the light curve onto. Defaults to None.
                 In case of 'Default' or 'Interpolated' kind, ax must have the same number of columns as bands selected.
             legend (bool, optional): Flag to put band legend in plot. Defaults to True.
+            check_disk (bool, optional): Flag to check if light curve is in disk. Defaults to False.
             **fig_kwargs: Additional arguments to be passed in matplotlib.pyplot.subplots if kind is 'Concatenated'.
                 Otherwise, arguments to be passed in matplotlib.pyplot.figure.
 
@@ -581,11 +582,11 @@ class SWIFT:
             if isinstance(df, tuple):
                 warnings.warn(fr"Error when limiting out of T_{t} {name}: {df[3]}. Plotting all data...",
                               RuntimeWarning)
-                df = self.obtain_data(name=name)
+                df = self.obtain_data(name=name, check_disk=check_disk)
                 df = df[self.bands_selected]
                 high_sub.set_title(f"{self.end} Swift {name} Total Light Curve", weight='bold').set_fontsize('12')
         else:
-            df = self.obtain_data(name=name)
+            df = self.obtain_data(name=name, check_disk=check_disk)
             df = df[self.bands_selected]
             high_sub.set_title(f"{self.end} Swift {name} Total Light Curve", weight='bold').set_fontsize('12')
         colors = ['#2d0957', '#12526f', '#04796a', '#7ab721', '#d9c40a']
@@ -1016,7 +1017,7 @@ class SWIFT:
             pack_num (int, optional): Number of data grouped per packet to interpolate. Defaults to 10.
 
         Returns:
-            A list of Pandas Dataframes where the first column presents the time and the rest are the interpolated counts.
+            A list of Pandas Dataframes with first column as time and the rest as interpolated counts.
         """
         if new_times is None:
             new_times = repeat(None)
@@ -1024,4 +1025,119 @@ class SWIFT:
             results = list(tqdm(executor.map(self.grb_interpolate, data, new_times, repeat(res), repeat(kind),
                                              repeat(pack_num)), total=len(data), unit='GRB', desc='Interpolating: '))
 
+        return results
+
+    def noise_reduction_fabada(
+            self,
+            name: str,
+            sigma: Union[Sequence, Mapping, np.ndarray, pd.Series, float] = None,
+            save_data: bool = True,
+    ):
+        """Function to perform non-parametric noise reduction technique from FABADA to any GRB.
+
+        Source (GitHub): https://github.com/PabloMSanAla/fabada
+        FABADA is a novel non-parametric noise reduction technique which arise from the point of view of Bayesian
+        inference that iteratively evaluates possible smoothed models of the data, obtaining an estimation of the
+        underlying signal that is statistically compatible with the noisy measurements.
+
+        Args:
+            name (str): Name of the GRB.
+            sigma (float or array, optional): Variance to use in the FABADA algorithm. Defaults to None.
+                If sigma is None, the variance is estimated from the data using the RMS noise of an image. If sigma is a
+                float, the same variance is used for all the bands. If sigma is an array, the variance is used for each
+                band in ascending order.
+            save_data (bool, optional): Whether to save the data or not. Defaults to True.
+
+        Returns:
+            A Pandas Dataframe with first column as time and the rest as reduced counts. If any error occurs, it returns
+            a tuple of original data and error description.
+        """
+        if sigma is not None:
+            if not isinstance(sigma, (Sequence, Mapping, np.ndarray, pd.Series, float)):
+                raise TypeError(f"sigma must be a float, array or None. Obtained: {type(sigma)}")
+        if not isinstance(save_data, bool):
+            raise TypeError(f"save_data must be a bool. Obtained: {type(save_data)}")
+        if not isinstance(name, str):
+            raise TypeError(f"name must be a str. Obtained: {type(name)}")
+        sig_check = True if sigma is None else False
+        data = self.obtain_data(name=name, check_disk=True)
+        try:
+            limits = self.duration_limits(name=name, t=100)[0]
+            low_lim, upper_lim = float(limits[1]), float(limits[2])
+        except (ValueError, IndexError) as err:
+            warnings.warn(f"Error when obtaining limits for {name}: {err}. It is not possible to reduce noise.",
+                          RuntimeWarning)
+            if save_data:  # Create an empty file to avoid errors when limiting data
+                _tools.save_data(data=pd.DataFrame(), name=name, filename=f"{name}_{self.end}.h5",
+                                 directory=self.noise_data_path)
+            return data, err
+        else:
+            out_t100 = data[(data.iloc[:, 0] < low_lim) | (data.iloc[:, 0] > upper_lim)]
+            out_t100 = out_t100[out_t100.iloc[:, 1:].any(axis=1)]  # Remove rows with all zeros to avoid errors
+            if len(out_t100) > 0:
+                columns_aux = [self.column_labels[i] for i in range(1, len(self.column_labels), 2)]
+                out_t100 = out_t100[columns_aux]
+                for i, column in enumerate(out_t100):
+                    data_i = np.asarray(data[column])
+                    if sig_check:
+                        out_i = np.asarray([out_t100[column]])
+                        sigma = np.square(_tools.estimate_noise(out_i))
+                    data[column] = fabada(data_i, data_variance=sigma if isinstance(sigma, float) else sigma[i])
+                if save_data:
+                    file_name = f"{name}_{self.end}.h5"
+                    _tools.save_data(data=data, name=name, filename=file_name, directory=self.noise_data_path)
+                return data
+            else:
+                warnings.warn(f"No data outside T_100 found for {name}. It is not possible to reduce noise.",
+                              RuntimeWarning)
+                if save_data:
+                    _tools.save_data(data=pd.DataFrame(), name=name, filename=f"{name}_{self.end}.h5",
+                                     directory=self.noise_data_path)
+                return data, f'length = {len(out_t100)}'
+
+    def parallel_noise_reduction_fabada(
+            self,
+            names: Union[Sequence, Mapping, np.ndarray, pd.Series],
+            sigma: Union[Sequence, Mapping, np.ndarray, pd.Series] = None,
+            save_data: bool = True,
+    ):
+        """Function to perform non-parametric noise reduction technique from FABADA in a parallel way.
+
+        Args:
+            names (array-like): Names of the GRBs.
+            sigma (float or array, optional): Variance to use in the FABADA algorithm. Defaults to None.
+                If sigma is None, the variance is estimated from the data using the RMS noise of an image. If each
+                sigma_i in the array is a float, the same variance is used for all bands. If instead each sigma_i is an
+                array, each element of the i-esim array is used as variance for each band in ascending order.
+            save_data (bool, optional): Whether to save the data or not. Defaults to True.
+
+        Raises:
+            TypeError: If names is not an array-like.
+            TypeError: If sigma is not a float, array or None.
+            TypeError: If save_data is not a bool.
+
+        Returns:
+            A list of Pandas Dataframes with first column as time and the rest as reduced counts (without modify error
+            columns).
+        """
+        if not isinstance(names, (Sequence, Mapping, np.ndarray, pd.Series)):
+            raise TypeError(f"names must be an array-like. Obtained: {type(names)}")
+        if sigma is not None:
+            if not isinstance(sigma, (Sequence, Mapping, np.ndarray, pd.Series, float)):
+                raise TypeError(f"sigma must be a float, array or None. Obtained: {type(sigma)}")
+        if not isinstance(save_data, bool):
+            raise TypeError(f"save_data must be a bool. Obtained: {type(save_data)}")
+        if sigma is None:
+            sigma = repeat(None)
+        if not isinstance(names, np.ndarray):
+            names = np.asarray(names)
+        with concurrent.futures.ProcessPoolExecutor(max_workers=self.workers) as executor:
+            results = list(tqdm(executor.map(self.noise_reduction_fabada, names, sigma, repeat(save_data)),
+                                total=len(names), unit='GRB', desc='Noise reduction: '))
+            if save_data:
+                with open(os.path.join(self.noise_data_path, f"Errors_{self.end}.txt"), 'w') as f:
+                    f.write("## GRB_Name\tError_Description\n")
+                    for i in range(len(names)):
+                        result = results[i]
+                        f.write(f"{names[i]}\t{result[-1]}\n") if isinstance(result, tuple) else None
         return results

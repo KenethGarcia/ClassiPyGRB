@@ -10,7 +10,32 @@ import os
 import numpy as np
 import pandas as pd
 from typing import Union
+from scipy.signal import convolve2d
 from collections.abc import Sequence, Mapping
+
+
+def save_data(
+        data: pd.DataFrame,
+        name: str,
+        filename: str,
+        directory: str
+):
+    """Function to save data in a hdf5 file.
+
+    Args:
+        data (pd.DataFrame): Data to save.
+        name (str): Name of the data.
+        filename (str): Name of the file.
+        directory (str): Path where to save the file.
+
+    Returns:
+        None
+    """
+    if not os.path.exists(directory):
+        directory_maker(directory)
+    path = os.path.join(directory, filename)
+    os.remove(path) if os.path.exists(path) else None
+    data.to_hdf(path_or_buf=path, key=name, complevel=0, format='fixed')
 
 
 def directory_maker(
@@ -124,3 +149,21 @@ def get_index(array_1, array_2):
         else:
             raise ValueError(f"Array does not contain any element higher or equal to {other[-1]}.")
     return index[-1], index2[0]+1
+
+
+def estimate_noise(data):
+    """ Estimate the RMS noise of an image
+
+    Taked from https://stackoverflow.com/questions/2440504/noise-estimation-noise-measurement-in-image
+    Reference: J. Immerkaer, “Fast Noise Variance Estimation”, Computer Vision and Image Understanding,
+    Vol. 64, No. 2, pp. 300-302, Sep. 1996 [PDF]
+    """
+    H, W = data.shape
+    data = np.nan_to_num(data)
+    M = [[1, -2, 1],
+         [-2, 4, -2],
+         [1, -2, 1]]
+    sigma = np.sum(np.sum(np.abs(convolve2d(data, M))))
+    sigma = sigma * np.sqrt(0.5 * np.pi) / (6 * (W - 2) * (H - 2))
+    return sigma
+

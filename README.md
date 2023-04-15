@@ -1,11 +1,12 @@
-_This repository was put together by [Keneth Garcia](https://stivengarcia7113.wixsite.com/kenethgarcia). Source and license info are on [GitHub](https://github.com/KenethGarcia/GRB_ML)._
+_This repository created by [Keneth Garcia](https://stivengarcia7113.wixsite.com/kenethgarcia). Source and license info are on [GitHub](https://github.com/KenethGarcia/GRB_ML)._
 - - -
 # T-distributed Stochastic Neighbor Embedding (t-SNE) in Swift Data
-As suggested by [Jespersen et al. (2020)](https://ui.adsabs.harvard.edu/abs/2020ApJ...896L..20J/abstract), Swift GRBs can be separated into two groups when t-SNE is performed. In this repository, we replicate this work by adding more recent data and an in-depth analysis of t-SNE performance. Moreover, we add synthetic GRBs performed using Machine Learning instances and join into Swift and other GRB data packages.
 
-The project started on February 1st, 2022, and is expected to end in 2024. However, any posterior contribution will be received.
+Gamma-ray bursts (GRBs) are typically classified in two groups using their duration ([Kouveliotou et al. (1993)](https://ui.adsabs.harvard.edu/abs/1993ApJ...413L.101K/abstract)). Nevertheless, this classification is not exact. And in recent years, it has been observed that it is not reliable in determining the progenitors of such events.
 
+[Jespersen et al. (2020)](https://ui.adsabs.harvard.edu/abs/2020ApJ...896L..20J/abstract) showed that Swift/BAT GRBs can be separated into two groups  when t-SNE is performed. In this repository, we replicate this work by adding more recent data and an in-depth analysis of t-SNE performance. Moreover, we add synthetic GRBs performed using Machine Learning instances and join into Swift and other GRB data packages.
 
+!The project started on February 1st, 2022, and is expected to end in 2024. However, any posterior contribution will be received.
 
 ## Dependencies
 This repository requires Python 3.8 or high, and the packages from the [``requeriments.txt``](https://github.com/KenethGarcia/GRB_ML/blob/51482eecd01d8bea10a951ba3e9b0b108cea3c08/requirements.txt) file. Other packages will be required optionally in Documentation (i.e., Jupyter).

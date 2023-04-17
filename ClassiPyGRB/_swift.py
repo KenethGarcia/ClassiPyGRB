@@ -24,6 +24,8 @@ from scipy.fft import next_fast_len
 from tables import NaturalNameWarning
 from scipy.interpolate import interp1d
 from collections.abc import Sequence, Mapping
+from openTSNE import TSNE as open_tsne
+from sklearn.manifold import TSNE as sklearn_tsne
 warnings.filterwarnings('ignore', category=NaturalNameWarning)
 
 
@@ -365,16 +367,13 @@ class SWIFT:
 
     def redshifts(
             self,
-            name: Union[str, Sequence, Mapping, np.ndarray, pd.Series] = None,
-            redshift_table: str = "GRBlist_redshift_BAT.txt"
+            name: Union[str, Sequence, Mapping, np.ndarray, pd.Series] = None
     ):
         """GRB Redshift extractor.
 
         Args:
             name (str, list of str): GRB Name or list of GRB Names. Defaults to None.
                 If None, then all GRBs available will be indexed.
-            redshift_table (str, optional): Durations table name, related with table path class variable. Defaults to
-                'summary_burst_durations.txt'.
 
         Returns:
             list: Array in format [[Name_i, Z_i], ...] for each i-esim GRB name.
@@ -390,8 +389,7 @@ class SWIFT:
             >>>SWIFT.redshifts(name=['GRB220611A', 'GRB220521A'])
             [['GRB220611A' '2.3608'], ['GRB220521A' '5.6']]
         """
-        path = os.path.join(self.table_path, redshift_table)
-        keys_extract = np.genfromtxt(path, delimiter="|", dtype=str, usecols=(0, 1), autostrip=True)
+        keys_extract = np.genfromtxt(f'../tables/GRBlist_redshift_BAT.txt', delimiter="|", dtype=str, usecols=(0, 1), autostrip=True)
         # Extract all values from summary_burst_durations.txt:
         if isinstance(name, str):  # If a specific name is entered, then we search the redshift in the array
             return _tools.check_name(name, keys_extract)
@@ -562,7 +560,7 @@ class SWIFT:
         if not isinstance(name, str):
             raise ValueError(f"{type(name)} not supported as name. Only str GRB name supported in current version.")
         aux_inter = True
-        if len(self.bands_selected)-1 == 1:
+        if len(self.bands_selected) - 1 == 1:
             aux_inter = False if kind.lower() == 'interpolated' else True
             kind = 'Concatenated'
         if ax is None:  # If there aren't any previous axes, create new one
@@ -571,9 +569,9 @@ class SWIFT:
                 ax.set_ylabel(r"Counts/sec/det", weight='bold').set_fontsize('10')
             else:
                 fig5 = plt.figure(dpi=150, **fig_kwargs)
-                gs = fig5.add_gridspec(nrows=len(self.bands_selected)-1, hspace=0)
+                gs = fig5.add_gridspec(nrows=len(self.bands_selected) - 1, hspace=0)
                 ax = gs.subplots(sharex=True)
-                ax[(len(self.bands_selected)-1)//2].set_ylabel(r"Counts/sec/det", weight='bold').set_fontsize('10')
+                ax[(len(self.bands_selected) - 1) // 2].set_ylabel(r"Counts/sec/det", weight='bold').set_fontsize('10')
         low_sub = ax if kind.lower() == "concatenated" else ax[-1]
         high_sub = ax if kind.lower() == "concatenated" else ax[0]
         low_sub.set_xlabel('Time since BAT Trigger time (s)', weight='bold').set_fontsize('10')
@@ -592,7 +590,7 @@ class SWIFT:
         colors = ['#2d0957', '#12526f', '#04796a', '#7ab721', '#d9c40a']
         columns = list(df.columns)
         columns.pop(0)
-        for i in range(len(self.bands_selected)-1):
+        for i in range(len(self.bands_selected) - 1):
             x_val = df[self.column_labels[0]]
             if kind.lower() == "interpolated":
                 ax[i].plot(x_val, df[columns[i]], label=columns[i], alpha=0.3, ms=0.5, c='gray')
@@ -604,7 +602,7 @@ class SWIFT:
             if legend:
                 ax[i].legend(fontsize='xx-small', loc="upper right") if kind.lower() != "concatenated" else None
                 ax.legend(fontsize='xx-small', loc="upper right") if (
-                            kind.lower() == "concatenated" and i == len(columns)-1) else None
+                        kind.lower() == "concatenated" and i == len(columns) - 1) else None
         return ax
 
     @staticmethod
@@ -812,8 +810,8 @@ class SWIFT:
             raise ValueError(f"Data needs to be an array-like (i.e., list, tuple). Received a {type(data)}.")
         n = len(data)
         x = np.fft.fft(data)
-        mag_x = np.abs(x)/n  # Normalize amplitude
-        return mag_x[:len(mag_x)//2]
+        mag_x = np.abs(x) / n  # Normalize amplitude
+        return mag_x[:len(mag_x) // 2]
 
     def parallel_dft_spectrum(
             self,
@@ -861,7 +859,7 @@ class SWIFT:
             raise ValueError(f"Spectrum needs to be an array-like (i.e., list, tuple). Received a {type(spectrum)}.")
         if ax is None:
             fig, ax = plt.subplots(2, 1, dpi=150, figsize=[10, 7], gridspec_kw={'height_ratios': [0.7, 0.4]})
-        freq = np.fft.fftfreq(2*spectrum.size, d=self.res * 1e-3)
+        freq = np.fft.fftfreq(2 * spectrum.size, d=self.res * 1e-3)
         freq = freq[:len(freq) // 2]
         ax[0].set_title(fr"{name} DFT", weight='bold').set_fontsize('12') if name is not None else None
         ax[0].plot(freq[:len(freq) // 5], spectrum[:len(freq) // 5], linewidth=0.5, c='k')
@@ -944,11 +942,11 @@ class SWIFT:
                 raise ValueError("If new_time is None, resolution interval cannot be NoneType.")
             else:
                 # If there is not any new_time but a resolution, create a new time array:
-                new_time = np.arange(data.iloc[0, 0], data.iloc[-1, 0], res/1000)
+                new_time = np.arange(data.iloc[0, 0], data.iloc[-1, 0], res / 1000)
                 if len(new_time) < 2:
                     raise ValueError("Resolution interval is so high that it does not allow to interpolate the data. "
                                      f"Received resolution: {res} ms, but data has a time interval of "
-                                     f"{round((data.iloc[-1, 0] - data.iloc[0, 0])*1000, 5)} ms.")
+                                     f"{round((data.iloc[-1, 0] - data.iloc[0, 0]) * 1000, 5)} ms.")
         if not isinstance(data, pd.DataFrame):
             columns = []
             data = pd.DataFrame(data)
@@ -1141,3 +1139,213 @@ class SWIFT:
                         result = results[i]
                         f.write(f"{names[i]}\t{result[-1]}\n") if isinstance(result, tuple) else None
         return results
+
+    @staticmethod
+    def perform_tsne(
+            data: Union[Sequence, Mapping, np.ndarray, pd.Series],
+            library: str = 'sklearn',
+            **kwargs
+    ):
+        """Function to perform tSNE using scikit-Learn or openTSNE implementations.
+
+        Args:
+            data (array-like): Preprocessed data to be embedded. Must be a 2D array.
+            library (str, optional): Library to use. Defaults to 'sklearn'.
+                Options: 'sklearn' or 'openTSNE'.
+            **kwargs: Additional arguments to configure tSNE implementation, avoid to use 'random_state' as arg.
+
+        Returns:
+            2D array with the embedded data. Each row corresponds to a pair (x_i, y_i) of data transformed.
+        """
+        if not isinstance(data, (Sequence, Mapping, np.ndarray, pd.Series)):
+            raise TypeError(f"data must be an array-like. Obtained: {type(data)}")
+        if not isinstance(library, str):
+            raise TypeError(f"library must be a str. Obtained: {type(library)}")
+        if library.lower() == 'opentsne':  # OpenTSNE has by default init='pca'
+            tsne = open_tsne(n_components=2, n_jobs=-1, random_state=42, **kwargs)
+            data_reduced_tsne = tsne.fit(data)  # Perform tSNE to data
+        else:  # However, sklearn_TSNE has by default init='random'
+            tsne = sklearn_tsne(n_components=2, n_jobs=-1, random_state=42, **kwargs)
+            data_reduced_tsne = tsne.fit_transform(data)  # Perform tSNE to data
+        return data_reduced_tsne
+
+    @staticmethod
+    def plot_tsne(
+            positions: Union[Sequence, Mapping, np.ndarray, pd.DataFrame],
+            durations: Union[Sequence, Mapping, np.ndarray, pd.Series] = None,
+            names: Union[Sequence, Mapping, np.ndarray, pd.Series] = None,
+            special_cases: Union[Sequence, Mapping, np.ndarray, pd.Series] = None,
+            redshifts: Union[Sequence, Mapping, np.ndarray, pd.Series] = None,
+            marker_size: Union[Sequence, Mapping, np.ndarray, pd.Series, int] = 10,
+            color_limits: tuple = None,
+            legend_redshifts: bool = True,
+            legend_special_cases: bool = True,
+            redshift_kwargs: dict = None,
+            special_marker: Union[Sequence, Mapping, np.ndarray, pd.Series, str] = None,
+            special_marker_size: Union[Sequence, Mapping, np.ndarray, pd.Series, int] = None,
+            special_marker_color: Union[Sequence, Mapping, np.ndarray, pd.Series, str] = None,
+            non_special_marker_color: Union[Sequence, Mapping, np.ndarray, pd.Series, str] = None,
+            kwargs_plot: dict = None,
+            special_kwargs_plot: dict = None,
+            special_kwargs_legend: dict = None,
+            color_bar_kwargs: dict = None,
+            picker: bool = False,
+            return_colorbar: bool = False,
+            ax=None
+    ):
+        """Function to plot tSNE results.
+
+        Args:
+            positions (array-like): 2D array with the embedded data. Each row corresponds to a pair (x_i, y_i) of data
+                transformed.
+            durations (array-like, optional): Duration of each GRB in seconds. Defaults to None.
+            names (array-like, optional): Names of the GRBs. Defaults to None.
+            special_cases (array-like, optional): Array with the special cases to highlight in map. Defaults to None.
+            redshifts (array-like, optional): Array with the redshifts of each GRB. Defaults to None.
+            marker_size (int or array-like, optional): Size of the markers. Defaults to 10.
+                Unused when redshifts is not None. If array-like, each element of the i-esim array is used as size for
+                the i-esim GRB.
+            color_limits (tuple, optional): Limits of the colorbar. Defaults to None.
+            legend_redshifts (bool, optional): Whether to show legend of redshifts or not. Defaults to True.
+            legend_special_cases (bool, optional): Whether to show legend of special cases or not. Defaults to True.
+            redshift_kwargs (dict, optional): Additional arguments to configure redshifts legend. Defaults to None.
+            special_marker (str or array-like, optional): Marker to use for special cases. Defaults to None.
+                If array-like, each i-esim element of the array is used as marker for the i-esim special GRB.
+            special_marker_size (int or array-like, optional): Size of the markers for special cases. Defaults to None.
+                If array-like, each i-esim element of the array is used as size for the i-esim special GRB. If int, all
+                special markers will have the same size. It overrides marker_size if specified.
+            special_marker_color (str or array-like, optional): Markers color for special cases. Defaults to None.
+                If array-like, each i-esim element of the array is used as color for the i-esim special GRB. If str, all
+                special markers will have the same color. It overrides durations colormap if specified.
+            non_special_marker_color (str or array-like, optional): Non-special cases marker color. Defaults to None.
+                If array-like, each i-esim element of the array is used as color for the i-esim non-special GRB. If str,
+                all non-special markers will have the same color. It overrides durations colormap if specified.
+            kwargs_plot (dict, optional): Additional arguments to configure main scatter. Defaults to None.
+                It does not affect special cases scatter.
+            special_kwargs_plot (dict, optional): Additional arguments to special cases scatter. Defaults to None.
+            special_kwargs_legend (dict, optional): Additional arguments to special cases legend. Defaults to None.
+            color_bar_kwargs (dict, optional): Additional arguments to configure color bar. Defaults to None.
+            picker (bool, optional): Whether to enable picker or not. Defaults to False.
+            return_colorbar (bool, optional): Whether to return color bar or not. Defaults to False.
+            ax (matplotlib.axes.Axes, optional): Axes to plot in. Defaults to None.
+
+        Raises:
+            TypeError: If positions is not an array-like.
+            TypeError: If durations is not an array-like.
+            TypeError: If names is not an array-like.
+            TypeError: If special_cases is not an array-like.
+            TypeError: If redshifts is not an array-like.
+            TypeError: If ax is not a matplotlib.axes.Axes.
+
+        Returns:
+            matplotlib.axes.Axes: Axes with the plot.
+        """
+        if not isinstance(positions, (Sequence, Mapping, np.ndarray, pd.DataFrame)):
+            raise TypeError(f"positions must be an array-like. Obtained: {type(positions)}")
+        if durations is not None:
+            if not isinstance(durations, (Sequence, Mapping, np.ndarray, pd.Series)):
+                raise TypeError(f"durations must be an array-like. Obtained: {type(durations)}")
+            if len(durations) != len(positions):
+                raise ValueError(f"Durations must have the same length as positions. Obtained: {len(durations)} "
+                                 f"and {len(positions)}")
+        if names is not None:
+            if not isinstance(names, (Sequence, Mapping, np.ndarray, pd.Series)):
+                raise TypeError(f"names must be an array-like. Obtained: {type(names)}")
+            if len(names) != len(positions):
+                raise ValueError(f"Names must have the same length as positions. Obtained: {len(names)} "
+                                 f"and {len(positions)}")
+        if special_cases is not None:
+            if not isinstance(special_cases, (Sequence, Mapping, np.ndarray, pd.Series)):
+                raise TypeError(f"special_cases must be an array-like. Obtained: {type(special_cases)}")
+        if redshifts is not None:
+            if not isinstance(redshifts, (Sequence, Mapping, np.ndarray, pd.Series)):
+                raise TypeError(f"redshifts must be an array-like. Obtained: {type(redshifts)}")
+            if len(redshifts) != len(positions):
+                raise ValueError(f"Redshifts must have the same length as positions. Obtained: {len(redshifts)} "
+                                 f"and {len(positions)}")
+        if ax is not None:
+            if not isinstance(ax, plt.Axes):
+                raise TypeError(f"ax must be a matplotlib.axes.Axes. Obtained: {type(ax)}")
+        if isinstance(marker_size, (Sequence, Mapping, np.ndarray, pd.Series)):
+            if len(marker_size) != len(positions):
+                raise ValueError(f"Marker size must have the same length as positions. Obtained: {len(marker_size)} "
+                                 f"and {len(positions)}.")
+        if redshift_kwargs is None:
+            redshift_kwargs = {}
+        if kwargs_plot is None:
+            kwargs_plot = {}
+        if special_kwargs_plot is None:
+            special_kwargs_plot = {}
+        if special_kwargs_legend is None:
+            special_kwargs_legend = {}
+        if color_bar_kwargs is None:
+            color_bar_kwargs = {}
+        if ax is None:
+            fig, ax = plt.subplots(dpi=300)
+        sca, color_bar = [], ()  # Define a default array to group scatter for Legends and color bar
+        # Convert positions to numpy array if not:
+        if not isinstance(positions, np.ndarray):
+            positions = np.asarray(positions)
+        x_i, y_i = positions[:, 0], positions[:, 1]  # Unpack tSNE results
+        # Initialize sizes based on redshifts or marker_size and add a legend if required:
+        sizes = np.ones(len(positions)) * marker_size if isinstance(marker_size, int) else marker_size
+        if redshifts is not None:
+            redshift = _tools.size_maker(redshifts)
+            sizes = redshift * 600 / np.max(redshift)
+            if legend_redshifts:
+                for area in [1, 2, 4]:  # Do phantom scatter to put legend size
+                    sca.append(ax.scatter([], [], c='k', alpha=0.3, s=area * 600 / max(redshift), label=f"$z={area}$"))
+                first_leg = ax.legend(handles=sca, scatterpoints=1, frameon=False, labelspacing=1, fontsize='small',
+                                      **redshift_kwargs)
+                ax.add_artist(first_leg)  # Add legend to plot
+                sca.clear()  # Reset variable to add further legends later
+        # Initialize colors based on durations:
+        colors, normalize = np.array(['darkslategray'] * len(positions)), None
+        if durations is not None:
+            colors = np.log10(durations)
+            if color_limits is None:
+                min_color, max_color = np.min(colors), np.max(colors)
+            else:
+                min_color, max_color = color_limits[0], color_limits[1]
+            normalize = plt.Normalize(min_color, max_color)
+        # Now divide the GRBs in two groups: special cases and normal cases:
+        special_cases = [] if special_cases is None else special_cases
+        match = np.where(np.isin(names, special_cases))[0]  # Check if there are special cases matching GRB Names
+        non_match = np.arange(0, len(x_i), 1) if names is None else \
+            np.where(np.isin(names, special_cases, invert=True))[0]
+        if len(match) > 0:  # Plot special cases:
+            if isinstance(special_marker, str):  # If special_marker is a string, use it for all special cases
+                special_marker = np.array([special_marker] * len(match))
+            if isinstance(special_marker_size, int):  # If special_marker_size is an int, use it for all special cases
+                special_marker_size = np.array([special_marker_size] * len(match))
+            if isinstance(special_marker_color, str):  # If special_marker_color is a string, use it for all special
+                special_marker_color = np.array([special_marker_color] * len(match))
+            mpl_markers = list(matplotlib.lines.Line2D.filled_markers[2:])  # Make a list of all possible markers
+            markers = mpl_markers * len(match) if special_marker is None else special_marker  # Define multiple markers
+            for j, i in enumerate(match):  # If there are special cases, plot them
+                sc = ax.scatter(x_i[i], y_i[i], marker=markers[j], zorder=10, norm=normalize, edgecolor='k',
+                                cmap='jet' if durations is not None else None,
+                                c=colors[i] if special_marker_color is None else special_marker_color[j],
+                                s=sizes[i] if special_marker_size is None else special_marker_size[j],
+                                label=f'{names[i][:3]} {names[i][3:]}' if names is not None else None,
+                                **special_kwargs_plot)
+                sca.append(sc)
+            if legend_special_cases:
+                leg_args = {'loc': 'lower left', 'borderaxespad': 0., **special_kwargs_legend}
+                second_legend = ax.legend(**leg_args, handles=sca, fontsize='small', frameon=False)
+                ax.add_artist(second_legend)
+        if isinstance(non_special_marker_color, str):
+            non_special_marker_color = [non_special_marker_color] * len(non_match)
+        main_sca = ax.scatter(x_i[non_match], y_i[non_match], zorder=5, cmap='jet' if durations is not None else None,
+                              norm=normalize, s=sizes[non_match], picker=picker, **kwargs_plot,
+                              c=colors[non_match] if non_special_marker_color is None else non_special_marker_color)
+        main_sca.set_picker(picker) if picker else None
+        if durations is not None:
+            color_bar = plt.colorbar(main_sca, ax=ax, label=r'log$_{10}\left(T_{90}\right)$', **color_bar_kwargs)
+        plt.tight_layout()
+        plt.axis('off')
+        if return_colorbar:  # Return color bar if required
+            return ax, color_bar
+        else:
+            return ax
+

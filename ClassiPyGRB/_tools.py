@@ -167,3 +167,13 @@ def estimate_noise(data):
     sigma = sigma * np.sqrt(0.5 * np.pi) / (6 * (W - 2) * (H - 2))
     return sigma
 
+
+def size_maker(z_array):
+    """Function to get redshift values without raising an error."""
+    result_array = []
+    for value in z_array:
+        try:
+            result_array.append(float(value[1]))
+        except (ValueError, IndexError, TypeError):
+            result_array.append(0)
+    return np.array(result_array)

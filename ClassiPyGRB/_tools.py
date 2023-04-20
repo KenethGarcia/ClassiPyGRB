@@ -7,9 +7,13 @@
 # Details about Swift Data can be found in https://swift.gsfc.nasa.gov/about_swift/bat_desc.html
 
 import os
+import sklearn
 import numpy as np
 import pandas as pd
+from time import time
+from numpy import linalg
 from typing import Union
+from sklearn.manifold import TSNE
 from scipy.signal import convolve2d
 from collections.abc import Sequence, Mapping
 
@@ -105,7 +109,7 @@ def slice_array(
         elements = array_copy[:length]
         slices.append(elements)
         if len(array_copy) > length:
-            array_copy = np.delete(array_copy, [i for i in range(length-1)])
+            array_copy = np.delete(array_copy, [i for i in range(length - 1)])
         else:
             array_copy = np.delete(array_copy, np.s_[:])
     return slices
@@ -148,7 +152,7 @@ def get_index(array_1, array_2):
             index2 = [len(array)]
         else:
             raise ValueError(f"Array does not contain any element higher or equal to {other[-1]}.")
-    return index[-1], index2[0]+1
+    return index[-1], index2[0] + 1
 
 
 def estimate_noise(data):
@@ -177,3 +181,109 @@ def size_maker(z_array):
         except (ValueError, IndexError, TypeError):
             result_array.append(0)
     return np.array(result_array)
+
+
+def get_steps(data, **step_kwargs):
+    """Function to get the of steps in a TSNE embedding of scikit-learn.
+
+    This function uses the _gradient_descent function from the scikit-learn library version 1.2.2:
+    (https://github.com/scikit-learn/scikit-learn/blob/main/sklearn/manifold/_t_sne.py).
+    The original function was written by L. van der Maaten and G. E. Hinton and is licensed under the BSD 3-Clause
+    License. Additionally, the instance implemented here is based on the tsne_animate repository on GitHub:
+    (https://github.com/sophronesis/tsne_animate). We are grateful to the authors for their work.
+
+    Args:
+        data (array-like): Array with the data to be embedded.
+        step_kwargs (dict): Keyword arguments to be passed to the TSNE instance of scikit-learn.
+
+    Returns:
+        A list of positions of the data in the embedding space for each iteration.
+    """
+    old_gradient = sklearn.manifold._t_sne._gradient_descent  # Save original gradient descent function
+    positions = []  # Array to save data positions
+
+    def _gradient_descent(
+            objective,
+            p0,
+            it,
+            n_iter,
+            n_iter_check=1,
+            n_iter_without_progress=300,
+            momentum=0.8,
+            learning_rate=200.0,
+            min_gain=0.01,
+            min_grad_norm=1e-7,
+            verbose=0,
+            args=None,
+            kwargs=None,
+    ):
+        if args is None:
+            args = []
+        if kwargs is None:
+            kwargs = {}
+
+        p = p0.copy().ravel()
+        update = np.zeros_like(p)
+        gains = np.ones_like(p)
+        error = np.finfo(float).max
+        best_error = np.finfo(float).max
+        best_iter = i = it
+
+        tic = time()
+        for i in range(it, n_iter):
+            positions.append(p.copy())  # Save current position
+
+            check_convergence = (i + 1) % n_iter_check == 0
+            # only compute the error when needed
+            kwargs["compute_error"] = check_convergence or i == n_iter - 1
+
+            error, grad = objective(p, *args, **kwargs)
+
+            inc = update * grad < 0.0
+            dec = np.invert(inc)
+            gains[inc] += 0.2
+            gains[dec] *= 0.8
+            np.clip(gains, min_gain, np.inf, out=gains)
+            grad *= gains
+            update = momentum * update - learning_rate * grad
+            p += update
+
+            if check_convergence:
+                toc = time()
+                duration = toc - tic
+                tic = toc
+                grad_norm = linalg.norm(grad)
+
+                if verbose >= 2:
+                    print(
+                        "[t-SNE] Iteration %d: error = %.7f,"
+                        " gradient norm = %.7f"
+                        " (%s iterations in %0.3fs)"
+                        % (i + 1, error, grad_norm, n_iter_check, duration)
+                    )
+
+                if error < best_error:
+                    best_error = error
+                    best_iter = i
+                elif i - best_iter > n_iter_without_progress:
+                    if verbose >= 2:
+                        print(
+                            "[t-SNE] Iteration %d: did not make any progress "
+                            "during the last %d episodes. Finished."
+                            % (i + 1, n_iter_without_progress)
+                        )
+                    break
+                if grad_norm <= min_grad_norm:
+                    if verbose >= 2:
+                        print(
+                            "[t-SNE] Iteration %d: gradient norm %f. Finished."
+                            % (i + 1, grad_norm)
+                        )
+                    break
+
+        return p, error, i
+
+    sklearn.manifold._t_sne._gradient_descent = _gradient_descent  # Change original gradient function
+    TSNE(random_state=42, **step_kwargs).fit_transform(data)  # Perform TSNE
+    sklearn.manifold._t_sne._gradient_descent = old_gradient  # Return old gradient descent function
+    return np.array(positions)  # Return all positions, texts in format (iteration, message)

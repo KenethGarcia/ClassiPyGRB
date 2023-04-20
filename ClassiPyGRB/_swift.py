@@ -8,12 +8,14 @@
 
 import os
 import tables
+import inspect
 import warnings
 import requests
 import numpy as np
 import pandas as pd
 import matplotlib.axes
 import concurrent.futures
+import moviepy.editor as mpy
 import matplotlib.pyplot as plt
 from . import _tools
 from tqdm import tqdm
@@ -26,6 +28,7 @@ from scipy.interpolate import interp1d
 from collections.abc import Sequence, Mapping
 from openTSNE import TSNE as open_tsne
 from sklearn.manifold import TSNE as sklearn_tsne
+from moviepy.video.io.bindings import mplfig_to_npimage
 warnings.filterwarnings('ignore', category=NaturalNameWarning)
 
 
@@ -1158,7 +1161,7 @@ class SWIFT:
             2D array with the embedded data. Each row corresponds to a pair (x_i, y_i) of data transformed.
         """
         if not isinstance(data, (Sequence, Mapping, np.ndarray, pd.Series)):
-            raise TypeError(f"data must be an array-like. Obtained: {type(data)}")
+            raise TypeError(f"Data must be an array-like. Obtained: {type(data)}")
         if not isinstance(library, str):
             raise TypeError(f"library must be a str. Obtained: {type(library)}")
         if library.lower() == 'opentsne':  # OpenTSNE has by default init='pca'
@@ -1231,10 +1234,10 @@ class SWIFT:
 
         Raises:
             TypeError: If positions is not an array-like.
-            TypeError: If durations is not an array-like.
-            TypeError: If names is not an array-like.
+            TypeError: If durations is not an array-like, or it does not have the same length as positions.
+            TypeError: If names is not an array-like, or it does not have the same length as positions.
             TypeError: If special_cases is not an array-like.
-            TypeError: If redshifts is not an array-like.
+            TypeError: If redshifts is not an array-like, or it does not have the same length as positions.
             TypeError: If ax is not a matplotlib.axes.Axes.
 
         Returns:
@@ -1349,3 +1352,101 @@ class SWIFT:
         else:
             return ax
 
+    def convergence_animation(
+            self,
+            data: Union[Sequence, Mapping, np.ndarray, pd.Series],
+            fps: int = 50,
+            filename: str = None,
+            **kwargs
+    ):
+        """Instance to create TSNE convergence animations using scikit-Learn implementation
+
+        Args:
+            data (array-like): Preprocessed data to be embedded.
+            fps (int, optional): Frames per second of the animation. Defaults to 50.
+            filename (str, optional): Name of the file to save the animation. Defaults to None.
+            **kwargs: Other additional arguments, can be TSNE or tsne_plot function arguments.
+
+        Returns:
+            Moviepy.editor.VideoClip: Video clip of the convergence animation.
+        """
+        if not isinstance(data, (Sequence, Mapping, np.ndarray, pd.Series)):
+            raise TypeError(f"Data must be an array-like. Obtained: {type(data)}")
+        if not isinstance(fps, int):
+            raise TypeError(f"Frames per second (fps) must be an integer. Obtained: {type(fps)}")
+        scatter_args = set(inspect.signature(self.plot_tsne).parameters)
+        scatter_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in scatter_args}  # Separate plot parameters
+        positions = _tools.get_steps(data, **kwargs)  # Get positions
+        duration = len(positions) // fps
+        fig, ax = plt.subplots()
+
+
+        def make_iteration(t):
+            ax.clear()
+            iteration = int(t // (1 / fps))
+            positions_i = positions[iteration].reshape(-1, 2)
+            ax2, bar = self.plot_tsne(positions_i, ax=ax, return_colorbar=True, **scatter_dict)
+            ax2.set_title(f"Iteration: {iteration}", loc='left', style='italic', fontsize=10)
+            fig.subplots_adjust(top=0.94)
+            frame = mplfig_to_npimage(fig)  # Convert to mpy
+            bar.remove() if bar != () else None  # Remove bar
+            return frame
+
+        animation = mpy.VideoClip(make_iteration, duration=duration)
+        animation.write_gif(filename, fps=fps, program='imageio') if filename is not None else None
+        return animation
+
+    def tsne_animation(
+            self,
+            data: Union[Sequence, Mapping, np.ndarray, pd.Series],
+            fps: int = 50,
+            filename: str = None,
+            iterable: str = 'perplexity',
+            **kwargs
+    ):
+        """Instance to create TSNE convergence animations using scikit-Learn implementation
+
+        Args:
+            data (array-like): Preprocessed data to be embedded.
+            fps (int, optional): Frames per second of the animation. Defaults to 50.
+            filename (str, optional): Name of the file to save the animation. Defaults to None.
+            iterable (str, optional): Name of TSNE iterable in scikit Learn. Defaults to 'perplexity'.
+                The name of iterable must be exact as TSNE arguments, see
+                https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html#sklearn.manifold.TSNE
+            **kwargs: Iterable array and other additional arguments. It can be arguments for TSNE or plot_tsne
+                function, but it is necessary to add 'iterable' array as an argument
+
+        Returns:
+            Moviepy.editor.VideoClip: Video clip of the convergence animation.
+        """
+        if not isinstance(data, (Sequence, Mapping, np.ndarray, pd.Series)):
+            raise TypeError(f"Data must be an array-like. Obtained: {type(data)}")
+        if not isinstance(fps, int):
+            raise TypeError(f"Frames per second (fps) must be an integer. Obtained: {type(fps)}")
+        if not isinstance(iterable, str):
+            raise TypeError(f"Iterable argument must be a string. Obtained: {type(iterable)}")
+        args = sklearn_tsne.__init__.__code__.co_varnames
+        if iterable not in args:
+            raise ValueError(f"Iterable argument must be a valid TSNE argument. Obtained: {iterable}")
+        fig, ax = plt.subplots()
+        array_it = kwargs.pop(iterable)  # Separate iterable array
+        duration = len(array_it) // fps  # Duration of the animation
+        if duration == 0:
+            raise ValueError(f"Iterable array must have more values than fps. Obtained: {len(array_it)}")
+        scatter_args = set(inspect.signature(self.plot_tsne).parameters)
+        scatter_dict = {k: kwargs.pop(k) for k in dict(kwargs) if k in scatter_args}
+
+        def make_frame(t):  # t has a step equal to 1/fps
+            ax.clear()  # Clear axes between iterations
+            dict_iterable = {iterable: array_it[int(t // (1 / fps))]}  # Define a unique i-esim parameter to pass tSNE
+            x_i = self.perform_tsne(data, **dict_iterable, **kwargs)  # Perform tSNE
+            ax2, bar = self.plot_tsne(x_i, **scatter_dict, ax=ax, return_colorbar=True)  # Scatter results
+            ax2.set_title(f"{iterable}:{dict_iterable.get(iterable)}", loc='left', style='italic', fontsize=10)
+            fig.subplots_adjust(top=0.94)  # Resize fig to make title
+            frame = mplfig_to_npimage(fig)  # Convert to mpy
+            bar.remove() if bar != () else None  # Remove bar
+            return frame  # Return frame fig
+
+        animation = mpy.VideoClip(make_frame, duration=duration)  # Create animation object
+        animation.write_gif(filename, fps=fps, program='imageio') if filename is not None else None  # Save animation
+        return animation

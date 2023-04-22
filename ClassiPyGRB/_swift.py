@@ -277,7 +277,7 @@ class SWIFT:
                                 unit='GRB'))
             if error:
                 with open(os.path.join(self.original_data_path, f"Errors_{self.end}.txt"), 'w') as f:
-                    f.write("## GRB_Name\tTrigger_ID\tError_Description\n")
+                    f.write("## GRB_Name\tError_Description\n")
                     for i in range(len(results)):
                         f.write(f"{names[i]}\t{results[i]}\n") if results[i] is not None else None
 
@@ -453,7 +453,7 @@ class SWIFT:
             df = self.obtain_data(name=name, check_disk=True)
             if not isinstance(df, pd.DataFrame):
                 raise FileNotFoundError
-            df = df[(df[self.column_labels[0]] < t_end) & (df[self.column_labels[0]] > t_start)]
+            df = df[(df[self.column_labels[0]] <= t_end) & (df[self.column_labels[0]] >= t_start)]
             df = df[self.bands_selected]
         except FileNotFoundError:  # If file is not found, return error
             return name, ' ', ' ', 'FileNotFoundError'
@@ -1051,7 +1051,7 @@ class SWIFT:
 
         Returns:
             A Pandas Dataframe with first column as time and the rest as reduced counts. If any error occurs, it returns
-            a tuple of original data and error description.
+            a tuple with original data and error description. If save_data is True, it saves the data in a .h5 file.
         """
         if sigma is not None:
             if not isinstance(sigma, (Sequence, Mapping, np.ndarray, pd.Series, float)):
@@ -1061,6 +1061,7 @@ class SWIFT:
         if not isinstance(name, str):
             raise TypeError(f"name must be a str. Obtained: {type(name)}")
         sig_check = True if sigma is None else False
+        file_name = f"{name}_{self.end}.h5"
         data = self.obtain_data(name=name, check_disk=True)
         try:
             limits = self.duration_limits(name=name, t=100)[0]
@@ -1068,15 +1069,13 @@ class SWIFT:
         except (ValueError, IndexError) as err:
             warnings.warn(f"Error when obtaining limits for {name}: {err}. It is not possible to reduce noise.",
                           RuntimeWarning)
-            if save_data:  # Create an empty file to avoid errors when limiting data
-                _tools.save_data(data=pd.DataFrame(), name=name, filename=f"{name}_{self.end}.h5",
-                                 directory=self.noise_data_path)
+            _tools.save_data(data=data, name=name, filename=file_name, directory=self.noise_data_path)
             return data, err
         else:
+            columns_aux = [self.column_labels[i] for i in range(1, len(self.column_labels), 2)]
             out_t100 = data[(data.iloc[:, 0] < low_lim) | (data.iloc[:, 0] > upper_lim)]
             out_t100 = out_t100[out_t100.iloc[:, 1:].any(axis=1)]  # Remove rows with all zeros to avoid errors
             if len(out_t100) > 0:
-                columns_aux = [self.column_labels[i] for i in range(1, len(self.column_labels), 2)]
                 out_t100 = out_t100[columns_aux]
                 for i, column in enumerate(out_t100):
                     data_i = np.asarray(data[column])
@@ -1085,16 +1084,14 @@ class SWIFT:
                         sigma = np.square(_tools.estimate_noise(out_i))
                     data[column] = fabada(data_i, data_variance=sigma if isinstance(sigma, float) else sigma[i])
                 if save_data:
-                    file_name = f"{name}_{self.end}.h5"
                     _tools.save_data(data=data, name=name, filename=file_name, directory=self.noise_data_path)
                 return data
             else:
                 warnings.warn(f"No data outside T_100 found for {name}. It is not possible to reduce noise.",
                               RuntimeWarning)
                 if save_data:
-                    _tools.save_data(data=pd.DataFrame(), name=name, filename=f"{name}_{self.end}.h5",
-                                     directory=self.noise_data_path)
-                return data, f'length = {len(out_t100)}'
+                    _tools.save_data(data=data, name=name, filename=file_name, directory=self.noise_data_path)
+                return data, f'No data outside T_100'
 
     def parallel_noise_reduction_fabada(
             self,

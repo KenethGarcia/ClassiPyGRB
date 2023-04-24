@@ -1447,3 +1447,227 @@ class SWIFT:
         animation = mpy.VideoClip(make_frame, duration=duration)  # Create animation object
         animation.write_gif(filename, fps=fps, program='imageio') if filename is not None else None  # Save animation
         return animation
+
+    @staticmethod
+    def split_points(
+            coords: Union[Sequence, Mapping, np.ndarray, pd.Series],
+            x_s: Union[Sequence, Mapping, np.ndarray, pd.Series, float, int],
+            y_s: Union[Sequence, Mapping, np.ndarray, pd.Series, float, int],
+            quadrant: float = 1,
+    ):
+        """Function to separate groups in a TSNE plot.
+
+        It is possible to separate groups by looking for points above and below a single line crossing the points
+        (x_1, y_1) and (x_2, y_2), or by searching a specific quadrant separated by a constant vertical and horizontal
+        line crossing at (x_s, y_s).
+
+        Args:
+            coords (array-like): Coordinates of the TSNE embedding.
+            x_s (float or 2d array): x coordinates of the group separator line.
+                If x_s is a single number, it will be assumed as a constant line in x-axis. If x_s is a 2d array, it
+                will be assumed as x-positions to join a line.
+            y_s (float or 2d array): y coordinates of the group separator line.
+                If y_s is a single number, it will be assumed as a constant line in y-axis. If y_s is a 2d array, it
+                will be assumed as y-positions to join a line.
+            quadrant (float, optional): Quadrant of the group separator line in plane geometry. Defaults to 1.
+                It follows the same procedure as x-y axis, quadrant 1 will be the upper-right quadrant, etc.
+                It only works when x_s and y_s are single numbers.
+
+        Returns:
+            A tuple with the groups separated by the lines.
+
+        """
+        if not isinstance(x_s, (float, int, Sequence, Mapping, np.ndarray, pd.Series)):
+            raise TypeError(f"x_s must be a float, int or array-like. Obtained: {type(x_s)}")
+        if not isinstance(y_s, (float, int, Sequence, Mapping, np.ndarray, pd.Series)):
+            raise TypeError(f"y_s must be a float, int or array-like. Obtained: {type(y_s)}")
+        if not isinstance(quadrant, (float, int)):
+            raise TypeError(f"Quadrant must be a float or int. Obtained: {type(quadrant)}")
+        if not isinstance(coords, (Sequence, Mapping, np.ndarray, pd.Series)):
+            raise TypeError(f"Coords must be an array-like. Obtained: {type(coords)}")
+        if isinstance(x_s, (Sequence, Mapping, np.ndarray, pd.Series)) and \
+                isinstance(y_s, (Sequence, Mapping, np.ndarray, pd.Series)):
+            if len(x_s) != 2 or len(y_s) != 2:
+                raise ValueError(f"x_s and y_s must have arrays of length=2. Obtained: {len(x_s)} and {len(y_s)}")
+        if not isinstance(x_s, (float, int)):
+            if isinstance(y_s, (float, int)):
+                raise TypeError(f"x_s and y_s must be both arrays or both numbers. Obtained: {type(x_s)} and "
+                                f"{type(y_s)}")
+        elif not isinstance(y_s, (float, int)):
+            raise TypeError(f"x_s and y_s must be both arrays or both numbers. Obtained: {type(x_s)} and "
+                            f"{type(y_s)}")
+        if not isinstance(coords, np.ndarray):
+            coords = np.asarray(coords)
+        if isinstance(x_s, (float, int)) and isinstance(y_s, (float, int)):
+            if quadrant not in [1, 2, 3, 4]:
+                raise ValueError(f"Quadrant must be 1, 2, 3 or 4. Obtained: {quadrant}")
+            if quadrant == 1:
+                group_1 = coords[np.where((coords[:, 0] > x_s) & (coords[:, 1] > y_s))]
+                group_2 = coords[np.where((coords[:, 0] < x_s) | (coords[:, 1] < y_s))]
+            elif quadrant == 2:
+                group_1 = coords[np.where((coords[:, 0] < x_s) & (coords[:, 1] > y_s))]
+                group_2 = coords[np.where((coords[:, 0] > x_s) | (coords[:, 1] < y_s))]
+            elif quadrant == 3:
+                group_1 = coords[np.where((coords[:, 0] < x_s) & (coords[:, 1] < y_s))]
+                group_2 = coords[np.where((coords[:, 0] > x_s) | (coords[:, 1] > y_s))]
+            elif quadrant == 4:
+                group_1 = coords[np.where((coords[:, 0] > x_s) & (coords[:, 1] < y_s))]
+                group_2 = coords[np.where((coords[:, 0] < x_s) | (coords[:, 1] > y_s))]
+            return group_1, group_2
+        else:
+            m = (y_s[1] - y_s[0]) / (x_s[1] - x_s[0])
+            b = y_s[0] - m * x_s[0]
+            above, below = [], []
+            for x, y in coords:
+                if y > m * x + b:
+                    above.append((x, y))
+                else:
+                    below.append((x, y))
+            return np.array(above), np.array(below)
+
+    def duration_histogram(
+            self,
+            names: Union[Sequence, Mapping, np.ndarray, pd.Series],
+            custom_durations: Union[Sequence, Mapping, np.ndarray, pd.Series] = None,
+            color_groups: Union[Sequence, Mapping, np.ndarray, pd.Series] = None,
+            ax: plt.Axes = None,
+            **hist_kwargs
+    ):
+        """Function to make histogram of durations.
+
+        It is possible to set a variable number of groups to plot the histogram making names an array with 2 or more
+        columns. If custom_durations is not provided, the durations will be indexed from Swift/BAT Tables.
+
+        Args:
+            names (array-like): Names of the groups to plot.
+                It follows the notation [[group_1], [group_2], ...], where group_i is the i-esim group of names to add
+                in the histogram. If only one group is needed, it can be provided as a single array.
+            custom_durations (array-like, optional): Custom durations to plot. Defaults to None.
+                If custom_durations is not provided, the durations will be indexed from Swift/BAT Tables.
+            ax (matplotlib.axes.Axes, optional): Axes to plot the histogram. Defaults to None.
+            color_groups (array-like, optional): Colors to use for each group. Defaults to None.
+            **hist_kwargs: Keyword arguments to pass to the matplotlib.axes.Axes.hist function.
+                To see more details, check https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.hist.html
+
+        Returns:
+            A matplotlib.axes.Axes object with the histogram.
+        """
+        if not isinstance(names, (Sequence, Mapping, np.ndarray, pd.Series)):
+            raise TypeError(f"Names must be an array-like. Obtained: {type(names)}")
+        if not isinstance(custom_durations, (Sequence, Mapping, np.ndarray, pd.Series, type(None))):
+            raise TypeError(f"Custom_durations must be an array-like or None. Obtained: {type(custom_durations)}")
+        if not isinstance(ax, (plt.Axes, type(None), matplotlib.axes.Axes)):
+            raise TypeError(f"Ax must be a matplotlib.axes.Axes object or None. Obtained: {type(ax)}")
+        if not isinstance(hist_kwargs, Mapping):
+            raise TypeError(f"hist_kwargs must be a dict. Obtained: {type(hist_kwargs)}")
+        if color_groups is not None:
+            if not isinstance(color_groups, (Sequence, Mapping, np.ndarray, pd.Series)):
+                raise TypeError(f"Color_groups must be an array. Obtained: {type(color_groups)}")
+        if isinstance(names, (Sequence, Mapping, np.ndarray, pd.Series)):
+            if not isinstance(names[0], (Sequence, Mapping, np.ndarray, pd.Series)):
+                names = [names]
+        if custom_durations is None:
+            custom_durations = []
+            for i in range(len(names)):
+                custom_durations.append(self.total_durations(names=names[i]))
+        else:
+            # Check if every single element of names and custom_durations have the same length
+            if not isinstance(custom_durations[0], (Sequence, Mapping, np.ndarray, pd.Series)):
+                custom_durations = [custom_durations]
+            for i in range(len(names)):
+                if len(names[i]) != len(custom_durations[i]):
+                    raise ValueError(f"Names and custom_durations must have the same length. Obtained: "
+                                     f"{len(names[i])} and {len(custom_durations[i])} for the {i}-esim group.")
+        if ax is None:
+            fig, ax = plt.subplots()
+        if hist_kwargs is None:
+            hist_kwargs = {}
+        if hist_kwargs.get("color") is not None:
+            raise ValueError("The color argument is not allowed. Use color_groups instead.")
+        if hist_kwargs.get("bins") is None:
+            hist_kwargs["bins"] = np.arange(-1, 3.1, 0.1)
+        # Make an array of auxiliary colors with length equal to the number of groups
+        if color_groups is None:
+            color_groups = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f",
+                            "#bcbd22", "#17becf"] * (len(names) // 10 + 1)
+        for i in range(len(names)):
+            ax.hist(np.log10(custom_durations[i]), color=color_groups[i], edgecolor="gray", **hist_kwargs)
+        return ax
+
+    def get_flux(
+            self,
+            name: str,
+            band: Union[float, int],
+            t: int = 100,
+            limits: Union[Sequence, Mapping, np.ndarray, pd.DataFrame] = None
+    ):
+        """Function to get flux for any GRB light curve in Swift/BAT catalog.
+
+        Args:
+            name (str): Name of the GRB.
+            band (int): Swift/BAT band to use.
+                In order, 1 represent the 15-25 keV band, 2 represent the 25-50 keV band, 3 represent the 50-100 keV
+                band, 4 represent the 100-350 keV band, and 5 represent the 15-350 keV band.
+            t (int): Duration interval. Defaults to 100.
+                Duration is defined as the time interval during which t% of the total observed counts have been
+                detected. Supported values are 50, 90, and 100.
+            limits (list, optional): Custom limits [t_start, t_end] to limit. Defaults to None.
+
+        Returns:
+            The flux in the selected band.
+        """
+        if not isinstance(name, str):
+            raise TypeError(f"Name must be a string. Obtained: {type(name)}")
+        if not isinstance(band, (float, int)):
+            raise TypeError(f"Band must be a float or an int. Obtained: {type(band)}")
+        if limits is not None:
+            if not isinstance(limits[0], (float, int)):
+                raise TypeError(f"Limits must be a list of floats or ints. Obtained: {type(limits[0])}")
+            if not isinstance(limits[1], (float, int)):
+                raise TypeError(f"Limits must be a list of floats or ints. Obtained: {type(limits[1])}")
+            if len(limits) != 2:
+                raise ValueError(f"Limits must have length 2. Obtained: {len(limits)}")
+            if limits[0] > limits[1]:
+                raise ValueError(f"The first element of limits must be smaller than the second. Obtained: {limits}")
+        if band not in [1, 2, 3, 4, 5]:
+            raise ValueError(f"Band must be 1, 2, 3, 4, or 5. Obtained: {band}")
+        if t is not None:
+            if t not in [50, 90, 100]:
+                raise ValueError(f"T must be 50, 90, or 100. Obtained: {t}")
+        if t is None and limits is None:
+            lc = self.obtain_data(name=name, check_disk=True)
+        else:
+            lc = self.lc_limiter(name=name, t=t, limits=limits)
+        if isinstance(lc, tuple):
+            raise RuntimeError(f"Error while obtaining data for {name}. Got {lc}")
+        else:
+            selected_band = np.asarray(lc[self.column_labels[2*band-1]])
+            times = np.asarray(lc[self.column_labels[0]])
+            total_flux = np.trapz(y=selected_band, x=times)
+            return total_flux
+
+    def hardness_ratio(
+            self,
+            names: Union[Sequence, Mapping, np.ndarray, pd.Series, str]
+    ):
+        """Function to calculate the hardness ratio for any GRB in Swift/BAT catalog.
+
+        ClassiPyGRB uses a proxy based on the ratio of the flux in $50-100$ keV and $25-50$ keV bands. Based on
+        Jespersen et al.(2020): https://iopscience.iop.org/article/10.3847/2041-8213/ab964d
+
+        Args:
+            names (array-like): Names of the GRBs.
+
+        Returns:
+            The hardness ratio for each GRB in names.
+        """
+        if not isinstance(names, (Sequence, Mapping, np.ndarray, pd.Series, str)):
+            raise TypeError(f"Names must be an array or string. Obtained: {type(names)}")
+        if isinstance(names, str):  # If a specific name is entered, then we search the value in the array
+            band_50_100 = self.get_flux(names, band=3, t=100)
+            band_25_50 = self.get_flux(names, band=2, t=100)
+        else:  # If a name's array is specified, search them recursively
+            with concurrent.futures.ProcessPoolExecutor(max_workers=self.workers) as executor:
+                band_50_100 = list(executor.map(self.get_flux, names, repeat(3, len(names)), repeat(100, len(names))))
+                band_25_50 = list(executor.map(self.get_flux, names, repeat(2, len(names)), repeat(100, len(names))))
+        return np.array(band_50_100) / np.array(band_25_50)

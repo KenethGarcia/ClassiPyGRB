@@ -25,6 +25,7 @@ from itertools import repeat
 from scipy.fft import next_fast_len
 from tables import NaturalNameWarning
 from scipy.interpolate import interp1d
+from scipy.spatial.distance import cdist
 from collections.abc import Sequence, Mapping
 from openTSNE import TSNE as open_tsne
 from sklearn.manifold import TSNE as sklearn_tsne
@@ -1362,7 +1363,7 @@ class SWIFT:
             data (array-like): Preprocessed data to be embedded.
             fps (int, optional): Frames per second of the animation. Defaults to 50.
             filename (str, optional): Name of the file to save the animation. Defaults to None.
-            **kwargs: Other additional arguments, can be TSNE or tsne_plot function arguments.
+            **kwargs: Other additional arguments, can be TSNE or plot_tsne function arguments.
 
         Returns:
             Moviepy.editor.VideoClip: Video clip of the convergence animation.
@@ -1671,3 +1672,48 @@ class SWIFT:
                 band_50_100 = list(executor.map(self.get_flux, names, repeat(3, len(names)), repeat(100, len(names))))
                 band_25_50 = list(executor.map(self.get_flux, names, repeat(2, len(names)), repeat(100, len(names))))
         return np.array(band_50_100) / np.array(band_25_50)
+
+    @staticmethod
+    def nearest_neighbors(
+            name: str,
+            total_names: Union[Sequence, Mapping, np.ndarray, pd.Series, str],
+            coord: Union[Sequence, Mapping, np.ndarray, pd.DataFrame],
+            num: int = 5,
+            sorted_d: bool = False
+    ):
+        """Function to obtain the nearest neighbors of a GRB in a embedding of the Swift/BAT catalog.
+
+        Args:
+            name (str): Name of the GRB.
+            total_names (array-like): Total sample names of the GRBs.
+            coord (array-like): Coordinates of the embedding of each GRB. It must follow the same order as total_names.
+            num (int, optional): Number of nearest neighbors to obtain. Defaults to 5.
+            sorted_d (bool, optional): Flag to sort the nearest neighbors in alphabetical order. Defaults to False.
+
+        Returns:
+            An array with the names of the nearest neighbors. If sorted_d is True, then it returns the names in
+            alphabetical order from lowest to highest.
+        """
+        if not isinstance(name, str):
+            raise TypeError(f"Name must be a string. Obtained: {type(name)}")
+        if not isinstance(total_names, (Sequence, Mapping, np.ndarray, pd.Series, str)):
+            raise TypeError(f"Total names must be an array or string. Obtained: {type(total_names)}")
+        if not isinstance(coord, (Sequence, Mapping, np.ndarray, pd.Series)):
+            raise TypeError(f"Coord must be an array. Obtained: {type(coord)}")
+        if not isinstance(num, int):
+            raise TypeError(f"Number of nearest neighbors must be an int. Obtained: {type(num)}")
+        if not isinstance(sorted_d, bool):
+            raise TypeError(f"Sorted flag must be a bool. Obtained: {type(sorted_d)}")
+        if not isinstance(coord[0], (Sequence, Mapping, np.ndarray, pd.Series)):
+            raise TypeError(f"Each coordinate element must be an array. Obtained: {type(coord[0])}")
+        if len(coord) != len(total_names):
+            raise ValueError(f"Coordinates and names must have the same length. Obtained: {len(coord)} "
+                             f"and {len(total_names)}")
+        row_name = np.where(np.isin(total_names, name))[0]  # Index row of match GRB
+        distances = cdist(coord[row_name], coord)[0]
+        sort_array = np.sort(distances)[1:num + 1]
+        near_neighbors = np.where(np.isin(distances, sort_array))[0]
+        if sorted_d:
+            return np.sort(total_names[near_neighbors])
+        else:
+            return total_names[near_neighbors]

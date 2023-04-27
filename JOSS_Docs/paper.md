@@ -1,5 +1,5 @@
 
-![Logo](docs/Animations/images/logo.jpeg) 
+![Logo](/docs/Animations/images/logo.jpeg) 
 
 ---
 Title: 'ClassipyGRB: Classifying GRBs with Machine Learning t-SNE'

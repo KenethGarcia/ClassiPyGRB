@@ -1,24 +1,24 @@
 ---
-title: 'ClassipyGRB: Classifying GRBs with Machine Learning t-SNE'
-tags:
+Title: 'ClassipyGRB: Classifying GRBs with Machine Learning t-SNE'
+Tags:
   - Python
   - astronomy
   - transient astronomy
   - gamma-ray bursts
   - extragalactic astronomy
-authors:
+Authors:
   - name: [Keneth Garcia-Cifuentes](https://orcid.org/0009-0001-2607-6359)
     equal-contrib: true
-    affiliation: 1
+    Affiliation: 1
     corresponding: true
 
   - name: [Rosa L. Becerra](https://orcid.org/0000-0002-0216-3415)
-    affiliation: 1
+    Affiliation: 1
 
   - name: [Fabio De Colle](https://orcid.org/0000-0002-3137-4633)
-    affiliation: 1
+    Affiliation: 1
     
-affiliations:
+Affiliation:
  - name: Instituto de Ciencias Nucleares,  Universidad Nacional Autónoma de México, Apartado Postal 70-543, 04510 CDMX, México
 
 date: 28 April 2023

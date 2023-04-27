@@ -383,8 +383,3 @@ def font_style(label):
         label: Tkinter label to change the font style
     """
     label.config(font=('Helvetica bold', 9))
-
-
-if __name__ == "__main__":
-    app = ScatterPlotWindow(root_path='/home/keneth/Documents/Swift_Data')
-    app.mainloop()

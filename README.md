@@ -1,7 +1,12 @@
 # **Warning: This package is currently in development. Take care about the instances presented here**
 
-_This repository created by [Keneth Garcia](https://stivengarcia7113.wixsite.com/kenethgarcia). Source and license info are on [GitHub](https://github.com/KenethGarcia/GRB_ML)._
+![Logo](docs/Animations/images/Logo.jpeg)  
+
+**ClassiPyGRB** is a Python 3 package to retrieve, download, visualize, process and classify Gamma-Ray-Burst (GRB) data from [Swift/BAT Telescope](https://swift.gsfc.nasa.gov/about_swift/bat_desc.html). It is distributed over the GNU General Public License Version 2 (1991).
 - - -
+# How to cite
+If you used ClassiPyGRB as a part of your research work. We appreciate to refer this package by its name and cite [Garcia-Cifuentes et al.(2023)](https://ui.adsabs.harvard.edu/abs/2023arXiv230408666G/abstract) -> [arXiv link](https://arxiv.org/abs/2304.08666).
+
 # Introduction
 Gamma-ray bursts (GRBs) are typically classified in two groups using their duration ([Kouveliotou et al. (1993)](https://ui.adsabs.harvard.edu/abs/1993ApJ...413L.101K/abstract)). Nevertheless, this classification is not exact. And in recent years, it has been observed that it is not reliable in determining the progenitors of such events.
 

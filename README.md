@@ -12,7 +12,7 @@ Gamma-ray bursts (GRBs) are originated by the death of a massive star or from th
 
 # T-distributed Stochastic Neighbor Embedding (t-SNE) in Swift Data
 
-[Jespersen et al. (2020)](https://ui.adsabs.harvard.edu/abs/2020ApJ...896L..20J/abstract) showed that Swift/BAT GRBs can be separated into two groups when t-SNE is performed. In this repository, we replicate this work by adding more recent data from the Swift/BAT catalog (up to July 2022) and an in-depth analysis of t-SNE performance. Moreover, we add synthetic GRBs performed using Machine Learning instances and join into Swift and other GRB data packages.
+[Jespersen et al. (2020)](https://ui.adsabs.harvard.edu/abs/2020ApJ...896L..20J/abstract) showed that Swift/BAT GRBs can cluster into two groups when t-SNE is performed. In this repository, we replicate this work by adding more recent data from the Swift/BAT catalog (up to July 2022). We also included reduction and interpolation tools for achieving a deeper analysis of these data.
 
 ## Dependencies
 This repository requires Python 3.8 or high, and the packages from the [``requeriments.txt``](https://github.com/KenethGarcia/GRB_ML/blob/51482eecd01d8bea10a951ba3e9b0b108cea3c08/requirements.txt) file. Other packages will be required optionally in Documentation (i.e., Jupyter).

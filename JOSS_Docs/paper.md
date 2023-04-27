@@ -66,10 +66,12 @@ We complement the methodology presented in [@Jespersen2020]. Additionally, we im
 
 The use of this method produces 2D visualization maps colored by the duration of GRBs. Furthermore:
 
+- Intuitive graphic interface.
 - It is possible to add either of the two features to the t-SNE maps or to visualize the raw data.
-- There is the possibility of working only on the desired bands of BAT.
+- Manupulation of the t-SNE parameters.
+- Visualization of the light curves from the events with and without noise-reduction.
+- There is the possibility of working only on the desired bands of Swift/BAT.
 - Specific events can be searched for and highlighted on the display.
-- Provisionally, those who are part of a study of extended emission GRBs will inform the user of this and show the reference. This will be expanded with another interesting features in the future.
 
 We remark the fact that algorithms such as t-SNE visualization maps are very sensitive to any change in the perplexity and learning rate parameters. Therefore, as is the case when using any of these visualization techniques derived from machine learning, care must be taken in the correct interpretation of the data.
 

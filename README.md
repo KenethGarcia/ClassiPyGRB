@@ -8,9 +8,9 @@ Tags:
   - extragalactic astronomy
 Authors:
   - name: [Keneth Garcia-Cifuentes](https://orcid.org/0009-0001-2607-6359)
-    equal-contrib: true
+    Equal-contrib: true
     Affiliation: 1
-    corresponding: true
+    Corresponding: True
 
   - name: [Rosa L. Becerra](https://orcid.org/0000-0002-0216-3415)
     Affiliation: 1
@@ -19,7 +19,7 @@ Authors:
     Affiliation: 1
     
 Affiliation:
- - name: Instituto de Ciencias Nucleares,  Universidad Nacional Autónoma de México, Apartado Postal 70-543, 04510 CDMX, México
+ - Mame: Instituto de Ciencias Nucleares,  Universidad Nacional Autónoma de México, Apartado Postal 70-543, 04510 CDMX, México
 
 date: 28 April 2023
 

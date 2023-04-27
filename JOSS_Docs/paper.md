@@ -1,3 +1,6 @@
+
+![Logo](docs/Animations/images/logo.jpeg) 
+
 ---
 Title: 'ClassipyGRB: Classifying GRBs with Machine Learning t-SNE'
 Tags:
@@ -22,12 +25,9 @@ Affiliation:
  - Name: Instituto de Ciencias Nucleares,  Universidad Nacional Autónoma de México, Apartado Postal 70-543, 04510 CDMX, México
  - Index: 1
 
-date: 28 April 2023
-
+date: 28 April 2023 
 
 # **Warning: This package is under peer review**
-
-![Logo](docs/Animations/images/logo.jpeg)  
 
 **ClassiPyGRB** is a Python 3 package to download, process, visualize and classify Gamma-Ray-Burst (GRB) datavbase from [Swift/BAT Telescope](https://swift.gsfc.nasa.gov/about_swift/bat_desc.html). It is distributed over the GNU General Public License Version 2 (1991).
 - - -

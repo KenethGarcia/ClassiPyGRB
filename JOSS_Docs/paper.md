@@ -34,6 +34,9 @@ date: 28 April 2023
 # How to cite
 If you use this code in a publication, please refer to the package by name and cite [Garcia-Cifuentes et al.(2023)](https://ui.adsabs.harvard.edu/abs/2023arXiv230408666G/abstract) -> [arXiv link](https://arxiv.org/abs/2304.08666). Any question, please email [Keneth Garcia-Cifuentes](mailto:kenet.garcia@correo.nucleares.unam.mx)
 
+# Dependencies
+This repository requires Python 3.8 or high, and the packages from the [``requeriments.txt``](https://github.com/KenethGarcia/GRB_ML/blob/51482eecd01d8bea10a951ba3e9b0b108cea3c08/requirements.txt) file. Other packages will be required optionally in Documentation (i.e., Jupyter).
+
 # Introduction
 Gamma-ray bursts (GRBs) are originated by the death of a massive star or from the merger of two compact objects. The classification is based on their duration ([Kouveliotou et al. (1993)](https://ui.adsabs.harvard.edu/abs/1993ApJ...413L.101K/abstract)). Nevertheless, events such as GRB 211211A ([Yang et al. (2022)](https://ui.adsabs.harvard.edu/abs/2022Natur.612..232Y/abstract)) has challenged this taxonomy.  Therefore, this method is not completely reliable for the determination of the progenitors of such events.
 
@@ -54,10 +57,6 @@ This method has been successfully applied for the correct identification of cand
 
 ![t-SNE visualization map obtained for the noise-reduced dataset binned at $64$ ms with $pp=30$. GRBs colored in magenta are classified as Extended Emission by previous works. Image taken from. \label{fig:fig1}](https://github.com/KenethGarcia/ClassiPyGRB/blob/1d0b3e43dd4c200382538ed2a60b695c49d064a4/JOSS_Docs/Figures/EE_analysis.jpg)
 
-## Dependencies
-This repository requires Python 3.8 or high, and the packages from the [``requeriments.txt``](https://github.com/KenethGarcia/GRB_ML/blob/51482eecd01d8bea10a951ba3e9b0b108cea3c08/requirements.txt) file. Other packages will be required optionally in Documentation (i.e., Jupyter).
-
-
 # Methodology
 
 We complement the methodology presented in [@Jespersen2020]. Additionally, we implement the possibility of improving the signal/noise (S/N) ratio in two ways:
@@ -75,7 +74,6 @@ The use of this method produces 2D visualization maps colored by the duration of
 - Provisionally, those who are part of a study of extended emission GRBs will inform the user of this and show the reference. This will be expanded with another interesting features in the future.
 
 We remark the fact that algorithms such as t-SNE visualization maps are very sensitive to any change in the perplexity and learning rate parameters. Therefore, as is the case when using any of these visualization techniques derived from machine learning, care must be taken in the correct interpretation of the data.
-
 
 # Acknowledgements
 

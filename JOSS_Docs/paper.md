@@ -43,16 +43,20 @@ The detection of GRBs are carried by spatial mission such as Swift with its BAT 
 
 `ClassipyGRB` was designed to be used by astronomers whose scientific research is focused on GRBs. This module provides interactive visualizations of the light curves of GRBs, and the similarities they share. `ClassipyGRB` allows the comparison in a few seconds with other events in order to find resembling GRBs through the proximity between them.
 
-This method has been successfully applied for the correct identification of candidates for GRBs with extended emission that have not been previously identified by other groups, saving a lot of time and human effort [Garcia-Cifuentes et al.(2023)](https://ui.adsabs.harvard.edu/abs/2023arXiv230408666G/abstract). We locate extended emission GRBs reported by various authors under different criteria in our t-SNE maps (REF) and discuss its possible identification using only the gamma-ray data provided by the automatic pipeline of Swift/BAT. 
 
 # T-distributed Stochastic Neighbor Embedding (t-SNE) in Swift Data
 
 [Jespersen et al. (2020)](https://ui.adsabs.harvard.edu/abs/2020ApJ...896L..20J/abstract) showed that Swift/BAT GRBs can cluster into two groups when t-SNE is performed. In this repository, we replicate this work by adding more recent data from the Swift/BAT catalog (up to July 2022). We also included a noise-reduction and  an interpolation tools for achieving a deeper analysis of these data.
 
+# Applications 
+
+This method has been successfully applied for the correct identification of candidates for GRBs with extended emission that have not been previously identified by other groups, saving a lot of time and human effort [Garcia-Cifuentes et al.(2023)](https://ui.adsabs.harvard.edu/abs/2023arXiv230408666G/abstract). We locate extended emission GRBs reported by various authors under different criteria in our t-SNE maps and discuss its possible identification using only the gamma-ray data provided by the automatic pipeline of Swift/BAT. 
+
+![t-SNE visualization map obtained for the noise-reduced dataset binned at $64$ ms with $pp=30$. GRBs colored in magenta are classified as Extended Emission by previous works. Image taken from. \label{fig:fig1}](https://github.com/KenethGarcia/ClassiPyGRB/blob/1d0b3e43dd4c200382538ed2a60b695c49d064a4/JOSS_Docs/Figures/EE_analysis.jpg)
+
 ## Dependencies
 This repository requires Python 3.8 or high, and the packages from the [``requeriments.txt``](https://github.com/KenethGarcia/GRB_ML/blob/51482eecd01d8bea10a951ba3e9b0b108cea3c08/requirements.txt) file. Other packages will be required optionally in Documentation (i.e., Jupyter).
 
-![t-SNE visualization map obtained for the noise-reduced dataset binned at $64$ ms with $pp=30$. GRBs colored in magenta are classified as Extended Emission by previous works. Image taken from. \label{fig:fig1}](https://github.com/KenethGarcia/ClassiPyGRB/blob/1d0b3e43dd4c200382538ed2a60b695c49d064a4/JOSS_Docs/Figures/EE_analysis.jpg)
 
 # Methodology
 

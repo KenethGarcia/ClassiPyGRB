@@ -8,7 +8,7 @@
 If you use this code in a publication, please refer to the package by name and cite [Garcia-Cifuentes et al.(2023)](https://ui.adsabs.harvard.edu/abs/2023arXiv230408666G/abstract) -> [arXiv link](https://arxiv.org/abs/2304.08666).
 
 # Introduction
-Gamma-ray bursts (GRBs) are originated by the death of a massive star or from the merger of two compact objects. The classification is based on their duration ([Kouveliotou et al. (1993)](https://ui.adsabs.harvard.edu/abs/1993ApJ...413L.101K/abstract)). Nevertheless, events such as GRB 211211A ([Yang et al. (2022)]([https://ui.adsabs.harvard.edu/abs/1993ApJ...413L.101K/abstract](https://ui.adsabs.harvard.edu/abs/2022Natur.612..232Y/abstract))) has challenge this taxonomy.  Therefore, this method is not completely reliable for the determination of the progenitors of such events.
+Gamma-ray bursts (GRBs) are originated by the death of a massive star or from the merger of two compact objects. The classification is based on their duration ([Kouveliotou et al. (1993)](https://ui.adsabs.harvard.edu/abs/1993ApJ...413L.101K/abstract)). Nevertheless, events such as GRB 211211A ([Yang et al. (2022)](https://ui.adsabs.harvard.edu/abs/2022Natur.612..232Y/abstract)) has challenge this taxonomy.  Therefore, this method is not completely reliable for the determination of the progenitors of such events.
 
 # T-distributed Stochastic Neighbor Embedding (t-SNE) in Swift Data
 

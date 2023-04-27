@@ -18,53 +18,25 @@ This repository requires Python 3.8 or high, and the packages from the [``requer
 
 ## Features
 
-- ** 1. [Basic Usage](docs/Basic_Usage.ipynb)
+- 1. [Basic Usage](docs/Basic_Usage.ipynb)
 		
-- ** 2. [BAT: Data_Download](docs/BAT_Data_Download.ipynb)
+- 2. [BAT: Data_Download](docs/BAT_Data_Download.ipynb)
 	
-- ** 3. [BAT: Preprocess](docs/BAT_Preprocess.ipynb)
+- 3. [BAT: Preprocess](docs/BAT_Preprocess.ipynb)
 	
-- ** 4. [BAT: Noise_Reduction](docs/BAT_Noise_Reduction.ipynb)
+- 4. [BAT: Noise_Reduction](docs/BAT_Noise_Reduction.ipynb)
 	
-- ** 5. [BAT: Interpolation](docs/BAT_Interpolate.ipynb)
+- 5. [BAT: Interpolation](docs/BAT_Interpolate.ipynb)
 	
-- ** 6. [TSNE: Introduction](docs/TSNE_Introduction.ipynb)
+- 6. [TSNE: Introduction](docs/TSNE_Introduction.ipynb)
 	
-- ** 7. [TSNE: Overview](docs/TSNE_Overview.ipynb)
+- 7. [TSNE: Overview](docs/TSNE_Overview.ipynb)
 	
-- ** 8. [Plotting with t-SNE](docs/TSNE_Plotting.ipynb)
+- 8. [Plotting with t-SNE](docs/TSNE_Plotting.ipynb)
 	
-- ** 9. [Clustering Properties](docs/Cluster_Properties.ipynb)
+- 9. [Clustering Properties](docs/Cluster_Properties.ipynb)
 
-- ** 10. [Applicatios and Example](docs/Extended_Emission.ipynb)
-
-
-
-
-1. **Download Swift Data for different binnings.**
-
-![](https://github.com/KenethGarcia/GRB_ML/blob/4f5322be0ab14f37b968f98ba4400a52e0aa5eed/Documentation/README_Images/GRB060614.jpg)
-
-2. **Pre-process Swift Data following the guidelines from [Jespersen et al. (2020)](https://ui.adsabs.harvard.edu/abs/2020ApJ...896L..20J/abstract)**
-
-![](https://github.com/KenethGarcia/GRB_ML/blob/4f5322be0ab14f37b968f98ba4400a52e0aa5eed/Documentation/README_Images/Limited_GRB060614.jpg)
-
-3. **Perform t-SNE in high-level customization (thanks to [_openTSNE_](https://opentsne.readthedocs.io/en/latest/index.html) and [_scikit Learn_](https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html) implementations):**
-- **Create creative t-SNE animations showing its convergence:**
-
-![](https://github.com/KenethGarcia/GRB_ML/blob/51482eecd01d8bea10a951ba3e9b0b108cea3c08/Documentation/Animations/convergence_animation_pp_30.gif)
-
-- **Or changing any hyperparameter (perplexity, learning rate, etc.):**
-
-![](https://github.com/KenethGarcia/GRB_ML/blob/51482eecd01d8bea10a951ba3e9b0b108cea3c08/Documentation/Animations/perplexity_animation_2.gif)
-
-4. **Reduce noise to any custom light curve using [FABADA](https://github.com/PabloMSanAla/fabada), checking its variance assuming a gray-scaled 1-pixel height image.**
-
-![](https://github.com/KenethGarcia/GRB_ML/blob/4f5322be0ab14f37b968f98ba4400a52e0aa5eed/Documentation/README_Images/Noise_Filtered_GRB060614.jpg)
-
-5. **Interpolate between light curve data points using any custom n-order polynomial.**
-
-![](https://github.com/KenethGarcia/GRB_ML/blob/4f5322be0ab14f37b968f98ba4400a52e0aa5eed/Documentation/README_Images/Interpolated_GRB060614.jpg)
+- 10. [Applicatios and Example](docs/Extended_Emission.ipynb)
 
 # Contributors:
 1. [Keneth Garcia-Cifuentes](https://orcid.org/0009-0001-2607-6359)

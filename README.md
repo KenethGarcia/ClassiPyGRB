@@ -17,6 +17,30 @@ This repository requires Python 3.8 or high, and the packages from the [``requer
 
 
 ## Features
+
+- ** 1. [Basic Usage](docs/Basic_Usage.ipynb)
+		
+- ** 2. [BAT: Data_Download](docs/BAT_Data_Download.ipynb)
+	
+- ** 3. [BAT: Preprocess](docs/BAT_Preprocess.ipynb)
+	
+- ** 4. [BAT: Noise_Reduction](docs/BAT_Noise_Reduction.ipynb)
+	
+- ** 5. [BAT: Interpolation](docs/BAT_Interpolate.ipynb)
+	
+- ** 6. [TSNE: Introduction](docs/TSNE_Introduction.ipynb)
+	
+- ** 7. [TSNE: Overview](docs/TSNE_Overview.ipynb)
+	
+- ** 8. [Plotting with t-SNE](docs/TSNE_Plotting.ipynb)
+	
+- ** 9. [Clustering Properties](docs/Cluster_Properties.ipynb)
+
+- ** 10. [Applicatios and Example](docs/Extended_Emission.ipynb)
+
+
+
+
 1. **Download Swift Data for different binnings.**
 
 ![](https://github.com/KenethGarcia/GRB_ML/blob/4f5322be0ab14f37b968f98ba4400a52e0aa5eed/Documentation/README_Images/GRB060614.jpg)

@@ -66,8 +66,6 @@ class SWIFT:
             original_data_path: str = None,
             noise_data_path: str = None,
             results_path: str = None,
-            noise_images_path: str = None,
-            table_path: str = None,
     ):
         """
         Constructor of SWIFT Class
@@ -90,9 +88,6 @@ class SWIFT:
                 folder inside data_path.
             results_path (str, optional): Path to save non-manipulated data from SWIFT. Defaults to Results folder
                 inside root_path.
-            noise_images_path (str, optional): Path to save noise-reduced plots from SWIFT. Defaults to
-                Noise_Filter_Images folder inside results_path.
-            table_path (str, optional): Path to save tables from SWIFT. Defaults to Tables folder inside root_path.
 
         Raises:
             ValueError: If res is not in (2, 8, 16, 64, 256, 1000, 10000)
@@ -114,15 +109,12 @@ class SWIFT:
         self.n_bands = n_bands
 
         self.root_path = os.path.join(os.getcwd()) if root_path is None else root_path
-        self.table_path = os.path.join(self.root_path, r"Tables") if table_path is None else table_path
         self.data_path = os.path.join(self.root_path, r"Data") if data_path is None else data_path
         self.original_data_path = os.path.join(self.data_path, r"Original_Data") if original_data_path is None \
             else original_data_path
         self.noise_data_path = os.path.join(self.data_path, r"Noise_Filtered_Data") if noise_data_path is None \
             else noise_data_path
         self.results_path = os.path.join(self.root_path, r"Results") if results_path is None else results_path
-        self.noise_images_path = os.path.join(self.results_path, r"Noise_Filter_Images") if noise_images_path is None \
-            else noise_images_path
         self.bands_selected = [self.column_labels[2 * i - 1] for i in n_bands]
         self.bands_selected.insert(0, self.column_labels[0])
 
@@ -581,6 +573,7 @@ class SWIFT:
         low_sub.set_xlabel('Time since BAT Trigger time (s)', weight='bold').set_fontsize('10')
         if t in (50, 90, 100) or limits is not None:
             df = self.lc_limiter(name=name, t=t, limits=limits)
+            high_sub.set_title(fr"{self.end} Swift {name} out of $T\_{t}$", weight='bold').set_fontsize('12')
             if isinstance(df, tuple):
                 warnings.warn(fr"Error when limiting out of T_{t} {name}: {df[3]}. Plotting all data...",
                               RuntimeWarning)

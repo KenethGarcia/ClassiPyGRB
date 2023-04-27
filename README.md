@@ -19,7 +19,8 @@ Authors:
     Affiliation: 1
     
 Affiliation:
- - Mame: Instituto de Ciencias Nucleares,  Universidad Nacional Autónoma de México, Apartado Postal 70-543, 04510 CDMX, México
+ - Name: Instituto de Ciencias Nucleares,  Universidad Nacional Autónoma de México, Apartado Postal 70-543, 04510 CDMX, México
+ - Index: 1
 
 date: 28 April 2023
 

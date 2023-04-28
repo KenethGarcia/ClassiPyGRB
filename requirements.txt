@@ -3,7 +3,6 @@ matplotlib==3.7.1
 moviepy==1.0.3
 numpy==1.24.2
 openTSNE==0.7.1
-openTSNE==0.7.1
 pandas==2.0.0
 requests==2.29.0
 scikit_learn==1.2.2

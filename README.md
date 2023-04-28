@@ -3,7 +3,7 @@
 
 ![Logo](docs/Animations/images/logo.jpeg)  
 
-**ClassiPyGRB** is a Python 3 package to download, process, visualize and classify Gamma-Ray-Bursts (GRB) from the [Swift/BAT Telescope](https://swift.gsfc.nasa.gov/about_swift/bat_desc.html) database. It is distributed over the GNU General Public License Version 2 (1991). Please read the complete description of the method and its application to GRBs in this [publication](JOSS_Docs/paper.md).
+**ClassiPyGRB** is a Python 3 package to download, process, visualize and classify Gamma-Ray-Bursts (GRB) from the [Swift/BAT Telescope](https://swift.gsfc.nasa.gov/about_swift/bat_desc.html) database. It is distributed over the GNU General Public License Version 2 (1991). Please, read the complete description of the method and its application to GRBs in this [publication](JOSS_Docs/paper.md).
 
 # Attribution
 If you use this code in a publication, please refer to the package by its name and cite [Garcia-Cifuentes et al.(2023)](https://ui.adsabs.harvard.edu/abs/2023arXiv230408666G/abstract) -> [arXiv link](https://arxiv.org/abs/2304.08666). Any question, please email [Keneth Garcia-Cifuentes](mailto:kenet.garcia@correo.nucleares.unam.mx).
@@ -37,13 +37,13 @@ $ pip install classipygrb
 
 ## Features
 
-In **ClassiPyGRB**, it is possible to retrieve data from Swift/BAT Telescope in a single three-line code:
+In **ClassiPyGRB**, it is possible to retrieve data from the Swift/BAT catalog in a single three-line code:
 ```
 from ClassiPyGRB import SWIFT
 swift = SWIFT(res=64)
 df = swift.obtain_data(name='GRB211211A')
 ```
-Also, plot any light curve:
+Also, you only use a line to plot a light curve:
 ```
 swift.plot_any_grb(name='GRB060614')
 ```
@@ -55,7 +55,8 @@ or use a Graphical User Interface (GUI) to analyze the embeddings obtained by TS
 
 ![GUI](docs/Animations/images/Use.png)
 
-We strongly encourage you to read the Documentation of **ClassiPyGRB**. It includes all the details and follow-up for managing and processing data from Swift/BAT, performing TSNE, plotting and animating their results, and how to use the internal GUI:
+We strongly encourage you to read the Documentation of **ClassiPyGRB** before start. This documentation includes all the details and follow-up for managing and processing data from Swift/BAT, performing TSNE, plotting and animating their results, and how to use the internal GUI.
+Moreover, there are ten intuitive notebooks to support you.
 
 - 1. [Basic Usage](docs/1.Basic_Usage.ipynb)
 		
@@ -89,4 +90,4 @@ Here are some ways you can get involved:
 - Submit a [pull request](https://github.com/KenethGarcia/ClassiPyGRB/pulls) with your code changes or enhancements.
 - Share ClassiPyGRB on social media or with your colleagues.
 
-We appreciate your involvement and do not hesitate to email [Keneth Garcia](mailto:keneth.garcia@correo.nucleares.unam.mx) to discuss any topic related to **ClassiPyGRB**.
+We appreciate your interest in this package. Please, do not hesitate to email [Keneth Garcia](mailto:keneth.garcia@correo.nucleares.unam.mx) to discuss any topic related to **ClassiPyGRB**.

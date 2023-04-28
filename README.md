@@ -56,7 +56,7 @@ or use a Graphical User Interface (GUI) to analyze the embeddings obtained by TS
 ![GUI](docs/Animations/images/Use.png)
 
 We strongly encourage you to read the Documentation of **ClassiPyGRB** before start. This documentation includes all the details and follow-up for managing and processing data from Swift/BAT, performing TSNE, plotting and animating their results, and how to use the internal GUI.
-Moreover, there are ten intuitive notebooks to support you.
+Moreover, we deveoloped intuitive notebooks to support you in your research.
 
 - 1. [Basic Usage](docs/1.Basic_Usage.ipynb)
 		

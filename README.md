@@ -53,7 +53,7 @@ Do specialized tasks as see the convergence of t-Distributed Stochastic Neighbor
 
 ![convergence](docs/Animations/animation1.gif)
 
-or use a Graphical User Interface (GUI) to aanlyze the embeddings obtained by TSNE:
+or use a Graphical User Interface (GUI) to analyze the embeddings obtained by TSNE:
 
 ![GUI](docs/Animations/images/Use.png)
 

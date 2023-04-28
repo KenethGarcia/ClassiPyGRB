@@ -26,7 +26,7 @@ $ cd ClassiPyGRB
 $ pip install -r requirements.txt
 $ pip install .
 ```
-Also, using `pip`
+Or, using `pip`
 ```
 $ pip install classipygrb@git+https://github.com/KenethGarcia/ClassiPyGRB
 ```

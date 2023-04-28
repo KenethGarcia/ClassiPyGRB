@@ -111,7 +111,7 @@ class Viewer(tk.Tk):
         self.t_label.place(x=840, y=0)
         self.t = tk.StringVar()
         self.t.set('90')
-        self.t_drop_menu = tk.OptionMenu(self, self.t, '50', '90', '100')
+        self.t_drop_menu = tk.OptionMenu(self, self.t, 'Full', '50', '90', '100')
         self.t_drop_menu.place(x=900, y=0)
         self.button_data = tk.Button(self, text="Update Light Curve", command=self.update_lc)
         self.button_data.pack(side='top')
@@ -247,15 +247,19 @@ class Viewer(tk.Tk):
                 flag = True
                 self.canvas2.get_tk_widget().destroy()
                 self.figure2, self.ax2 = plt.subplots(nrows=5, ncols=1, sharex=True, gridspec_kw=self.gs_kw, figsize=(6, 4))
+            try:
+                t = int(self.t.get())
+            except ValueError:
+                t = None
             if self.dataset.get() == '64ms':
-                self.object1.plot_any_grb(name=name, t=int(self.t.get()), ax=self.ax2)
+                self.object1.plot_any_grb(name=name, t=t, ax=self.ax2, check_disk=True)
             elif self.dataset.get() == 'FABADA':
                 old_path = self.object1.original_data_path  # Change path
                 self.object1.original_data_path = self.object1.noise_data_path
-                self.object1.plot_any_grb(name=name, t=int(self.t.get()), ax=self.ax2)
+                self.object1.plot_any_grb(name=name, t=t, ax=self.ax2, check_disk=True)
                 self.object1.original_data_path = old_path  # Return path
             else:
-                self.object2.plot_any_grb(name=name, t=int(self.t.get()), ax=self.ax2)
+                self.object2.plot_any_grb(name=name, t=t, ax=self.ax2, check_disk=True)
             if flag:
                 self.canvas2 = FigureCanvasTkAgg(self.figure2, self)
                 self.canvas2.get_tk_widget().pack(side="right", fill="both", expand=True)
@@ -330,15 +334,19 @@ class Viewer(tk.Tk):
         Function to update the light curve plot.
         """
         [self.ax2[i].clear() for i in range(len(self.ax2))]
+        try:
+            t = int(self.t.get())
+        except ValueError:
+            t = None
         if self.dataset.get() == '64ms':
-            self.object1.plot_any_grb(name=name, t=int(self.t.get()), ax=self.ax2)
+            self.object1.plot_any_grb(name=name, t=t, ax=self.ax2, check_disk=True)
         elif self.dataset.get() == 'FABADA':
             old_path = self.object1.original_data_path  # Change path
             self.object1.original_data_path = self.object1.noise_data_path
-            self.object1.plot_any_grb(name=name, t=int(self.t.get()), ax=self.ax2)
+            self.object1.plot_any_grb(name=name, t=t, ax=self.ax2, check_disk=True)
             self.object1.original_data_path = old_path  # Return path
         else:
-            self.object2.plot_any_grb(name=name, t=int(self.t.get()), ax=self.ax2)
+            self.object2.plot_any_grb(name=name, t=t, ax=self.ax2, check_disk=True)
         self.canvas2.draw()
 
     def position_searcher(self):
@@ -383,3 +391,8 @@ def font_style(label):
         label: Tkinter label to change the font style
     """
     label.config(font=('Helvetica bold', 9))
+
+
+if __name__ == "__main__":
+    app = Viewer(root_path='/home/keneth/Documents/Swift_Data')
+    app.mainloop()

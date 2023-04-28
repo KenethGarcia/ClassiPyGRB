@@ -17,6 +17,37 @@
 ##        to the value presented in this table.
 ################################################################################
 ## GRBname | z | Method | Uncertainty (when available; mostly for photo-z) | Ref.
+GRB220611A  |   2.3608   | host galaxy Lyman-alpha |   +0.0002 -0.0002   |   Schneider et al. GCN Circ. 32595 (VLT/X-shooter)  
+GRB220521A  |   5.6     | ba |   N/A   |   Fynbo et al. GCN Circ. 32079 (NOT)  
+GRB220117A  |   4.961   | ba |   N/A   |   Palmerio et al. GCN Circ. 31480 (VLT/X-shooter)  
+GRB220101A  |   4.61    | ba |   N/A   |   Fu et al. GCN Circ. 31353  
+GRB211227A  |   0.228?   | he |   N/A   |   Xu et al. GCN Circ. 31320; Malesani et al. GCN Circ. 31324  
+GRB211211A  |   0.076 or 0.459   |   hp   |   N/A   |   Malesani et al. GCN Circ. 31221 (NOT) ; Waxman et al. (2022) https://arxiv.org/pdf/2206.10710.pdf  
+GRB211207A  |   2.272   | ba |   N/A   |   Schneider et al. GCN Circ. 31188 (VLT/X-shooter)  
+GRB211024B  |   1.1137  | he |   +0.0002 -0.0002   |   de Ugarte Postigo et al. GCN Circ. 31800 (VLT/X-shooter)  
+GRB211023B  |   0.862   | he |   N/A   |   Rossi et al. GCN Circ. 31107  
+GRB210905A  |   6.318   | afterglow Lyman-alpha |   N/A   |   Tanvir et al. GCN Circ. 30771 (VLT/X-shooter)  
+GRB210822A  |   1.736   | ba |   N/A   |   Zhu et al. GCN Circ. 30692  
+GRB210731A  |   1.2525  | ba |   N/A   |   Kann et al. GCN Circ. 30583 (VLT/X-shooter)  
+GRB210726A  |   0.35    |   hp   |   +0.15 -0.15   |   Watson et al. GCN Circ. 30534  
+GRB210722A  |   1.145   | ba |   N/A   |   Thoene et al. GCN Circ. 30487 (GTC/OSIRIS)  
+GRB210702A  |   1.1757  | ba |   +0.0093 -0.0093   |   Kuin et al. GCN Circ. 30355  
+GRB210619B  |   1.937   | ba |   N/A   |   de Ugarte Postigo et al. GCN Circ. 30272 (GTC/OSIRIS)  
+GRB210610B  |   1.13    | ba |   N/A   |   *Fynbo et al. GCN Circ. 30182; Fu et al. GCN Circ. 30188; de Ugarte Postigo et al. GCN Circ. 30194; Frederiks et al. GCN Circ. 30196; Dutta et al. GCN Circ. 30201; Gropp et al. GCN Circ. 30208  
+GRB210610A  |   3.54    | ba |   N/A   |   Zhu et al. GCN Circ. 30164  
+GRB210517A  |   2.486   | ba |   N/A   |   Tanvir et al. GCN Circ. 30037 (VLT/X-shooter)  
+GRB210504A  |   2.077   | ba |   N/A   |   Xu et al. GCN Circ. 29944 (VLT/X-shooter)  
+GRB210420B  |   1.400   | ba |   N/A   |   de Ugarte Postigo et al. GCN Circ. 29853 (GTC)  
+GRB210411C  |   2.826   | ba |   N/A   |   de Ugarte Postigo et al. GCN Circ. 29806 (VLT/X-shooter)  
+GRB210321A  |   1.487   | ba |   N/A   |   de Ugarte Postigo et al. GCN Circ. 29685 (GTC/OSIRIS)  
+GRB210222B  |   2.198   | ba |   N/A   |   Agui Fernandez et al. GCN Circ. 29552 (FORS2/VLT)  
+GRB210210A  |   0.715   | ba |   N/A   |   de Ugarte Postigo et al. GCN Circ. 29450 (GTC/OSIRIS)  
+GRB210207B  |   1.4-1.9   | UVOT |   N/A   |   Siegel et al. GCN Circ. 29436  
+GRB210104A  |   0.92    | bp |   +0.3 -0.3   |   Kool et al. GCN Circ. 29405  
+GRB201221D  |   1.046   | ba |   N/A   |   de Ugarte Postigo et al. GCN Circ. 29132 (GTC/OSIRIS)  
+GRB201221A  |   5.7     | afterglow Lyman break |   N/A   |   Malesani et al. GCN Circ. 29100 (VLT/X-shooter)   
+GRB201216C  |   1.1     | ba |   N/A   |   Vielfaure et al. GCN Circ. 29077 (VLT/X-shooter)  
+GRB201104B  |   1.954   | ba |   N/A   |   Vielfaure et al. GCN Circ. 28840 (VLT/X-shooter)  
 GRB201024A  |   0.999   | ba |   N/A   |   de Ugarte Postigo et al. GCN Circ. 28764 (GTC/OSIRIS)  
 GRB201021C  |   1.070   | ba |   N/A   |   Vielfaure et al. GCN Circ. 28739 (VLT/X-shooter)  
 GRB201020A  |   2.903   | ba |   N/A   |   Kann et al. GCN Circ. 28717  

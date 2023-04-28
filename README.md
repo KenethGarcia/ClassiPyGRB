@@ -86,9 +86,9 @@ We strongly encourage you to read the Documentation of **ClassiPyGRB**. It inclu
 **ClassiPyGRB** is a open-source package where all kinds of contributions are welcome. Whether you want to report a bug or submit a pull request, your feedback will be received gratefully.
 
 Here are some ways you can get involved:
-- Report a bug or issue on our GitHub Issues page.
+- Report a bug or issue on our [GitHub Issues](https://github.com/KenethGarcia/ClassiPyGRB/issues) page.
 - Suggest a new feature or improvement by opening a new issue.
-- Submit a pull request with your code changes or enhancements.
+- Submit a [pull request](https://github.com/KenethGarcia/ClassiPyGRB/pulls) with your code changes or enhancements.
 - Share ClassiPyGRB on social media or with your colleagues.
 
 We appreciate your involvement and do not hesitate to email [Keneth Garcia](mailto:keneth.garcia@correo.nucleares.unam.mx) to discuss any topic related to **ClassiPyGRB**.

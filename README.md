@@ -5,15 +5,22 @@
 
 ![Logo](docs/Animations/images/logo.jpeg)  
 
-**ClassiPyGRB** is a Python 3 package to download, process, visualize and classify Gamma-Ray-Bursts (GRB) from the [Swift/BAT Telescope](https://swift.gsfc.nasa.gov/about_swift/bat_desc.html) database. It is distributed over the GNU General Public License Version 2 (1991). Please read the complete description of the method and its application to GRBs in this [publication](JOSS_Docs/paper.md)
+**ClassiPyGRB** is a Python 3 package to download, process, visualize and classify Gamma-Ray-Bursts (GRB) from the [Swift/BAT Telescope](https://swift.gsfc.nasa.gov/about_swift/bat_desc.html) database. It is distributed over the GNU General Public License Version 2 (1991). Please read the complete description of the method and its application to GRBs in this [publication](JOSS_Docs/paper.md).
 
-[Jespersen et al. (2020)](https://ui.adsabs.harvard.edu/abs/2020ApJ...896L..20J/abstract) showed that Swift/BAT GRBs can cluster into two groups when t-SNE is performed. In this repository, we replicate this work by adding more recent data from the Swift/BAT catalog (up to July 2022). We also included a noise-reduction and  an interpolation tools for achieving a deeper analysis of these data.
+[Jespersen et al. (2020)](https://ui.adsabs.harvard.edu/abs/2020ApJ...896L..20J/abstract) showed that Swift/BAT GRBs can cluster into two groups when t-SNE is performed. In this repository, we replicate this work by adding more recent data from the Swift/BAT catalog (up to July 2022). We also included a noise-reduction and an interpolation tools for achieving a deeper analysis of these data.
 
 # Attribution
 If you use this code in a publication, please refer to the package by name and cite [Garcia-Cifuentes et al.(2023)](https://ui.adsabs.harvard.edu/abs/2023arXiv230408666G/abstract) -> [arXiv link](https://arxiv.org/abs/2304.08666). Any question, please email [Keneth Garcia-Cifuentes](mailto:kenet.garcia@correo.nucleares.unam.mx)
 
 ## Dependencies
-This repository requires Python 3.8 or high, and the packages from the [``requeriments.txt``](https://github.com/KenethGarcia/GRB_ML/blob/51482eecd01d8bea10a951ba3e9b0b108cea3c08/requirements.txt) file. Other packages will be required optionally in Documentation (i.e., Jupyter).
+This repository requires Python 3.8 or high, and the packages from the [``requeriments.txt``](https://github.com/KenethGarcia/GRB_ML/blob/51482eecd01d8bea10a951ba3e9b0b108cea3c08/requirements.txt) file. In addition, it is required to install all the dependencies related to Tkinter and `python3-pillow-tk`, in Debian-based distros:
+
+```
+$ sudo apt install python3-tk
+$ sudo apt-get install python3-pil python3-pil.imagetk
+```
+
+Other data management packages as [Numpy](https://numpy.org/) or [Pandas](https://pandas.pydata.org/) will be required optionally in Documentation.
 
 
 ## Features

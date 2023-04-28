@@ -20,7 +20,7 @@ $ sudo apt-get install python3-tk
 $ sudo apt-get install python3-pil python3-pil.imagetk
 ```
 
-Other data management packages as [Numpy](https://numpy.org/) or [Pandas](https://pandas.pydata.org/) will be required optionally in Documentation.
+Other data management packages as [Numpy](https://numpy.org/) or [Pandas](https://pandas.pydata.org/) will be required in Documentation.
 
 
 ## Features

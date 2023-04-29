@@ -28,7 +28,7 @@ $ pip install .
 ```
 Or, using `pip`
 ```
-$ pip install classipygrb@git+https://github.com/KenethGarcia/ClassiPyGRB
+$ pip install ClassiPyGRB@git+https://github.com/KenethGarcia/ClassiPyGRB
 ```
 or by using the stable [PyPI](https://pypi.org/) compiled version:
 ```

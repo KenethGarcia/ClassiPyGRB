@@ -27,8 +27,6 @@ Affiliation:
 
 date: 30 April 2023 
 
-# **Warning: This package is under peer review**
-
 # Summary
 Gamma-ray burst (GRBs) are the brightest events in the universe. Since decades, astrophysics have known about their cosmological nature. Every year, spacecraft missions such as Fermi and SWIFT, detect hundred of them. In spite of this large sample, these phenomena show a complex taxonomy in the first seconds after their appearence, it makes it very difficult to find resemblance between them using conventional techniques.
 
@@ -45,21 +43,34 @@ Motivated by this problem, [@Jespersen2020] and [@Steinhardt2023] carried out an
 
 This method has been successfully applied for the correct identification of candidates for GRBs with extended emission that have not been previously identified by other groups, saving a lot of time and human effort [@Garcia-Cifuentes2023]. We locate extended emission GRBs reported by various authors under different criteria in our t-SNE maps and discuss its possible identification using only the gamma-ray data provided by the automatic pipeline of Swift/BAT. 
 
-![t-SNE visualization map obtained for the noise-reduced dataset binned at $64$ ms with $pp=30$. GRBs colored in magenta are classified as Extended Emission by previous works. Image taken from [@Garcia-Cifuentes2023] \label{fig:fig1}](https://github.com/KenethGarcia/ClassiPyGRB/blob/1d0b3e43dd4c200382538ed2a60b695c49d064a4/JOSS_Docs/Figures/EE_analysis.jpg)
+![t-SNE visualization map obtained for the noise-reduced dataset binned at $64$ ms with $pp=30$. GRBs colored in magenta are classified as Extended Emission by previous works. Image taken from [@Garcia-Cifuentes2023] \label{fig:fig1}](Figures/EE_analysis_updated.jpg)
 
-Moreover, `ClassipyGRB` has been use to find in few seconds, similar GRBs with some specific feature, such as a bright component[@Angulo-Valdez2023].
+Moreover, `ClassipyGRB` has been use to find in few seconds, similar GRBs with some specific feature, such as a bright component [@Angulo-Valdez2023].
 
 
-# Methodology and Structure of ClassipyGRB
+# Methodology and Structure of ClassiPyGRB
 
-We complement the methodology presented in [@Jespersen2020]. Additionally, we implement the possibility of improving the signal/noise (S/N) ratio in two ways:
+`ClassipyGRB` mainly consist in three parts:
 
-1. We applied the non-parametric noise reduction technique called FABADA [@Sanchez-Alarcon2022] to each band for every single light curve. 
-2. We use the 10 s binned light curve data from the Swift/BAT catalog.
+1) Retrieval and visualization of data from Swift/BAT: We implement an easy and fast code to download and plot an existing GRB. There is the possibility to modify the resolution (2ms, 8ms, 16ms, 64ms, 256ms, 1s and 10s) and select those bands to work with. 
 
-This repository requires Python 3.8 or high, and the packages from the [``requeriments.txt``](https://github.com/KenethGarcia/GRB_ML/blob/51482eecd01d8bea10a951ba3e9b0b108cea3c08/requirements.txt) file. Other packages will be required optionally in Documentation (i.e., Jupyter).
 
-The use of this method produces 2D visualization maps colored by the duration of GRBs. Furthermore:
+![Light curve of GRB 060614A. Image taken from [@Garcia-Cifuentes2023] \label{fig:fig2}](Figures/GRB.jpg)
+
+2) Data processing: `ClassipyGRB` is able to: 
+  -constrain the light curves in the duration T100.
+  -normalise the flux
+  -standarise the temporal interval of all the sample (zero-padding step)
+  -improve the signal/noise (S/N) ratio in two ways:
+
+    1. We applied the non-parametric noise reduction technique called FABADA [@Sanchez-Alarcon2022] to each band for every single light     curve. 
+    2. We use the 10 s binned light curve data from the Swift/BAT catalog.
+
+  -interpolate the flux between two times.
+
+3) Visualization and plot of t-SNE maps
+
+`ClassipyGRB` produces 2D visualization maps colored by the duration of GRBs. It includes:
 
 - Intuitive graphic interface.
 - It is possible to add either of the two features to the t-SNE maps or to visualize the raw data.
@@ -68,7 +79,10 @@ The use of this method produces 2D visualization maps colored by the duration of
 - There is the possibility of working only on the desired bands of Swift/BAT.
 - Specific events can be searched for and highlighted on the display.
 
-Algorithms such as t-SNE visualization maps are very sensitive to any change in the perplexity and learning rate parameters. Therefore, as is the case when using any of these visualization techniques derived from machine learning, care must be taken in the correct interpretation of the data.
+
+Note: Algorithms such as t-SNE visualization maps are very sensitive to any change in the perplexity and learning rate parameters. Therefore, as is the case when using any of these visualization techniques derived from machine learning, care must be taken in the correct interpretation of the data.
+
+This repository requires Python 3.8 or high, and the packages from the [``requeriments.txt``](https://github.com/KenethGarcia/GRB_ML/blob/51482eecd01d8bea10a951ba3e9b0b108cea3c08/requirements.txt) file. Other packages will be required optionally in Documentation (i.e., Jupyter).
 
 # Acknowledgements
 

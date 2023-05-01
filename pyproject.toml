@@ -1,3 +1,67 @@
 [build-system]
-requires = ['setuptools>=42']
+requires = [
+     'setuptools>=65.5.1',
+     "wheel"
+]
 build-backend = 'setuptools.build_meta'
+
+[project]
+name = "ClassiPyGRB"
+version = "1.0.0"
+authors = [
+  {name = "Garcia-Cifuentes, K.", email = "keneth.garcia@correo.nucleares.unam.mx"},
+  {name = "Becerra, R. L.", email = "rosa.becerra@correo.nucleares.unam.mx"},
+  {name = "De Colle, F.", email = "fabio@nucleares.unam.mx"},
+]
+maintainers = [
+  {name = "Keneth Garcia", email = "keneth.garcia@correo.nucleares.unam.mx"}
+]
+keywords = [
+   "Swift", "BAT", "Gamma-Ray-Burst", "Swift/BAT", "TSNE", "Transients", "Extragalactic Astronomy"
+]
+description = "Download, process, visualize and classify Gamma-Ray-Bursts (GRB) from the Swift/BAT Telescope database."
+readme = {file = "README.md", content-type = "text/markdown"}
+requires-python = ">=3.8"
+license = {file = "LICENSE", name = "GNU General Public License version 2 (1991)"}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Education",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: Implementation",
+    "Natural Language :: English",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux"
+]
+dependencies = [
+    "fabada==0.1",
+    "matplotlib==3.7.1",
+    "moviepy==1.0.3",
+    "numpy==1.24.2",
+    "openTSNE==0.7.1",
+    "pandas==2.0.0",
+    "requests==2.29.0",
+    "scikit_learn==1.2.2",
+    "scipy==1.10.1",
+    "tqdm==4.65.0",
+    "tables==3.8.0",
+    "scikit-learn==1.2.2"
+]
+
+[project.urls]
+homepage = "https://github.com/KenethGarcia/ClassiPyGRB"
+documentation = "https://github.com/KenethGarcia/ClassiPyGRB/tree/master/docs"
+
+[tool.setuptools.package-data]
+summary_tables = ["*"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+

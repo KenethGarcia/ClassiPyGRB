@@ -1,51 +1,93 @@
 
-
-
 # **Warning: This repository is under development**
 
 ![Logo](docs/Animations/images/logo.jpeg)  
 
-**ClassiPyGRB** is a Python 3 package to download, process, visualize and classify Gamma-Ray-Bursts (GRB) from the [Swift/BAT Telescope](https://swift.gsfc.nasa.gov/about_swift/bat_desc.html) database. It is distributed over the GNU General Public License Version 2 (1991). Please read the complete description of the method and its application to GRBs in this [publication](JOSS_Docs/paper.md).
-
-[Jespersen et al. (2020)](https://ui.adsabs.harvard.edu/abs/2020ApJ...896L..20J/abstract) showed that Swift/BAT GRBs can cluster into two groups when t-SNE is performed. In this repository, we replicate this work by adding more recent data from the Swift/BAT catalog (up to July 2022). We also included a noise-reduction and an interpolation tools for achieving a deeper analysis of these data.
+**ClassiPyGRB** is a Python 3 package to download, process, visualize and classify Gamma-Ray-Bursts (GRB) from the [Swift/BAT Telescope](https://swift.gsfc.nasa.gov/about_swift/bat_desc.html) database. It is distributed over the GNU General Public License Version 2 (1991). Please, read the complete description of the method and its application to GRBs in this [publication](JOSS_Docs/paper.md).
 
 # Attribution
-If you use this code in a publication, please refer to the package by name and cite [Garcia-Cifuentes et al.(2023)](https://ui.adsabs.harvard.edu/abs/2023arXiv230408666G/abstract) -> [arXiv link](https://arxiv.org/abs/2304.08666). Any question, please email [Keneth Garcia-Cifuentes](mailto:kenet.garcia@correo.nucleares.unam.mx)
+If you use this code in a publication, please refer to the package by its name and cite [Garcia-Cifuentes et al.(2023)](https://ui.adsabs.harvard.edu/abs/2023arXiv230408666G/abstract) -> [arXiv link](https://arxiv.org/abs/2304.08666). Any question, please email [Keneth Garcia-Cifuentes](mailto:kenet.garcia@correo.nucleares.unam.mx).
 
 ## Dependencies
-This repository requires Python 3.8 or high, and the packages from the [``requeriments.txt``](https://github.com/KenethGarcia/GRB_ML/blob/51482eecd01d8bea10a951ba3e9b0b108cea3c08/requirements.txt) file. In addition, it is required to install all the dependencies related to Tkinter, Pillow, and ImageTK, in Debian-based distros:
+This repository requires Python 3.8 or high, and the packages from the [``requeriments.txt``](https://github.com/KenethGarcia/ClassiPyGRB/blob/ce856bd08f12b741d26618aec016b4dd84ed44cf/requirements.txt) file. In addition, it is required to install all the dependencies related to Tkinter, Pillow, and ImageTK, in Debian-based distros:
 
 ```
 $ sudo apt-get install python3-tk
 $ sudo apt-get install python3-pil python3-pil.imagetk
 ```
 
-Other data management packages as [Numpy](https://numpy.org/) or [Pandas](https://pandas.pydata.org/) will be required optionally in Documentation.
+Other data management packages as [Numpy](https://numpy.org/) or [Pandas](https://pandas.pydata.org/) will be required in Documentation.
 
+## Installation
+The latest sources from **ClassiPyGRB** is avaiable by cloning the repository:
+```
+$ git clone https://github.com/KenethGarcia/ClassiPyGRB
+$ cd ClassiPyGRB
+$ pip install -r requirements.txt
+$ pip install .
+```
+Or, using `pip`
+```
+$ pip install ClassiPyGRB@git+https://github.com/KenethGarcia/ClassiPyGRB
+```
+or by using the stable [PyPI](https://pypi.org/) compiled version:
+```
+$ pip install classipygrb
+```
 
 ## Features
 
-- 1. [Basic Usage](docs/Basic_Usage.ipynb)
+In **ClassiPyGRB**, it is possible to retrieve data from the Swift/BAT catalog in a single three-line code:
+```
+from ClassiPyGRB import SWIFT
+swift = SWIFT(res=64)
+df = swift.obtain_data(name='GRB211211A')
+```
+Also, you only use a line to plot a light curve:
+```
+swift.plot_any_grb(name='GRB060614')
+```
+Do specialized tasks as see the convergence of t-Distributed Stochastic Neighbor Embedding (TSNE):
+
+![convergence](docs/Animations/animation1.gif)
+
+or use a Graphical User Interface (GUI) to analyze the embeddings obtained by TSNE:
+
+![GUI](docs/Animations/images/Use.png)
+
+We strongly encourage you to read the Documentation of **ClassiPyGRB** before start. This documentation includes all the details and follow-up for managing and processing data from Swift/BAT, performing TSNE, plotting and animating their results, and how to use the internal GUI.
+Moreover, we deveoloped intuitive notebooks to support you in your research.
+
+- 1. [Basic Usage](docs/1.Basic_Usage.ipynb)
 		
-- 2. [BAT: Data_Download](docs/BAT_Data_Download.ipynb)
+- 2. [BAT: Data_Download](docs/2.BAT_Data_Download.ipynb)
 	
-- 3. [BAT: Preprocess](docs/BAT_Preprocess.ipynb)
+- 3. [BAT: Preprocess](docs/3.BAT_Preprocess.ipynb)
 	
-- 4. [BAT: Noise_Reduction](docs/BAT_Noise_Reduction.ipynb)
+- 4. [BAT: Noise_Reduction](docs/4.BAT_Noise_Reduction.ipynb)
 	
-- 5. [BAT: Interpolation](docs/BAT_Interpolate.ipynb)
+- 5. [BAT: Interpolation](docs/5.BAT_Interpolate.ipynb)
 	
-- 6. [TSNE: Introduction](docs/TSNE_Introduction.ipynb)
+- 6. [TSNE: Introduction](docs/6.TSNE_Introduction.ipynb)
 	
-- 7. [TSNE: Overview](docs/TSNE_Overview.ipynb)
+- 7. [TSNE: Overview](docs/7.TSNE_Overview.ipynb)
 	
-- 8. [Plotting with t-SNE](docs/TSNE_Plotting.ipynb)
+- 8. [Plotting with t-SNE](docs/8.TSNE_Plotting.ipynb)
 	
-- 9. [Clustering Properties](docs/Cluster_Properties.ipynb)
+- 9. [Clustering Properties](docs/9.Cluster_Properties.ipynb)
 
-- 10. [Applicatios and Example](docs/Extended_Emission.ipynb)
+- 10. [Applications and Example](docs/10.Extended_Emission.ipynb)
 
-# Contributors:
-1. [Keneth Garcia-Cifuentes](https://orcid.org/0009-0001-2607-6359)
-2. [Rosa L. Becerra](https://orcid.org/0000-0002-0216-3415)
-3. [Fabio De Colle](https://orcid.org/0000-0002-3137-4633)
+- 11. [Internal GUI](docs/11.Viewer_Instance.ipynb)
+
+# Enhancement and Support
+
+**ClassiPyGRB** is a open-source package where all kinds of contributions are welcome. Whether you want to report a bug or submit a pull request, your feedback will be received gratefully.
+
+Here are some ways you can get involved:
+- Report a bug or issue on our [GitHub Issues](https://github.com/KenethGarcia/ClassiPyGRB/issues) page.
+- Suggest a new feature or improvement by opening a new issue.
+- Submit a [pull request](https://github.com/KenethGarcia/ClassiPyGRB/pulls) with your code changes or enhancements.
+- Share ClassiPyGRB on social media or with your colleagues.
+
+We appreciate your interest in this package. Please, do not hesitate to email [Keneth Garcia](mailto:keneth.garcia@correo.nucleares.unam.mx) to discuss any topic related to **ClassiPyGRB**.

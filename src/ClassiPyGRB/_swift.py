@@ -17,11 +17,14 @@ import matplotlib.axes
 import concurrent.futures
 import moviepy.editor as mpy
 import matplotlib.pyplot as plt
+import importlib.resources as pkg_resources
 from . import _tools
+from . import summary_tables
 from tqdm import tqdm
 from typing import Union
 from fabada import fabada
 from itertools import repeat
+from importlib import resources
 from scipy.fft import next_fast_len
 from tables import NaturalNameWarning
 from scipy.interpolate import interp1d
@@ -119,33 +122,6 @@ class SWIFT:
         self.bands_selected.insert(0, self.column_labels[0])
 
     @staticmethod
-    def tables_update():
-        """ Function to update or download summary tables needed from Swift/BAT.
-
-        Returns:
-            dict: Boolean array saving which tables was downloaded.
-        """
-        checks = {}
-        main_url = 'https://swift.gsfc.nasa.gov/results/batgrbcat/summary_cflux/'
-        urls = {'summary_general.txt': 'summary_general_info', 'summary_burst_durations.txt': 'summary_general_info',
-                'GRBlist_redshift_BAT.txt': 'summary_general_info'}
-        for key, value in urls.items():
-            try:
-                r = requests.get(f"{main_url}{value}/{key}", timeout=5)
-                r.raise_for_status()
-            except requests.exceptions.RequestException as err:
-                warnings.warn_explicit(f"Table {key} can not be downloaded --> {err}", RuntimeWarning,
-                                       filename='_swift.py', lineno=126)
-                checks[key] = 'Failure'
-            else:
-                module_path = os.path.abspath(__file__)  # Get the absolute path of the module file
-                table_dir = os.path.join(os.path.dirname(module_path), 'tables')
-                with open(os.path.join(table_dir, key), 'wb') as f:
-                    f.write(r.content)
-                checks[key] = 'Success'
-        return checks
-
-    @staticmethod
     def summary_table():
         """Query a Dataframe with Summary Table from Swift.
 
@@ -155,10 +131,8 @@ class SWIFT:
         columns = ('GRBname', 'Trig_ID', 'Trig_time_met', 'Trig_time_UTC', 'RA_ground', 'DEC_ground',
                    'Image_position_err', 'Image_SNR', 'T90', 'T90_err', 'T50', 'T50_err', 'Evt_start_sincetrig',
                    'Evt_stop_sincetrig', 'pcode', 'Trigger_method', 'XRT_detection', 'comment')
-        module_path = os.path.abspath(__file__)  # Get the absolute path of the module file
-        table_dir = os.path.join(os.path.dirname(module_path), 'tables')
-        table_file = os.path.join(table_dir, 'summary_general.txt')
-        table = np.genfromtxt(table_file, delimiter="|", dtype=str, unpack=True, autostrip=True)
+        with resources.open_text(summary_tables, 'summary_general.txt') as file:
+            table = np.genfromtxt(file, delimiter="|", dtype=str, unpack=True, autostrip=True)
         df = pd.DataFrame()
         for i in range(len(table)):
             df[columns[i]] = table[i]
@@ -194,12 +168,12 @@ class SWIFT:
             except FileNotFoundError:  # Otherwise, search into Swift website
                 warnings.warn(f"No such file: {file_path} -> Trying to query from Swift Website...", UserWarning)
                 return self.obtain_data(name=name, check_disk=False)
+            except ImportError as e:
+                raise RuntimeError(f"Error from tables when trying to read: {e}. Try to re-install tables package.")
         else:
-            module_path = os.path.abspath(__file__)  # Get the absolute path of the module file
-            table_dir = os.path.join(os.path.dirname(module_path), 'tables')
-            table_file = os.path.join(table_dir, 'summary_general.txt')
-            grb_names, ids = np.genfromtxt(table_file, delimiter="|", dtype=str, usecols=(0, 1),
-                                           unpack=True, autostrip=True)
+            with resources.open_text(summary_tables, 'summary_general.txt') as file:
+                grb_names, ids = np.genfromtxt(file, delimiter="|", dtype=str, usecols=(0, 1), unpack=True,
+                                               autostrip=True)
             if len(grb_names) == 0 or not isinstance(grb_names, (Sequence, Mapping, np.ndarray)):
                 raise TypeError(f"Error when reading Table: Expected array-like of grb_names, obtained "
                                 f"{type(grb_names)}. Try to download tables again using tables_update method...")
@@ -315,11 +289,8 @@ class SWIFT:
         if t not in (50, 90, 100):
             raise ValueError(f"Duration {t} not supported. Current supported durations (t) are 50, 90, and 100.")
         columns = {50: (0, 7, 8), 90: (0, 5, 6), 100: (0, 3, 4)}  # Dictionary to extract the correct columns
-        module_path = os.path.abspath(__file__)  # Get the absolute path of the module file
-        table_dir = os.path.join(os.path.dirname(module_path), 'tables')
-        table_file = os.path.join(table_dir, 'summary_burst_durations.txt')
-        keys_extract = np.genfromtxt(table_file, delimiter="|", dtype=str, usecols=columns.get(t), autostrip=True)
-        # Extract all values from summary_burst_durations.txt:
+        with resources.open_text(summary_tables, 'summary_burst_durations.txt') as file:
+            keys_extract = np.genfromtxt(file, delimiter="|", dtype=str, usecols=columns.get(t), autostrip=True)
         if isinstance(name, str):  # If a specific name is entered, then we search the value in the array
             return _tools.check_name(name, keys_extract)
         elif isinstance(name, (Sequence, Mapping, np.ndarray)):  # If a name's array is specified, search recursively
@@ -395,11 +366,8 @@ class SWIFT:
             >>>SWIFT.redshifts(name=['GRB220611A', 'GRB220521A'])
             [['GRB220611A' '2.3608'], ['GRB220521A' '5.6']]
         """
-        module_path = os.path.abspath(__file__)  # Get the absolute path of the module file
-        table_dir = os.path.join(os.path.dirname(module_path), 'tables')
-        table_file = os.path.join(table_dir, 'GRBlist_redshift_BAT.txt')
-        keys_extract = np.genfromtxt(table_file, delimiter="|", dtype=str, usecols=(0, 1), autostrip=True)
-        # Extract all values from summary_burst_durations.txt:
+        with resources.open_text(summary_tables, 'GRBlist_redshift_BAT.txt') as file:
+            keys_extract = np.genfromtxt(file, delimiter="|", dtype=str, usecols=(0, 1), autostrip=True)
         if isinstance(name, str):  # If a specific name is entered, then we search the redshift in the array
             return _tools.check_name(name, keys_extract)
         elif isinstance(name, (np.ndarray, list, tuple)):  # If a name's array is specified, search them recursively

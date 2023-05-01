@@ -41,10 +41,7 @@ Gamma-ray bursts (GRBs) are originated by the death of a massive star or from th
 
 The detection of GRBs are carried by spatial mission such as Swift with its BAT instrument. Using the Swift-BAT GRB catalog, consisting of light curves (flux/time) in four energy bands (15-25 keV, 25-50 keV, 50-100 keV, 100-350 keV) for about 1250 events up to July 2022.
 
-`ClassipyGRB` was designed to be used by astronomers whose scientific research is focused on GRBs. This module provides interactive visualizations of the light curves of GRBs, and the similarities they share. `ClassipyGRB` allows the comparison in a few seconds with other events in order to find resembling GRBs through the proximity between them.
-
-
-# Applications 
+`ClassipyGRB` was designed to be used by astronomers whose scientific research is focused on GRBs. This module provides interactive visualizations of the light curves of GRBs, and the similarities they share. `ClassipyGRB` allows the comparison in a few seconds with other events in order to find resembling GRBs in high-frequencies through the proximity between them.
 
 This method has been successfully applied for the correct identification of candidates for GRBs with extended emission that have not been previously identified by other groups, saving a lot of time and human effort [@Garcia-Cifuentes2023]. We locate extended emission GRBs reported by various authors under different criteria in our t-SNE maps and discuss its possible identification using only the gamma-ray data provided by the automatic pipeline of Swift/BAT. 
 

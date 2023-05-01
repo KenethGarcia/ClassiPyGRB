@@ -30,12 +30,14 @@ date: 30 April 2023
 # **Warning: This package is under peer review**
 
 # Summary
+Gamma-ray burst (GRBs) are the brightest events in the universe. Since decades, astrophysics have known about their cosmological nature. Every year, spacecraft missions such as Fermi and SWIFT, detect hundred of events. In spite of this large sample, these phenomena show a complex taxonomy in the first seconds after their appearence, it makes it very difficult to find resemblance between them using conventional techniques.
 
-**ClassiPyGRB** is a Python 3 package to download, process, visualize and classify Gamma-Ray-Burst (GRB) database from [Swift/BAT Telescope](https://swift.gsfc.nasa.gov/about_swift/bat_desc.html). It is distributed over the GNU General Public License Version 2 (1991).
+It is known that GRBs bursts are originated by the death of a massive star or from the merger of two compact objects. The classification is based on their duration [@Kouveliotou1993]. Nevertheless, events such as GRB 211211A [@Yang2022)], whose duration about 50 seconds lies in the group of long GRBs, has challenged this categorization due to short GRB features observed (the kilonova emission and the properties of its host galaxy).  Therefore, this method is not completely reliable for the determination of the progenitors of such events.
 
-Gamma-ray bursts (GRBs) are originated by the death of a massive star or from the merger of two compact objects. The classification is based on their duration [@Kouveliotou1993]. Nevertheless, events such as GRB 211211A [@Yang2022)] has challenged this taxonomy.  Therefore, this method is not completely reliable for the determination of the progenitors of such events.
+[@Jespersen2020] and [@Steinhardt2023] have showed that Swift/BAT GRBs cluster into two groups when t-SNE is performed. In this repository, we replicate this work by adding more recent data from the Swift/BAT catalog (up to July 2022).
 
-[@Jespersen2020] and [@Steinhardt2023] have showed that Swift/BAT GRBs can cluster into two groups when t-SNE is performed. In this repository, we replicate this work by adding more recent data from the Swift/BAT catalog (up to July 2022). We also included a noise-reduction and  an interpolation tools for achieving a deeper analysis of these data.
+**ClassiPyGRB** is a Python 3 package to download, process, visualize and classify Gamma-Ray-Burst (GRB) database from [Swift/BAT Telescope](https://swift.gsfc.nasa.gov/about_swift/bat_desc.html). It is distributed over the GNU General Public License Version 2 (1991).  We also included a noise-reduction and  an interpolation tools for achieving a deeper analysis of these data.
+
 
 # Statement of need
 

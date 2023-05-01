@@ -58,7 +58,7 @@ Moreover, `ClassipyGRB` has been use to find in few seconds, similar GRBs with s
 ![Light curve of GRB 060614A. Image taken from [@Garcia-Cifuentes2023] \label{fig:fig2}](Figures/GRB.jpg)
 
 2) Data processing: `ClassipyGRB` is able to: 
-  - constrain the light curves in the duration T100.
+  -constrain the light curves in the duration T100.
   -normalise the flux
   -standarise the temporal interval of all the sample (zero-padding step)
   -improve the signal/noise (S/N) ratio in two ways:

@@ -50,23 +50,20 @@ Moreover, `ClassipyGRB` has been use to find in few seconds, similar GRBs with s
 
 # Methodology and Structure of ClassiPyGRB
 
-`ClassipyGRB` mainly consist in three parts:
+`ClassipyGRB` mainly consists in three parts:
 
-1) Retrieval and visualization of data from Swift/BAT: We implement an easy and fast code to download and plot an existing GRB. There is the possibility to modify the resolution (2ms, 8ms, 16ms, 64ms, 256ms, 1s and 10s) and select those bands to work with. 
+1) Retrieval and visualization of data from Swift/BAT: We implement an easy and fast code to download and plot an existing GRB post-processed data. There is the possibility to modify the resolution (2ms, 8ms, 16ms, 64ms, 256ms, 1s and 10s) and select those bands to work with. 
 
 
-![Light curve of GRB 060614A. Image taken from [@Garcia-Cifuentes2023] \label{fig:fig2}](Figures/GRB.jpg)
+![Light curve of GRB 060614A. Image taken from [@Garcia-Cifuentes2023] \label{fig:fig2}](Figures/GRB060614.png)
 
 2) Data processing: `ClassipyGRB` is able to: 
-  -constrain the light curves in the duration T100.
-  -normalise the flux
-  -standarise the temporal interval of all the sample (zero-padding step)
-  -improve the signal/noise (S/N) ratio in two ways:
 
-    1. We applied the non-parametric noise reduction technique called FABADA [@Sanchez-Alarcon2022] to each band for every single light     curve. 
-    2. We use the 10 s binned light curve data from the Swift/BAT catalog.
-
-  -interpolate the flux between two times.
+  - constrain the light curves in its duration $T_\mathrm{100}$ (this can be modified to $T_\mathrm{90}$ or $T_\mathrm{50}$).
+  - normalise the flux.
+  - standarise the temporal interval of all the sample (by zero-padding).
+  - improve the signal/noise (S/N) ratio applying the non-parametric noise reduction technique called FABADA [@Sanchez-Alarcon2022] to each band for every single light curve. 
+  - interpolate the flux between two specific times.
 
 3) Visualization and plot of t-SNE maps
 
@@ -79,6 +76,7 @@ Moreover, `ClassipyGRB` has been use to find in few seconds, similar GRBs with s
 - There is the possibility of working only on the desired bands of Swift/BAT.
 - Specific events can be searched for and highlighted on the display.
 
+Moreover, any plot created with `ClassipyGRB` can be customized by the user.
 
 Note: Algorithms such as t-SNE visualization maps are very sensitive to any change in the perplexity and learning rate parameters. Therefore, as is the case when using any of these visualization techniques derived from machine learning, care must be taken in the correct interpretation of the data.
 

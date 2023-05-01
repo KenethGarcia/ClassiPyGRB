@@ -19,20 +19,19 @@ $ sudo apt-get install python3-pil python3-pil.imagetk
 Other data management packages as [Numpy](https://numpy.org/) or [Pandas](https://pandas.pydata.org/) will be required in Documentation.
 
 ## Installation
-The latest sources from **ClassiPyGRB** is avaiable by cloning the repository:
+The latest sources from **ClassiPyGRB** are avaiable by cloning the repository:
 ```
 $ git clone https://github.com/KenethGarcia/ClassiPyGRB
 $ cd ClassiPyGRB
-$ pip install -r requirements.txt
 $ pip install .
 ```
-Or, using `pip`
+Or, using `pip`:
 ```
 $ pip install ClassiPyGRB@git+https://github.com/KenethGarcia/ClassiPyGRB
 ```
 or by using the stable [PyPI](https://pypi.org/) compiled version:
 ```
-$ pip install classipygrb
+$ pip install ClassiPyGRB
 ```
 
 ## Features
@@ -43,11 +42,11 @@ from ClassiPyGRB import SWIFT
 swift = SWIFT(res=64)
 df = swift.obtain_data(name='GRB211211A')
 ```
-Also, you only use a line to plot a light curve:
+Moreover, you plot a light curve using one single line:
 ```
 swift.plot_any_grb(name='GRB060614')
 ```
-Do specialized tasks as see the convergence of t-Distributed Stochastic Neighbor Embedding (TSNE):
+Do specialized tasks to see the convergence of t-Distributed Stochastic Neighbor Embedding (TSNE):
 
 ![convergence](docs/Animations/animation1.gif)
 
@@ -82,9 +81,9 @@ Moreover, we deveoloped intuitive notebooks to support you in your research.
 
 # Enhancement and Support
 
-**ClassiPyGRB** is a open-source package where all kinds of contributions are welcome. Whether you want to report a bug or submit a pull request, your feedback will be received gratefully.
+**ClassiPyGRB** is a open-source package where all kinds of contributions are welcome. Whether you want to report a bug or submit a pull request, your feedback, comments and suggestions will be very welcome.
 
-Here are some ways you can get involved:
+Here are some ways you can get involved in this project:
 - Report a bug or issue on our [GitHub Issues](https://github.com/KenethGarcia/ClassiPyGRB/issues) page.
 - Suggest a new feature or improvement by opening a new issue.
 - Submit a [pull request](https://github.com/KenethGarcia/ClassiPyGRB/pulls) with your code changes or enhancements.

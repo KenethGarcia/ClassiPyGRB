@@ -50,14 +50,12 @@ This method has been successfully applied for the correct identification of cand
 Moreover, `ClassipyGRB` has been use to find in few seconds, similar GRBs with some specific feature, such as a bright component[@Angulo-Valdez2023].
 
 
-# Methodology
+# Methodology and Structure of ClassipyGRB
 
 We complement the methodology presented in [@Jespersen2020]. Additionally, we implement the possibility of improving the signal/noise (S/N) ratio in two ways:
 
 1. We applied the non-parametric noise reduction technique called FABADA [@Sanchez-Alarcon2022] to each band for every single light curve. 
 2. We use the 10 s binned light curve data from the Swift/BAT catalog.
-
-# Structure of ClassiPyGRBs
 
 This repository requires Python 3.8 or high, and the packages from the [``requeriments.txt``](https://github.com/KenethGarcia/GRB_ML/blob/51482eecd01d8bea10a951ba3e9b0b108cea3c08/requirements.txt) file. Other packages will be required optionally in Documentation (i.e., Jupyter).
 

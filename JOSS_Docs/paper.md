@@ -30,18 +30,18 @@ date: 30 April 2023
 # **Warning: This package is under peer review**
 
 # Summary
-Gamma-ray burst (GRBs) are the brightest events in the universe. Since decades, astrophysics have known about their cosmological nature. Every year, spacecraft missions such as Fermi and SWIFT, detect hundred of events. In spite of this large sample, these phenomena show a complex taxonomy in the first seconds after their appearence, it makes it very difficult to find resemblance between them using conventional techniques.
+Gamma-ray burst (GRBs) are the brightest events in the universe. Since decades, astrophysics have known about their cosmological nature. Every year, spacecraft missions such as Fermi and SWIFT, detect hundred of them. In spite of this large sample, these phenomena show a complex taxonomy in the first seconds after their appearence, it makes it very difficult to find resemblance between them using conventional techniques.
 
-It is known that GRBs bursts are originated by the death of a massive star or from the merger of two compact objects. The classification is based on their duration [@Kouveliotou1993]. Nevertheless, events such as GRB 211211A [@Yang2022)], whose duration about 50 seconds lies in the group of long GRBs, has challenged this categorization due to short GRB features observed (the kilonova emission and the properties of its host galaxy).  Therefore, this method is not completely reliable for the determination of the progenitors of such events.
+It is known that GRBs bursts are originated by the death of a massive star or from the merger of two compact objects. The typical classification is based on their duration [@Kouveliotou1993]. Nevertheless, events such as GRB 211211A [@Yang2022)], whose duration about 50 seconds lies in the group of long GRBs, has challenged this categorization by the evidence of features related with the short GRB population (the kilonova emission and the properties of its host galaxy). Therefore, this method is not completely reliable for the determination of the progenitors of such events.
 
-[@Jespersen2020] and [@Steinhardt2023] have showed that Swift/BAT GRBs cluster into two groups when t-SNE is performed. In this repository, we replicate this work by adding more recent data from the Swift/BAT catalog (up to July 2022).
+Motivated by this problem, [@Jespersen2020] and [@Steinhardt2023] carried out analysis with t-SNE algorithm, showing that Swift/BAT GRBs database (consisting of light curves (flux/time) in four energy bands (15-25 keV, 25-50 keV, 50-100 keV, 100-350 keV)) cluster into two groups corresponding with the typical long/short classification. However, in this case, this classification is based on the information provided by their gamma-ray emission light curves. 
 
-**ClassiPyGRB** is a Python 3 package to download, process, visualize and classify Gamma-Ray-Burst (GRB) database from [Swift/BAT Telescope](https://swift.gsfc.nasa.gov/about_swift/bat_desc.html). It is distributed over the GNU General Public License Version 2 (1991).  We also included a noise-reduction and  an interpolation tools for achieving a deeper analysis of these data.
+**ClassiPyGRB** is a Python 3 package to download, process, visualize and classify Gamma-Ray-Burst (GRB) database from [Swift/BAT Telescope](https://swift.gsfc.nasa.gov/about_swift/bat_desc.html) (up to July 2022). It is distributed over the GNU General Public License Version 2 (1991).  We also included a noise-reduction and  an interpolation tools for achieving a deeper analysis of these data.
 
 
 # Statement of need
 
-The detection of GRBs are carried by spatial mission such as Swift with its BAT instrument. Using the Swift-BAT GRB catalog, consisting of light curves (flux/time) in four energy bands (15-25 keV, 25-50 keV, 50-100 keV, 100-350 keV) for about 1250 events up to July 2022.
+[The detection of GRBs are carried by spatial mission such as Swift with its BAT instrument. Using the Swift-BAT GRB catalog, consisting of light curves (flux/time) in four energy bands (15-25 keV, 25-50 keV, 50-100 keV, 100-350 keV) for about 1250 events up to July 2022.]: # 
 
 `ClassipyGRB` was designed to be used by astronomers whose scientific research is focused on GRBs. This module provides interactive visualizations of the light curves of GRBs, and the similarities they share. `ClassipyGRB` allows the comparison in a few seconds with other events in order to find resembling GRBs in high-frequencies through the proximity between them.
 

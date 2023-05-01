@@ -31,7 +31,7 @@ date: 30 April 2023
 
 # Summary
 
-**ClassiPyGRB** is a Python 3 package to download, process, visualize and classify Gamma-Ray-Burst (GRB) datavbase from [Swift/BAT Telescope](https://swift.gsfc.nasa.gov/about_swift/bat_desc.html). It is distributed over the GNU General Public License Version 2 (1991).
+**ClassiPyGRB** is a Python 3 package to download, process, visualize and classify Gamma-Ray-Burst (GRB) database from [Swift/BAT Telescope](https://swift.gsfc.nasa.gov/about_swift/bat_desc.html). It is distributed over the GNU General Public License Version 2 (1991).
 
 Gamma-ray bursts (GRBs) are originated by the death of a massive star or from the merger of two compact objects. The classification is based on their duration [@Kouveliotou1993]. Nevertheless, events such as GRB 211211A [@Yang2022)] has challenged this taxonomy.  Therefore, this method is not completely reliable for the determination of the progenitors of such events.
 

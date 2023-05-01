@@ -23,16 +23,15 @@ The latest sources from **ClassiPyGRB** is avaiable by cloning the repository:
 ```
 $ git clone https://github.com/KenethGarcia/ClassiPyGRB
 $ cd ClassiPyGRB
-$ pip install -r requirements.txt
 $ pip install .
 ```
-Or, using `pip`
+Or, using `pip`:
 ```
 $ pip install ClassiPyGRB@git+https://github.com/KenethGarcia/ClassiPyGRB
 ```
 or by using the stable [PyPI](https://pypi.org/) compiled version:
 ```
-$ pip install classipygrb
+$ pip install ClassiPyGRB
 ```
 
 ## Features

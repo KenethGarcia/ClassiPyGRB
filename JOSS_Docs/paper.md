@@ -58,15 +58,15 @@ Moreover, `ClassipyGRB` has been use to find in few seconds, similar GRBs with s
 ![Light curve of GRB 060614A. Image taken from [@Garcia-Cifuentes2023] \label{fig:fig2}](Figures/GRB.jpg)
 
 2) Data processing: `ClassipyGRB` is able to: 
-- constrain the light curves in the duration T100.
--normalise the flux
--standarise the temporal interval of all the sample (zero-padding step)
--improve the signal/noise (S/N) ratio in two ways:
+  - constrain the light curves in the duration T100.
+  -normalise the flux
+  -standarise the temporal interval of all the sample (zero-padding step)
+  -improve the signal/noise (S/N) ratio in two ways:
 
-  1. We applied the non-parametric noise reduction technique called FABADA [@Sanchez-Alarcon2022] to each band for every single light     curve. 
-  2. We use the 10 s binned light curve data from the Swift/BAT catalog.
+    1. We applied the non-parametric noise reduction technique called FABADA [@Sanchez-Alarcon2022] to each band for every single light     curve. 
+    2. We use the 10 s binned light curve data from the Swift/BAT catalog.
 
--interpolate the flux between two times.
+  -interpolate the flux between two times.
 
 3) Visualization and plot of t-SNE maps
 

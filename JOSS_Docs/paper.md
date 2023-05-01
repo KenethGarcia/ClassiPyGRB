@@ -27,8 +27,6 @@ Affiliation:
 
 date: 30 April 2023 
 
-# **Warning: This package is under peer review**
-
 # Summary
 Gamma-ray burst (GRBs) are the brightest events in the universe. Since decades, astrophysics have known about their cosmological nature. Every year, spacecraft missions such as Fermi and SWIFT, detect hundred of them. In spite of this large sample, these phenomena show a complex taxonomy in the first seconds after their appearence, it makes it very difficult to find resemblance between them using conventional techniques.
 
@@ -47,10 +45,10 @@ This method has been successfully applied for the correct identification of cand
 
 ![t-SNE visualization map obtained for the noise-reduced dataset binned at $64$ ms with $pp=30$. GRBs colored in magenta are classified as Extended Emission by previous works. Image taken from [@Garcia-Cifuentes2023] \label{fig:fig1}](Figures/EE_analysis_updated.jpg)
 
-Moreover, `ClassipyGRB` has been use to find in few seconds, similar GRBs with some specific feature, such as a bright component[@Angulo-Valdez2023].
+Moreover, `ClassipyGRB` has been use to find in few seconds, similar GRBs with some specific feature, such as a bright component [@Angulo-Valdez2023].
 
 
-# Methodology and Structure of ClassipyGRB
+# Methodology and Structure of ClassiPyGRB
 
 We complement the methodology presented in [@Jespersen2020]. Additionally, we implement the possibility of improving the signal/noise (S/N) ratio in two ways:
 

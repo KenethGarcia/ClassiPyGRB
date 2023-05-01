@@ -2,7 +2,7 @@
 ![Logo](/docs/Animations/images/logo.jpeg) 
 
 ---
-Title: 'ClassipyGRB: Classifying GRBs with Machine Learning t-SNE'
+Title: 'ClassipyGRB: A tool for the visualization an classifitcation of GRBs with Machine Learning t-SNE'
 Tags:
   - Python
   - astronomy

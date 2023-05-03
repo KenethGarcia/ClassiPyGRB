@@ -3,6 +3,7 @@
 
 ---
 Title: 'ClassipyGRB: Machine Learning-Based Classification and Visualization of Gamma Ray Bursts using t-SNE'
+
 Tags:
   - Python
   - astronomy

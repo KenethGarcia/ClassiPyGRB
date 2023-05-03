@@ -34,16 +34,16 @@ Gamma-ray burst (GRBs) are the brightest events in the universe. Since decades, 
 
 It is known that GRBs are originated by the death of a massive star or from the merger of two compact objects. The typical classification is based on their duration [@Kouveliotou1993]. Nevertheless, events such as GRB 211211A [@Yang2022)], whose duration of about 50 seconds lies in the group of long GRBs, has challenged this categorization by the evidence of features related with the short GRB population (the kilonova emission and the properties of its host galaxy). Therefore, a classification based  only on their gamma-ray durationthis is not completely reliable to determine the progenitors of such events.
 
-Motivated by this problem, [@Jespersen2020] and [@Steinhardt2023] carried out analysis of GRB lightcurves by using the t-SNE algorithm, showing that Swift/BAT GRBs database, consisting of light curves, i.e. flux vs time, in four energy bands (15-25 keV, 25-50 keV, 50-100 keV, 100-350 keV), cluster into two groups corresponding with the typical long/short classification. However, in this case, this classification is based on the information provided by their gamma-ray emission light curves. 
+Motivated by this problem, [@Jespersen2020] and [@Steinhardt2023] carried out analysis of GRB lightcurves by using the t-SNE algorithm, showing that Swift/BAT GRBs database, consisting of light curves in four energy bands (15-25 keV, 25-50 keV, 50-100 keV, 100-350 keV), clusters into two groups corresponding with the typical long/short classification. However, in this case, this classification is based on the information provided by their gamma-ray emission light curves. 
 
-**ClassiPyGRB** is a Python 3 package to download, process, visualize and classify GRBs database from the [Swift/BAT Instrument](https://swift.gsfc.nasa.gov/about_swift/bat_desc.html) (up to July 2022). It is distributed over the GNU General Public License Version 2 (1991). We also included a noise-reduction and an interpolation tools for achieving a deeper analysis of these data.
+**ClassiPyGRB** is a Python 3 package to download, process, visualize and classify GRBs database from the [Swift/BAT Instrument](https://swift.gsfc.nasa.gov/about_swift/bat_desc.html) (up to July 2022). It is distributed over the GNU General Public License Version 2 (1991). We also included a noise-reduction and an interpolation tools for achieving a deeper analysis of the data.
 
 
 # Statement of need
 
 `ClassipyGRB` was designed to be used by astronomers whose scientific research is focused on GRBs. This module provides interactive visualizations of the light curves of GRBs, and the similarities they share. `ClassipyGRB` allows the comparison in a few seconds with other events in order to find resembling GRBs in high-frequencies through the proximity between them.
 
-This method has been successfully applied for the correct identification of candidates for GRBs with extended emission that have not been previously identified by other groups, saving a lot of time and human effort [@Garcia-Cifuentes2023]. We locate extended emission GRBs reported by various authors under different criteria in our t-SNE maps and discuss its possible identification using only the gamma-ray data provided by the automatic pipeline of Swift/BAT. 
+This method has been successfully applied for the correct identification of candidates for GRBs with extended emission that have not been previously identified by other groups, saving time and human effort [@Garcia-Cifuentes2023]. We locate extended emission GRBs reported by various authors under different criteria in our t-SNE maps and discuss its possible identification using only the gamma-ray data provided by the automatic pipeline of Swift/BAT. 
 
 ![t-SNE visualization map obtained for the noise-reduced dataset binned at $64$ ms with $pp=30$. GRBs colored in magenta are classified as Extended Emission by previous works. Image taken from [@Garcia-Cifuentes2023] \label{fig:fig1}](Figures/EE_analysis_updated.jpg)
 
@@ -52,9 +52,9 @@ Moreover, `ClassipyGRB` has been use to find in few seconds, similar GRBs with s
 
 # Methodology and Structure of ClassiPyGRB
 
-`ClassipyGRB` mainly consists in three parts:
+`ClassipyGRB` mainly consists of three parts:
 
-1) Retrieval and visualization of data from Swift/BAT: We implement an easy and fast code to download and plot an existing GRB post-processed data. There is the possibility to modify the resolution (2ms, 8ms, 16ms, 64ms, 256ms, 1s and 10s) and select those bands to work with. 
+1) Retrieval and visualization of data from Swift/BAT: We implement an easy and fast code to download and plot an existing GRB post-processed data. There is the possibility to modify the time resolution of the datafiles (2ms, 8ms, 16ms, 64ms, 256ms, 1s and 10s) and analyze the data by selecting only some of the energy bands. 
 
 
 ![Light curve of GRB 060614A. Image taken from [@Garcia-Cifuentes2023] \label{fig:fig2}](Figures/GRB060614.png)

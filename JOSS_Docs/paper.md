@@ -10,6 +10,7 @@ Tags:
   - transient astronomy
   - gamma-ray bursts
   - extragalactic astronomy
+
 Authors:
   - name: [Keneth Garcia-Cifuentes](https://orcid.org/0009-0001-2607-6359)
     Equal-contrib: true

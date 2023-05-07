@@ -1,6 +1,3 @@
-
-# **Warning: This repository is under development**
-
 ![Logo](docs/Animations/images/logo.jpeg)  
 
 **ClassiPyGRB** is a Python 3 package to download, process, visualize and classify Gamma-Ray-Bursts (GRBs) from the Swift/BAT Telescope (https://swift.gsfc.nasa.gov/about_swift/bat_desc.html) database. It is distributed over the GNU General Public License Version 2 (1991). Please, read the complete description of the method and its application to GRBs in this [publication](JOSS_Docs/paper.md).

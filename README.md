@@ -1,15 +1,12 @@
-
-# **Warning: This repository is under development**
-
 ![Logo](docs/Animations/images/logo.jpeg)  
 
-**ClassiPyGRB** is a Python 3 package to download, process, visualize and classify Gamma-Ray-Bursts (GRB) from the [Swift/BAT Telescope](https://swift.gsfc.nasa.gov/about_swift/bat_desc.html) database. It is distributed over the GNU General Public License Version 2 (1991). Please, read the complete description of the method and its application to GRBs in this [publication](JOSS_Docs/paper.md).
+**ClassiPyGRB** is a Python 3 package to download, process, visualize and classify Gamma-Ray-Bursts (GRBs) from the Swift/BAT Telescope (https://swift.gsfc.nasa.gov/about_swift/bat_desc.html) database. It is distributed over the GNU General Public License Version 2 (1991). Please, read the complete description of the method and its application to GRBs in this [publication](JOSS_Docs/paper.md).
 
 # Attribution
 If you use this code in a publication, please refer to the package by its name and cite [Garcia-Cifuentes et al.(2023)](https://ui.adsabs.harvard.edu/abs/2023arXiv230408666G/abstract) -> [arXiv link](https://arxiv.org/abs/2304.08666). Any question, please email [Keneth Garcia-Cifuentes](mailto:kenet.garcia@correo.nucleares.unam.mx).
 
 ## Dependencies
-This repository requires Python 3.8 or high, and the packages from the [``requeriments.txt``](https://github.com/KenethGarcia/ClassiPyGRB/blob/ce856bd08f12b741d26618aec016b4dd84ed44cf/requirements.txt) file. In addition, it is required to install all the dependencies related to Tkinter, Pillow, and ImageTK, in Debian-based distros:
+This repository requires Python 3.8 or high, and a list of packages downloaded automatically ([numpy](https://github.com/numpy/numpy), [scikit-learn](https://scikit-learn.org/stable/index.html), etc). In addition, it is required to install all the dependencies related to Tkinter, Pillow, and ImageTK. In Debian-based distros you can install these packages by running the following commands:
 
 ```
 $ sudo apt-get install python3-tk
@@ -36,17 +33,17 @@ $ pip install ClassiPyGRB
 
 ## Features
 
-In **ClassiPyGRB**, it is possible to retrieve data from the Swift/BAT catalog in a single three-line code:
+In **ClassiPyGRB**, it is possible to retrieve data from the Swift/BAT catalog by a three-line code:
 ```
 from ClassiPyGRB import SWIFT
 swift = SWIFT(res=64)
 df = swift.obtain_data(name='GRB211211A')
 ```
-Moreover, you plot a light curve using one single line:
+Moreover, you can plot a light curve using one single line:
 ```
 swift.plot_any_grb(name='GRB060614')
 ```
-Do specialized tasks to see the convergence of t-Distributed Stochastic Neighbor Embedding (TSNE):
+You can do specialized tasks to see the convergence of t-Distributed Stochastic Neighbor Embedding (TSNE):
 
 ![convergence](docs/Animations/animation1.gif)
 
@@ -55,7 +52,7 @@ or use a Graphical User Interface (GUI) to analyze the embeddings obtained by TS
 ![GUI](docs/Animations/images/Use.png)
 
 We strongly encourage you to read the Documentation of **ClassiPyGRB** before start. This documentation includes all the details and follow-up for managing and processing data from Swift/BAT, performing TSNE, plotting and animating their results, and how to use the internal GUI.
-Moreover, we deveoloped intuitive notebooks to support you in your research.
+Moreover, we developed intuitive notebooks to support you in your research.
 
 - 1. [Basic Usage](docs/1.Basic_Usage.ipynb)
 		

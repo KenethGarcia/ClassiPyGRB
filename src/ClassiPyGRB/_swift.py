@@ -17,7 +17,6 @@ import matplotlib.axes
 import concurrent.futures
 import moviepy.editor as mpy
 import matplotlib.pyplot as plt
-import importlib.resources as pkg_resources
 from . import _tools
 from . import summary_tables
 from tqdm import tqdm

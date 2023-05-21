@@ -216,12 +216,12 @@ class SWIFT:
             >>> SWIFT.single_download(name='GRB220715B')
             None
         """
-        _tools.directory_maker(self.original_data_path)
         file_name = f"{name}_{self.end}.h5"
         try:
             df = self.obtain_data(name=name)
             if not isinstance(df, pd.DataFrame):
                 return df
+            _tools.directory_maker(self.original_data_path)
             _tools.save_data(data=df, name=name, filename=file_name, directory=self.original_data_path)
         except tables.exceptions.HDF5ExtError as e:
             return e

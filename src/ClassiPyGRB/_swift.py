@@ -7,7 +7,6 @@
 # Details about Swift Data can be found in https://swift.gsfc.nasa.gov/about_swift/bat_desc.html
 
 import os
-
 import requests.exceptions
 import tables
 import inspect

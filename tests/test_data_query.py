@@ -1,7 +1,9 @@
 import unittest
 import numpy as np
 import pandas as pd
+from . import Data
 from ClassiPyGRB import SWIFT
+from importlib import resources
 
 
 class TestData(unittest.TestCase):
@@ -9,7 +11,8 @@ class TestData(unittest.TestCase):
 
     def test_query(self):
         df = self.swift.obtain_data(name='GRB180115A')
-        df2 = pd.read_hdf('GRB180115A_sn5_10s.h5', key='GRB180115A')
+        with resources.path(Data, 'GRB180115A_sn5_10s.h5') as file:
+            df2 = pd.read_hdf(file, key='GRB180115A')
         self.assertTrue(df.equals(df2))
 
     def test_query_invalid_name(self):

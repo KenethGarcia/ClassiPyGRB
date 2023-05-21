@@ -11,3 +11,7 @@ venv
 docs/.ipynb_checkpoints/
 # Ignore previous docs
 docs_before/
+# Ignore Pytest cache
+.pytest_cache/
+# Ignore coverage reports
+.coverage

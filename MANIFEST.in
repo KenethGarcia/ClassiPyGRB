@@ -2,3 +2,4 @@ recursive-include src *
 recursive-include tests *
 include LICENSE
 include README.md
+exclude .gitignore

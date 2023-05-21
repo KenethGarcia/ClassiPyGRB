@@ -7,6 +7,8 @@
 # Details about Swift Data can be found in https://swift.gsfc.nasa.gov/about_swift/bat_desc.html
 
 import os
+
+import requests.exceptions
 import tables
 import inspect
 import warnings
@@ -179,6 +181,8 @@ class SWIFT:
             if not isinstance(name, str):
                 raise ValueError(f"Expected GRB name of class 'str'. Got {type(name)}.")
             index = np.where(grb_names == name)
+            if len(index[0]) == 0:
+                raise RuntimeError(f"{name} is not contained in the summary table of Swift/BAT.")
             t_id, *other = ids[index]
             i_d = f"0{t_id}000" if len(t_id) == 7 else f"00{t_id}000" if len(t_id) == 6 else t_id
             root_url = 'https://swift.gsfc.nasa.gov/results/batgrbcat/'
@@ -186,6 +190,9 @@ class SWIFT:
             try:
                 r = requests.get(url, timeout=5)
                 r.raise_for_status()
+            except requests.exceptions.ConnectionError as err:
+                print(f"It is not possible to access Swift/BAT website. Try again or check your internet connection")
+                return err
             except requests.exceptions.RequestException as err:
                 return err
             else:
@@ -305,7 +312,7 @@ class SWIFT:
 
     def total_durations(
             self,
-            names: Union[list, tuple, np.ndarray],
+            names: Union[list, tuple, np.ndarray, str],
             t: int = 100
     ):
         """Total Duration Calculator.
@@ -325,20 +332,26 @@ class SWIFT:
             ValueError: If names is not a list or array-like.
 
         Examples:
-            >>>SWIFT.total_durations(name=['GRB060614'])
+            >>>SWIFT.total_durations(names=['GRB060614'])
             180.576
-            >>>SWIFT.total_durations(name=['GRB061210'])
+            >>>SWIFT.total_durations(names=['GRB061210'])
             89.396
-            >>>SWIFT.total_durations(name=('GRB061210', 'GRB060614'), t=50)
+            >>>SWIFT.total_durations(names=('GRB061210', 'GRB060614'), t=50)
             [49.428 43.236]
         """
         if t not in (50, 90, 100):
             raise ValueError(f"Duration {t} not supported. Current supported durations (t) are 50, 90, and 100.")
+        if isinstance(names, str):
+            names = [names]
         if not isinstance(names, (Sequence, Mapping, np.ndarray)):
             raise ValueError(f"GRB names needs to be an array-like (i.e., list, tuple). Received a {type(names)}.")
-        durations_array = self.duration_limits(names, t=t)  # Check for name, t_start, and t_end
-        start_t, end_t = durations_array[:, :, 1].astype(float), durations_array[:, :, 2].astype(float)
-        duration = np.reshape(end_t - start_t, len(durations_array))  # T_90 is equal to t_end - t_start
+        try:
+            durations_array = self.duration_limits(names, t=t)  # Check for name, t_start, and t_end
+            start_t, end_t = durations_array[:, :, 1].astype(float), durations_array[:, :, 2].astype(float)
+            duration = np.reshape(end_t - start_t, len(durations_array))  # T_90 is equal to t_end - t_start
+        except ValueError:
+            raise RuntimeError(f"An internal error has occurred. Please, check that the GRB names are correct and are "
+                               f"contained in the Swift/BAT database.")
         return duration
 
     def redshifts(
@@ -1138,7 +1151,7 @@ class SWIFT:
         if library.lower() == 'opentsne':  # OpenTSNE has by default init='pca'
             tsne = open_tsne(n_components=2, n_jobs=-1, random_state=42, **kwargs)
             data_reduced_tsne = tsne.fit(data)  # Perform tSNE to data
-        else:  # However, sklearn_TSNE has by default init='random'
+        else:  # sklearn_TSNE has by default init='pca'
             tsne = sklearn_tsne(n_components=2, n_jobs=-1, random_state=42, **kwargs)
             data_reduced_tsne = tsne.fit_transform(data)  # Perform tSNE to data
         return data_reduced_tsne
@@ -1400,8 +1413,14 @@ class SWIFT:
         if iterable not in args:
             raise ValueError(f"Iterable argument must be a valid TSNE argument. Obtained: {iterable}")
         fig, ax = plt.subplots()
-        array_it = kwargs.pop(iterable)  # Separate iterable array
-        duration = len(array_it) // fps  # Duration of the animation
+        try:
+            array_it = kwargs.pop(iterable)  # Separate iterable array
+        except KeyError:
+            raise KeyError(f"Iterable argument must be passed as a keyword argument. Try again adding {iterable}")
+        try:
+            duration = len(array_it) // fps  # Duration of the animation
+        except TypeError:
+            raise ValueError(f"Iterable argument must be an array-like. Obtained: {type(array_it)}")
         if duration == 0:
             raise ValueError(f"Iterable array must have more values than fps. Obtained: {len(array_it)}")
         scatter_args = set(inspect.signature(self.plot_tsne).parameters)

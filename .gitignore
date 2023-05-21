@@ -1,0 +1,13 @@
+# Ignore PyCharm project settings
+__pycache__/
+build/
+dist/
+*.egg-info/
+*.egg
+.idea/
+# Ignore virtual environment
+venv
+# Ignore Jupyter Notebook checkpoints
+docs/.ipynb_checkpoints/
+# Ignore previous docs
+docs_before/

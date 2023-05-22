@@ -1,33 +1,29 @@
-
-![Logo](/docs/Animations/images/logo.jpeg) 
-
 ---
-Title: 'ClassipyGRB: Machine Learning-Based Classification and Visualization of Gamma Ray Bursts using t-SNE'
-
-Tags:
+title: 'ClassipyGRB: Machine Learning-Based Classification and Visualization of Gamma Ray Bursts using t-SNE'
+tags:
   - Python
   - astronomy
   - transient astronomy
-  - gamma-ray bursts
+  - gamma ray bursts
   - extragalactic astronomy
-
-Authors:
-  - name: [Keneth Garcia-Cifuentes](https://orcid.org/0009-0001-2607-6359)
-    Equal-contrib: true
-    Affiliation: 1
-    Corresponding: True
-
-  - name: [Rosa L. Becerra](https://orcid.org/0000-0002-0216-3415)
-    Affiliation: 1
-
-  - name: [Fabio De Colle](https://orcid.org/0000-0002-3137-4633)
-    Affiliation: 1
-    
-Affiliation:
- - Name: Instituto de Ciencias Nucleares,  Universidad Nacional Autónoma de México, Apartado Postal 70-543, 04510 CDMX, México
- - Index: 1
-
-date: 30 April 2023 
+authors:
+  - name: Keneth Garcia-Cifuentes
+    orcid: 0009-0001-2607-6359
+    equal-contrib: true
+    affiliation: 1
+    corresponding: true # (This is how to denote the corresponding author)
+  - name: Rosa L. Becerra
+    orcid: 0000-0002-0216-3415
+    affiliation: 1
+  - name: Fabio De Colle
+    orcid: 0000-0002-3137-4633
+    affiliation: 1
+affiliations:
+ - name: Instituto de Ciencias Nucleares,  Universidad Nacional Autónoma de México, Apartado Postal 70-543, 04510 CDMX, México
+   index: 1
+date: 22 May 2023
+bibliography: paper.bib
+--- 
 
 # Summary
 Gamma-ray burst (GRBs) are the brightest events in the universe. Since decades, astrophysicists have known about their cosmological nature. Every year, spacecraft missions such as Fermi and SWIFT detect hundred of them. In spite of this large sample, these phenomena show a complex taxonomy in the first seconds after their appearence, which makes it very difficult to find resemblance between them using conventional techniques.

@@ -53,14 +53,14 @@ Moreover, `ClassipyGRB` has been use to find in few seconds, similar GRBs with s
 1) Retrieval and visualization of data from Swift/BAT: We implement an easy and fast code to download and plot an existing GRB post-processed data. There is the possibility to modify the time resolution of the datafiles (2ms, 8ms, 16ms, 64ms, 256ms, 1s and 10s) and analyze the data by selecting only some of the energy bands. 
 
 
-![Light curve of GRB 060614A. Image taken from [@Garcia-Cifuentes2023] \label{fig:fig2}](Figures/GRB060614.png)
+![Light curve of GRB 060614A. Image taken from [@Garcia-Cifuentes:2023] \label{fig:fig2}](Figures/GRB060614.png)
 
 2) Data processing. `ClassipyGRB` is able to: 
 
   - constrain the light curves by their duration $T_\mathrm{100}$, $T_\mathrm{90}$ or $T_\mathrm{50}$.
   - normalise the flux.
   - standarise the temporal interval of all the sample (by zero-padding).
-  - improve the signal/noise (S/N) ratio applying the non-parametric noise reduction technique called FABADA [@Sanchez-Alarcon2022] to each band for every single light curve. 
+  - improve the signal/noise (S/N) ratio applying the non-parametric noise reduction technique called FABADA [@Sanchez-Alarcon:2022] to each band for every single light curve. 
   - interpolate the flux between two specific times.
 
 3) Visualization and plot of t-SNE maps

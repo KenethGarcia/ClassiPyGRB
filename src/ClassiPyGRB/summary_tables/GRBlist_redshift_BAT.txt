@@ -17,6 +17,19 @@
 ##        to the value presented in this table.
 ################################################################################
 ## GRBname | z | Method | Uncertainty (when available; mostly for photo-z) | Ref.
+GRB230818A  |   2.42    | ba |   N/A   |   Malesani et al. GCN Circ. 34485 (NOT)  
+GRB230628E  |   <2      | be |   N/A   |   Palmerio et al. GCN Circ 34122  
+GRB230506C  |   3.7<z<4.0   | ba Lyman-alpha break |   N/A   |   Adami et al. GCN Circ. 33749 (OHP/T193)  
+GRB230427A  |   0.1524   | bp |   0.0005   |   Adami et al. GCN Circ. 33707 (OHP/T193)  
+GRB230414B  |   3.568   | ba Ly-alpha |   N/A   |   Fernandez et al. GCN Circ. 33629 (OSIRIS/GTC )  
+GRB230328B  |   0.09    | ba |   N/A   |   Minaev et al. GCN Circ. 33609  
+GRB230325A  |   1.664   | be |   N/A   |   Pieterse et al. GCN Circ. 33521  (VLT/X-shooter )  
+GRB230205A  |   0.484   |   hp   |   0.090   |   Tomasella et al. GCN Circ. 33302  
+GRB230116D  |   3.81    | ba |   N/A   |   Moskvitin et al. GCN Circ. 33187 (SAO RAS)  
+GRB221226B  |   2.694   | ba |   N/A   |   Xu et al. GCN Circ. 33110 (VLT/X-shooter)  
+GRB221110A  |   4.06    | ba |   N/A   |   Izzo et al. GCN Circ. 32928 (VLT/X-shooter)  
+GRB221009A  |   0.151   | ba |   N/A   |   de Ugarte Postigo et al. GCN Circ. 32648 (VLT/X-shooter)  
+GRB220813A  |   0.82    |   hp   |   N/A   |   Fausey et al. GCN Circ. 32471  
 GRB220611A  |   2.3608   | host galaxy Lyman-alpha |   +0.0002 -0.0002   |   Schneider et al. GCN Circ. 32595 (VLT/X-shooter)  
 GRB220521A  |   5.6     | ba |   N/A   |   Fynbo et al. GCN Circ. 32079 (NOT)  
 GRB220117A  |   4.961   | ba |   N/A   |   Palmerio et al. GCN Circ. 31480 (VLT/X-shooter)  

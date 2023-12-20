@@ -16,7 +16,7 @@ If you use this code in a publication, please refer to the package by its name a
 This repository requires Python 3.8 or high, and a list of packages downloaded automatically ([numpy](https://github.com/numpy/numpy), [scikit-learn](https://scikit-learn.org/stable/index.html), etc.). In addition, it is required to install all the dependencies related to Tkinter, Pillow, and ImageTK. There are some options to download it, but we recommend two in the next sections.
 
 >[!IMPORTANT]
-> The previous section requires knowledge of conda/mamba environments and Linux/Git management systems. You can use integrated development environments (IDEs) such as PyCharm or Visual Studio Code to reduce the effort of installing ClassiPyGRB (i.e., PyCharm has an integrated workflow to create new environments without a terminal).
+> The next instructions requires knowledge of conda/mamba environments and Linux/Git management systems. You can use integrated development environments (IDEs) such as PyCharm or Visual Studio Code to reduce the effort of installing ClassiPyGRB (i.e., PyCharm has an integrated workflow to create new environments without a terminal).
 
 ### Using Mamba/Conda
 `Conda` and `Mamba` are package management tools for creating, sharing, and managing environments and software across different platforms in Python. You can use ClassiPyGRB on both Mamba and Conda.

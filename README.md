@@ -1,7 +1,6 @@
 ![Logo](docs/Animations/images/logo.jpeg)  
 
-**ClassiPyGRB** is a Python 3 package to download, process, visualize and classify Gamma-Ray-Bursts (GRBs) from the Swift/BAT Telescope (https://swift.gsfc.nasa.gov/about_swift/bat_desc.html) database. It is distributed over the GNU General Public License Version 2 (1991). Please, read the complete description of the method and its application to GRBs in this [publication](JOSS_Docs/paper.md).
-
+**ClassiPyGRB** is a Python 3 package to download, process, visualize, and classify Gamma-Ray-Bursts (GRBs) from the Swift/BAT Telescope (https://swift.gsfc.nasa.gov/about_swift/bat_desc.html) database. It is distributed over the GNU General Public License Version 2 (1991). Please read the complete description of the method and its application to GRBs in this [publication](JOSS_Docs/paper.md).
 # Statement of need
 The Swift Burst Alert Telescope (BAT) is a wide-field, hard Gamma-ray detector that, since its launch in 2004, has played an important role in the high-energy astrophysical field. A preliminary query on the Astrophysics Data System (ADS) with the keyword "Swift/BAT" indicates that over 7000 research works have been uploaded to its platform (up to December 2023). Furthermore, recently has been increased the number of studies per year, evidencing the relevance and impact of the use of the Swift/BAT database.
 
@@ -57,17 +56,17 @@ Other data management packages such as [Numpy](https://numpy.org/) or [Pandas](h
 >[!TIP]
 > You can set up **ClassiPyGRB** on other Linux distributions by installing the previous packages in your operating system and following the next steps. The procedure changes between distributions, and therefore a more cross-platform option would be conda/mamba environments. If you have a specific incompatibility on your OS, you can create an issue and contribute to ongoing improvements and enhancements. Your feedback is appreciated!
 
-To install **ClassiPyGRB**. You can use the latest sources from **ClassiPyGRB**, available by cloning the repository:
+Here, you can install the latest sources from **ClassiPyGRB** by cloning the repository:
 ```
 $ git clone https://github.com/KenethGarcia/ClassiPyGRB
 $ cd ClassiPyGRB
 $ pip install .
 ```
-Or, using `pip`:
+Or, instead, use `pip`:
 ```
 $ pip install ClassiPyGRB@git+https://github.com/KenethGarcia/ClassiPyGRB
 ```
-Or by using the stable [PyPI](https://pypi.org/) compiled version:
+Or you can use the stable [PyPI](https://pypi.org/) compiled version:
 ```
 $ pip install ClassiPyGRB
 ```
@@ -80,19 +79,19 @@ from ClassiPyGRB import SWIFT
 swift = SWIFT(res=64)
 df = swift.obtain_data(name='GRB211211A')
 ```
-Moreover, you can plot a light curve using one single line:
+Moreover, you can plot a light curve using one single line of code:
 ```
 swift.plot_any_grb(name='GRB060614')
 ```
-You can do specialized tasks to see the convergence of t-Distributed Stochastic Neighbor Embedding (TSNE):
+You can do specialized tasks to see the convergence of t-distributed Stochastic Neighbor Embedding (TSNE):
 
 ![convergence](docs/Animations/animation1.gif)
 
-or use a Graphical User Interface (GUI) to analyze the embeddings obtained by TSNE:
+Or use a Graphical User Interface (GUI) to analyze the embeddings obtained by TSNE:
 
 ![GUI](docs/Animations/images/Use.png)
 
-We strongly encourage you to read the Tutorials of **ClassiPyGRB** before start. This documentation includes all the details and follow-up for managing and processing data from Swift/BAT, performing TSNE, plotting and animating their results, and how to use the internal GUI.
+We strongly encourage you to read the Tutorials of **ClassiPyGRB** before starting. This documentation includes all the details and follow-up for managing and processing data from Swift/BAT, performing TSNE, plotting and animating their results, and how to use the internal GUI.
 Moreover, we developed intuitive notebooks to support you in your research.
 
 - 1. [Basic Usage](docs/1.Basic_Usage.ipynb)
@@ -119,7 +118,7 @@ Moreover, we developed intuitive notebooks to support you in your research.
 
 # Enhancement and Support
 
-**ClassiPyGRB** is a open-source package where all kinds of contributions are welcome. Whether you want to report a bug or submit a pull request, your feedback, comments and suggestions will be very welcome.
+**ClassiPyGRB** is an open-source package where all kinds of contributions are welcome. Whether you want to report a bug or submit a pull request, your feedback, comments, and suggestions will be very welcome.
 
 Here are some ways you can get involved in this project:
 - Report a bug or issue on our [GitHub Issues](https://github.com/KenethGarcia/ClassiPyGRB/issues) page.
@@ -127,4 +126,4 @@ Here are some ways you can get involved in this project:
 - Submit a [pull request](https://github.com/KenethGarcia/ClassiPyGRB/pulls) with your code changes or enhancements.
 - Share ClassiPyGRB on social media or with your colleagues.
 
-We appreciate your interest in this package. Please, do not hesitate to email [Keneth Garcia](mailto:keneth.garcia@correo.nucleares.unam.mx) to discuss any topic related to **ClassiPyGRB**.
+We appreciate your interest in this package. Please do not hesitate to email [Keneth Garcia](mailto:keneth.garcia@correo.nucleares.unam.mx) to discuss any topic related to **ClassiPyGRB**.

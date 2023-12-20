@@ -12,18 +12,46 @@ Although the Swift/BAT database is [publicly available](https://swift.gsfc.nasa.
 # Attribution
 If you use this code in a publication, please refer to the package by its name and cite [Garcia-Cifuentes et al.(2023)](https://doi.org/10.3847/1538-4357/acd176) -> [Astrophysical Journal Vol. 951 No. 1](https://doi.org/10.3847/1538-4357/acd176). Any question, please email [Keneth Garcia-Cifuentes](mailto:kenet.garcia@correo.nucleares.unam.mx).
 
-## Dependencies
-This repository requires Python 3.8 or high, and a list of packages downloaded automatically ([numpy](https://github.com/numpy/numpy), [scikit-learn](https://scikit-learn.org/stable/index.html), etc). In addition, it is required to install all the dependencies related to Tkinter, Pillow, and ImageTK. In Debian-based distros you can install these packages by running the following commands:
+## Dependencies and Installation
+
+This repository requires Python 3.8 or high, and a list of packages downloaded automatically ([numpy](https://github.com/numpy/numpy), [scikit-learn](https://scikit-learn.org/stable/index.html), etc.). In addition, it is required to install all the dependencies related to Tkinter, Pillow, and ImageTK. There are some options to download it, but we recommend two in the next sections.
+
+### Using Mamba/Conda
+`Conda` and `Mamba` are package management tools for creating, sharing, and managing environments and software across different platforms in Python. You can use ClassiPyGRB on both Mamba and Conda.
+
+>[!NOTE]
+> In Mamba, you can create a new environment following:
+>```
+>$ mamba create -n ClassiPyGRB -c conda-forge python=3.10 pytables=3.8.0 pillow
+>$ mamba activate ClassiPyGRB
+>$ pip install .
+>```
+
+>[!NOTE]
+> In Conda, you can create a new environment using a similar approach:
+>```
+>$ conda create -n ClassiPyGRB -c conda-forge python=3.10 pytables=3.8.0 pillow
+>$ conda activate ClassiPyGRB
+>$ pip install .
+>```
+
+>[!TIP]
+>Using Pillow as a dependency in the conda/mamba environment is optional. If your current operative system has an installation of `imagetk`, you can omit this requirement.
+
+### Debian-based Linux distributions
+Another option is to install the dependencies directly on your current Linux distribution. In Debian-based distros, you can install these packages by running the following commands:
 
 ```
 $ sudo apt-get install python3-tk
 $ sudo apt-get install python3-pil python3-pil.imagetk
 ```
 
-Other data management packages as [Numpy](https://numpy.org/) or [Pandas](https://pandas.pydata.org/) will be required in Documentation.
+Other data management packages such as [Numpy](https://numpy.org/) or [Pandas](https://pandas.pydata.org/) will be required in Documentation.
 
-## Installation
-The latest sources from **ClassiPyGRB** are avaiable by cloning the repository:
+>[!TIP]
+> You can install ClassiPyGRB on other Linux distributions by installing these packages in your operating system and following the next steps. The procedure changes between distributions, and therefore a more cross-platform option would be conda/mamba environments. If you have a specific incompatibility on your OS, you can create an issue and contribute to ongoing improvements and enhancements. Your feedback is appreciated!
+
+To install ClassiPyGRB. You can use the latest sources from **ClassiPyGRB**, available by cloning the repository:
 ```
 $ git clone https://github.com/KenethGarcia/ClassiPyGRB
 $ cd ClassiPyGRB
@@ -33,11 +61,13 @@ Or, using `pip`:
 ```
 $ pip install ClassiPyGRB@git+https://github.com/KenethGarcia/ClassiPyGRB
 ```
-or by using the stable [PyPI](https://pypi.org/) compiled version:
+Or by using the stable [PyPI](https://pypi.org/) compiled version:
 ```
 $ pip install ClassiPyGRB
 ```
 
+>[!IMPORTANT]
+> The previous section requires knowledge of conda/mamba environments and Linux/Git management systems. You can use integrated development environments (IDEs) such as PyCharm or Visual Studio Code to reduce the effort of installing ClassiPyGRB (i.e., PyCharm has an integrated workflow to create new environments without a terminal).
 ## Features
 
 In **ClassiPyGRB**, it is possible to retrieve data from the Swift/BAT catalog by a three-line code:

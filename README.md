@@ -55,7 +55,7 @@ $ sudo apt-get install python3-pil python3-pil.imagetk
 Other data management packages such as [Numpy](https://numpy.org/) or [Pandas](https://pandas.pydata.org/) will be required in Documentation.
 
 >[!TIP]
-> You can install **ClassiPyGRB** on other Linux distributions by installing the previous packages in your operating system and following the next steps. The procedure changes between distributions, and therefore a more cross-platform option would be conda/mamba environments. If you have a specific incompatibility on your OS, you can create an issue and contribute to ongoing improvements and enhancements. Your feedback is appreciated!
+> You can set up **ClassiPyGRB** on other Linux distributions by installing the previous packages in your operating system and following the next steps. The procedure changes between distributions, and therefore a more cross-platform option would be conda/mamba environments. If you have a specific incompatibility on your OS, you can create an issue and contribute to ongoing improvements and enhancements. Your feedback is appreciated!
 
 To install **ClassiPyGRB**. You can use the latest sources from **ClassiPyGRB**, available by cloning the repository:
 ```

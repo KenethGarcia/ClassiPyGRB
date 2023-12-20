@@ -38,7 +38,8 @@ This repository requires Python 3.8 or high, and a list of packages downloaded a
 >$ pip install .
 >```
 
->[!TIP] Some notes about the previous commands:
+>[!TIP]
+> Some notes about the previous commands:
 >- Using Pillow as a dependency in the conda/mamba environment is optional. If your current operative system has an installation of `imagetk`, you can omit this requirement. 
 >- The Python version selected for your conda/mamba environment depends on your current OS. You can check the available versions by running `conda search python` or `mamba search python` (but use `python>=3.8`).
 >- The `pytables` package is required to manage data on hdf5 files. If you have the appropriate hdf5 dev library installed on your OS, you can omit this requirement (see more details [here](https://www.pytables.org/usersguide/index.html)).

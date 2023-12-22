@@ -45,13 +45,7 @@ jobs:
         shell: bash -l {0}
         run: pip install .
 
-      - name: Run Tests with coverage report
+      - name: Run Tests
         shell: bash -l {0}
         run: |
-          python -m unittest -v --cov=./ --cov-report=xml
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage.xml
+          python -m unittest -v

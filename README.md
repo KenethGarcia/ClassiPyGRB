@@ -80,6 +80,16 @@ A stable compiled version of **ClassiPyGRB** is available on [PyPI](https://pypi
 $ pip install ClassiPyGRB
 ```
 
+## Testing
+
+If you have installed the development version of **ClassiPyGRB** or cloned the complete source code (e.g., from the GitHub repository), you can run the tests by executing the following commands:
+
+```
+$ cd ClassiPyGRB
+$ python -m unittest -v
+```
+
+
 # Features
 
 In **ClassiPyGRB**, it is possible to retrieve data from the Swift/BAT catalog by a three-line code:

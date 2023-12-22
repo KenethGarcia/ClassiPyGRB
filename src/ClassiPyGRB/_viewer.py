@@ -11,7 +11,6 @@ import inspect
 import numpy as np
 import tkinter as tk
 import matplotlib
-matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 from ClassiPyGRB import SWIFT
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -19,6 +18,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.patches import Rectangle
 
 dpi = 150
+#matplotlib.use("TkAgg")
 swift_args = set(inspect.signature(SWIFT).parameters) - {'self', 'res', 'n_bands'}
 
 # Review of Swift/BAT data, Table 3 of https://ui.adsabs.harvard.edu/abs/2016ApJ...829....7L/abstract

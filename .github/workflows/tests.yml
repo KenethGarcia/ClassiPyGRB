@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install System Dependencies
         run: |
@@ -33,7 +33,7 @@ jobs:
           sudo apt-get install -y python3-pil python3-pil.imagetk
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 

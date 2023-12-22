@@ -19,14 +19,13 @@ This repository requires Python 3.8 or high, and a list of packages downloaded a
 > The next instructions requires knowledge of conda/mamba environments and Linux/Git management systems. You can use integrated development environments (IDEs) such as PyCharm or Visual Studio Code to reduce the effort of installing ClassiPyGRB (i.e., PyCharm has an integrated workflow to create new environments without a terminal).
 
 ### Using Mamba/Conda
-`Conda` and `Mamba` are package management tools for creating, sharing, and managing environments and software across different platforms in Python. You can use ClassiPyGRB on both Mamba and Conda.
+`Conda` and `Mamba` are package management tools for creating, sharing, and managing environments and software across different platforms in Python. You can use ClassiPyGRB on both Mamba and Conda with a new/existing environment compatible with Pillow.
 
 >[!NOTE]
 > In Mamba, you can create a new environment following:
 >```
 >$ mamba create -n ClassiPyGRB -c conda-forge python=3.10 pytables=3.8.0 pillow
 >$ mamba activate ClassiPyGRB
->$ pip install .
 >```
 
 >[!NOTE]
@@ -34,7 +33,6 @@ This repository requires Python 3.8 or high, and a list of packages downloaded a
 >```
 >$ conda create -n ClassiPyGRB -c conda-forge python=3.10 pytables=3.8.0 pillow
 >$ conda activate ClassiPyGRB
->$ pip install .
 >```
 
 >[!TIP]
@@ -54,24 +52,35 @@ $ sudo apt-get install python3-pil python3-pil.imagetk
 Other data management packages such as [Numpy](https://numpy.org/) or [Pandas](https://pandas.pydata.org/) will be required in Documentation.
 
 >[!TIP]
-> You can set up **ClassiPyGRB** on other Linux distributions by installing the previous packages in your operating system and following the next steps. The procedure changes between distributions, and therefore a more cross-platform option would be conda/mamba environments. If you have a specific incompatibility on your OS, you can create an issue and contribute to ongoing improvements and enhancements. Your feedback is appreciated!
+> You can set up **ClassiPyGRB** dependencies on other Linux distributions by installing the previous packages in your operating system and following the next steps. The procedure changes between distributions, and therefore a more cross-platform option would be conda/mamba environments. If you have a specific incompatibility on your OS, you can create an issue and contribute to ongoing improvements and enhancements. Your feedback is appreciated!
 
-Here, you can install the latest sources from **ClassiPyGRB** by cloning the repository:
+## Installing **ClassiPyGRB**
+
+At this point, it is possible to install **ClassiPyGRB** on Mamba/Conda and Linux distributions. In both cases, we assume that you have already installed the dependencies and the appropriate Python version. Now, there are two options to install **ClassiPyGRB**:
+
+>[!IMPORTANT]
+> If you are not using a conda/mamba environment, it is strongly recommended to use a virtual environment to install **ClassiPyGRB**. Installing packages globally on your OS can cause conflicts with other packages and dependencies. You can use [virtualenv](https://virtualenv.pypa.io/en/latest/) or [venv](https://docs.python.org/3/library/venv.html) to create a virtual environment. Some IDEs such as PyCharm or Visual Studio Code have integrated workflows to create virtual environments.
+
+### GitHub
+
+You can install the latest sources from **ClassiPyGRB** by cloning the repository directly from GitHub:
 ```
 $ git clone https://github.com/KenethGarcia/ClassiPyGRB
 $ cd ClassiPyGRB
 $ pip install .
 ```
-Or, instead, use `pip`:
+Or, instead, use `pip` with the path to the repository:
 ```
 $ pip install ClassiPyGRB@git+https://github.com/KenethGarcia/ClassiPyGRB
 ```
-Or you can use the stable [PyPI](https://pypi.org/) compiled version:
+
+### PyPI
+A stable compiled version of **ClassiPyGRB** is available on [PyPI](https://pypi.org/). You can install it by running:
 ```
 $ pip install ClassiPyGRB
 ```
 
-## Features
+# Features
 
 In **ClassiPyGRB**, it is possible to retrieve data from the Swift/BAT catalog by a three-line code:
 ```

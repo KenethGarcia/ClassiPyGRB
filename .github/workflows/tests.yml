@@ -16,18 +16,18 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Latest version of Ubuntu
 
     strategy:
       matrix:
-        python-version: ["3.10", "3.11"]
+        python-version: ["3.10", "3.11"]  # Python versions to test
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
       - name: Install System Dependencies
-        run: |
+        run: |  # Install Tkinter and Pillow dependencies for ClassiPyGRB
           sudo apt-get update
           sudo apt-get install -y python3-tk
           sudo apt-get install -y python3-pil python3-pil.imagetk
@@ -38,14 +38,14 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install Dependencies
-        run: |
+        run: |  # Upgrade pip
           python -m pip install --upgrade pip
 
-      - name: Install package
+      - name: Install package  # Install ClassiPyGRB and dependencies
         shell: bash -l {0}
         run: pip install .
 
-      - name: Run Tests
+      - name: Run Tests  # Run tests
         shell: bash -l {0}
         run: |
           python -m unittest -v

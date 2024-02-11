@@ -26,9 +26,9 @@ bibliography: paper.bib
 --- 
 
 # Summary
-Gamma-ray burst (GRBs) are the brightest events in the universe. Since decades, astrophysicists have known about their cosmological nature. Every year, spacecraft missions such as Fermi and SWIFT detect hundred of them. In spite of this large sample, these phenomena show a complex taxonomy in the first seconds after their appearence, which makes it very difficult to find resemblance between them using conventional techniques.
+Gamma-ray burst (GRBs) are the brightest events in the universe. Since decades, astrophysicists have known about their cosmological nature. Every year, spacecraft missions such as Fermi and SWIFT detect hundreds of them. In spite of this large sample, these phenomena show a complex taxonomy in the first seconds after their appearance, which makes it very difficult to find resemblance between them using conventional techniques.
 
-It is known that GRBs are originated by the death of a massive star or from the merger of two compact objects. The typical classification is based on their duration [@Kouveliotou:1993]. Nevertheless, events such as GRB 211211A [@Yang:2022)], whose duration of about 50 seconds lies in the group of long GRBs, has challenged this categorization by the evidence of features related with the short GRB population (the kilonova emission and the properties of its host galaxy). Therefore, a classification based  only on their gamma-ray durationthis is not completely reliable to determine the progenitors of such events.
+It is known that GRBs are originated by the death of a massive star or from the merger of two compact objects. The typical classification is based on their duration [@Kouveliotou:1993]. Nevertheless, events such as GRB 211211A [@Yang:2022], whose duration of about 50 seconds lies in the group of long GRBs, has challenged this categorization by the evidence of features related with the short GRB population (the kilonova emission and the properties of its host galaxy). Therefore, a classification based only on their gamma-ray duration this is not completely reliable to determine the progenitors of such events.
 
 Motivated by this problem, [@Jespersen:2020] and [@Steinhardt:2023] carried out analysis of GRB lightcurves by using the t-SNE algorithm, showing that Swift/BAT GRBs database, consisting of light curves in four energy bands (15-25 keV, 25-50 keV, 50-100 keV, 100-350 keV), clusters into two groups corresponding with the typical long/short classification. However, in this case, this classification is based on the information provided by their gamma-ray emission light curves. 
 
@@ -43,7 +43,7 @@ This method has been successfully applied for the correct identification of cand
 
 ![t-SNE visualization map obtained for the noise-reduced dataset binned at $64$ ms with $pp=30$. GRBs colored in magenta are classified as Extended Emission by previous works. Image taken from [@Garcia-Cifuentes:2023] \label{fig:fig1}](Figures/EE_analysis_updated.jpg)
 
-Moreover, `ClassipyGRB` has been use to find in few seconds, similar GRBs with some specific feature, such as a bright component (Angulo Valdez et al.(2023), in prep).
+Moreover, `ClassipyGRB` has been use to find in few seconds, similar GRBs with some specific feature, such as a bright component (Angulo Valdez et al. 2023, in prep).
 
 
 # Methodology and Structure of ClassiPyGRB
@@ -53,7 +53,7 @@ Moreover, `ClassipyGRB` has been use to find in few seconds, similar GRBs with s
 1) Retrieval and visualization of data from Swift/BAT: We implement an easy and fast code to download and plot an existing GRB post-processed data. There is the possibility to modify the time resolution of the datafiles (2ms, 8ms, 16ms, 64ms, 256ms, 1s and 10s) and analyze the data by selecting only some of the energy bands. 
 
 
-![Light curve of GRB 060614A. Image taken from [@Garcia-Cifuentes:2023] \label{fig:fig2}](Figures/GRB060614.png)
+![Light curve of GRB 060614A. Image taken from @Garcia-Cifuentes:2023 \label{fig:fig2}](Figures/GRB060614.png)
 
 2) Data processing. `ClassipyGRB` is able to: 
 

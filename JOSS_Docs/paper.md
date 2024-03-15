@@ -1,5 +1,5 @@
 ---
-title: 'ClassipyGRB: Machine Learning-Based Classification and Visualization of Gamma Ray Bursts using t-SNE'
+title: 'ClassiPyGRB: Machine Learning-Based Classification and Visualization of Gamma Ray Bursts using t-SNE'
 tags:
   - Python
   - astronomy
@@ -37,25 +37,25 @@ Motivated by this problem, @Jespersen:2020 and @Steinhardt:2023 carried out anal
 
 # Statement of need
 
-`ClassipyGRB` was designed to be used by astronomers whose scientific research is focused on GRBs. This module provides interactive visualizations of the light curves of GRBs, and their similarities. `ClassipyGRB` allows easy comparison with other events in order to identify similar GRBs.
+`ClassiPyGRB` was designed to be used by astronomers whose scientific research is focused on GRBs. This module provides interactive visualizations of the light curves of GRBs, and their similarities. `ClassipyGRB` allows easy comparison with other events in order to identify similar GRBs.
 
 This method has been successfully applied for identification of candidates for GRBs with extended emission that have not been previously identified by other groups, saving time and human effort [@Garcia-Cifuentes:2023]. We locate extended emission GRBs reported by various authors under different criteria in our t-SNE maps and discuss its possible identification using only the gamma-ray data provided by the automatic pipeline of Swift/BAT. 
 
 ![t-SNE visualization map obtained for the noise-reduced dataset binned at $64$ ms with $pp=30$. GRBs colored in magenta are classified as Extended Emission by previous works. Image taken from @Garcia-Cifuentes:2023 \label{fig:fig1}](Figures/EE_analysis_updated.jpg)
 
-`ClassipyGRB` has also been used to promptly find similar GRBs with some specific feature, such as a bright component (Angulo Valdez et al. 2023, in prep).
+`ClassiPyGRB` has also been used to promptly find similar GRBs with some specific feature, such as a bright component (Angulo Valdez et al. 2023, in prep).
 
 
 # Methodology and Structure of ClassiPyGRB
 
-`ClassipyGRB` mainly consists of three parts:
+`ClassiPyGRB` mainly consists of three parts:
 
 1) Retrieval and visualization of data from Swift/BAT: We implement an easy and fast code to download and plot an existing GRB post-processed data. There is the possibility to modify the time resolution of the data files (2ms, 8ms, 16ms, 64ms, 256ms, 1s and 10s) and analyze the data by selecting only some of the energy bands. 
 
 
 ![Light curve of GRB 060614A. Image taken from @Garcia-Cifuentes:2023 \label{fig:fig2}](Figures/GRB060614.png)
 
-2) Data processing. `ClassipyGRB` is able to: 
+2) Data processing. `ClassiPyGRB` is able to: 
 
   - Constrain the light curves by their duration $T_\mathrm{100}$, $T_\mathrm{90}$ or $T_\mathrm{50}$.
   - Normalize the flux.
@@ -63,7 +63,7 @@ This method has been successfully applied for identification of candidates for G
   - Improve the signal/noise (S/N) ratio applying the non-parametric noise reduction technique called FABADA [@Sanchez-Alarcon:2022] to each band for every single light curve. 
   - Interpolate the flux between two specific times.
 
-3) Visualization and plotting of t-SNE maps. `ClassipyGRB` produces 2D visualization maps colored by the duration of GRBs.
+3) Visualization and plotting of t-SNE maps. `ClassiPyGRB` produces 2D visualization maps colored by the duration of GRBs.
 
 - It includes an intuitive graphic interface.
 - It is possible to add either of the two features to the t-SNE maps or to visualize the raw data.
@@ -72,14 +72,14 @@ This method has been successfully applied for identification of candidates for G
 - There is the possibility of working only on the desired bands of Swift/BAT.
 - Specific events can be searched for and highlighted on the display.
 
-Any plots created with `ClassipyGRB` can be customized by the user.
+Any plots created with `ClassiPyGRB` can be customized by the user.
 
 Note: Algorithms such as t-SNE visualization maps are very sensitive to any change in the perplexity and learning rate parameters. Therefore, as is the case when using any of these visualization techniques derived from machine learning, care must be taken in the correct interpretation of the data.
 
-This repository requires Python 3.8 or high, and the packages from the [``requeriments.txt``](https://github.com/KenethGarcia/GRB_ML/blob/51482eecd01d8bea10a951ba3e9b0b108cea3c08/requirements.txt) file. Other packages will be required optionally in Documentation (i.e., Jupyter).
+This repository requires Python 3.8 or higher, and the necessary packages will be automatically handled during installation. Other packages will be required optionally in Documentation (i.e., Jupyter).
 
 # Acknowledgements
 
-KSGC acknowledges support from CONACyT fellowship. RLB acknowledges support from CONACyT postdoctoral fellowship.
+KSGC acknowledges support from CONAhCyT fellowship. RLB acknowledges support from CONAHCyT postdoctoral fellowship.
 
 # References

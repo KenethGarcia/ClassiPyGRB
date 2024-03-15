@@ -37,20 +37,24 @@ Motivated by this problem, @Jespersen:2020 and @Steinhardt:2023 carried out anal
 
 # Statement of need
 
-`ClassiPyGRB` was designed to be used by astronomers whose scientific research is focused on GRBs. This module provides interactive visualizations of the light curves of GRBs, and their similarities. `ClassipyGRB` allows easy comparison with other events in order to identify similar GRBs.
+The Swift Burst Alert Telescope (BAT) is a wide-field, hard Gamma-ray detector that, since its launch in 2004, has played an important role inthe high-energy astrophysical field. A preliminary query on the Astrophysics Data System (ADS) with the keyword "Swift/BAT" indicates that over 7000 research works have been uploaded to its platform (up to December 2023). Furthermore, the number of studies per year is increasingly, evidencing the relevance and impact of the use of the Swift/BAT database.
 
-This method has been successfully applied for identification of candidates for GRBs with extended emission that have not been previously identified by other groups, saving time and human effort [@Garcia-Cifuentes:2023]. We locate extended emission GRBs reported by various authors under different criteria in our t-SNE maps and discuss its possible identification using only the gamma-ray data provided by the automatic pipeline of Swift/BAT. 
+Although the Swift/BAT database is publicly available, for first-time users it might be a challenge to download and process the data. The data are stored in multiple directories, depending on the GRB. Moreover, the data are not pre-processed, and the user must perform the data manipulation and interpolation themselves. These issues make the data processing a time-consuming task. `ClassiPyGRB` is a Python 3 package that aims to solve these problems by providing a simple and intuitive interface to download, process, visualize, and classify the photometric data of GRBs from the Swift/BAT database. `ClassiPyGRB` can also been used to promptly find similar GRBs with some specific feature, such as a bright component [@Angulo-Valdez:2024].
 
-![t-SNE visualization map obtained for the noise-reduced dataset binned at $64$ ms with $pp=30$. GRBs colored in magenta are classified as Extended Emission by previous works. Image taken from @Garcia-Cifuentes:2023 \label{fig:fig1}](Figures/EE_analysis_updated.jpg)
+ClassiPyGRB allows researchers to query light curves for any GRB in the Swift/BAT database simply and intuitively. The package also provides a set of tools to preprocess the data, including noise/duration reduction and interpolation. Moreover, The package also provides a set of facilities and tutorials to classify GRBs based on their light curves, following the method proposed by Jespersen et al.(2020) and Garcia-Cifuentes et al.(2023) (see e.g., Figure 1). This method is based on dimensionality reduction of the data using t-distributed Stochastic Neighbour Embedding (t-SNE), where the user can visualize the results using a Graphical User Interface (GUI). The user can also plot and animate the results of the t-SNE analysis, allowing to perform a deeper hyperparameter grid search. The package is distributed over the GNU General Public Licence Version 2 (1991).
 
-`ClassiPyGRB` has also been used to promptly find similar GRBs with some specific feature, such as a bright component (Angulo Valdez et al. 2023, in prep).
+Although Swift/BAT offers basic functionality for data retrieval and analysis, it is still necessary to implement a package that allows the user to access and use the data in a simple way. In our case, ClassiPyGRB is completely focused on GRB science. It complements what other Python packages oriented to the Swift/BAT instrument do, such as:
 
+1) The NITRATES pipeline [@DeLaunay:2022], designed for maximum likelihood-driven discovery and localization of Gamma Ray Bursts.
+2) BatAnalysis [@Parsotan:2023], a package specializing in photometry from all sources observed by the BAT instrument, not just in GRBs.
+
+Thus, ClassiPyGRB distinguishes itself by offering a comprehensive solution that addresses the entire workflow of GRBs, from data retrieval to classification. This package facilitates the entire process of GRB analysis, ensuring accessibility, efficiency, and robustness for researchers in the field of gamma-ray astronomy.
 
 # Methodology and Structure of ClassiPyGRB
 
 `ClassiPyGRB` mainly consists of three parts:
 
-1) Retrieval and visualization of data from Swift/BAT: We implement an easy and fast code to download and plot an existing GRB post-processed data. There is the possibility to modify the time resolution of the data files (2ms, 8ms, 16ms, 64ms, 256ms, 1s and 10s) and analyze the data by selecting only some of the energy bands. 
+1) Retrieval and visualization of data from Swift/BAT: We implement an easy and fast code to download and plot an existing GRB post-processed data (e.g., Figure 2). There is the possibility to modify the time resolution of the data files (2ms, 8ms, 16ms, 64ms, 256ms, 1s and 10s) and analyze the data by selecting only some of the energy bands. 
 
 
 ![Light curve of GRB 060614A. Image taken from @Garcia-Cifuentes:2023 \label{fig:fig2}](Figures/GRB060614.png)
@@ -80,6 +84,6 @@ This repository requires Python 3.8 or higher, and the necessary packages will b
 
 # Acknowledgements
 
-KSGC acknowledges support from CONAhCyT fellowship. RLB acknowledges support from CONAHCyT postdoctoral fellowship.
+KSGC acknowledges support from CONACyT fellowship. RLB acknowledges support from CONACyT postdoctoral fellowship.
 
 # References

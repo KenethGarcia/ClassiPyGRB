@@ -14,13 +14,15 @@ authors:
     corresponding: true # (This is how to denote the corresponding author)
   - name: Rosa L. Becerra
     orcid: 0000-0002-0216-3415
-    affiliation: 1
+    affiliation: "1,2"
   - name: Fabio De Colle
     orcid: 0000-0002-3137-4633
     affiliation: 1
 affiliations:
  - name: Instituto de Ciencias Nucleares,  Universidad Nacional Autónoma de México, Apartado Postal 70-543, 04510 CDMX, México
    index: 1
+ - name: Department of Physics, University of Rome - Tor Vergata, via della Ricerca Scientifica 1, 00100 Rome, IT
+   index: 2
 date: 22 May 2023
 bibliography: paper.bib
 --- 
@@ -47,7 +49,7 @@ ClassiPyGRB allows researchers to query light curves for any GRB in the Swift/BA
 
 Although Swift/BAT offers basic functionality for data retrieval and analysis, it is still necessary to implement a package that allows the user to access and use the data in a simple way. In our case, ClassiPyGRB is completely focused on GRB science. It complements what other Python packages oriented to the Swift/BAT instrument do, such as:
 
-1) The NITRATES pipeline [@DeLaunay:2022], designed for maximum likelihood-driven discovery and localization of Gamma Ray Bursts.
+1) The NITRATES pipeline [@DeLaunay:2022], designed for maximum likelihood-driven discovery and localization of Gamma-Ray Bursts.
 2) BatAnalysis [@Parsotan:2023], a package specializing in photometry from all sources observed by the BAT instrument, not just in GRBs.
 
 Thus, ClassiPyGRB distinguishes itself by offering a comprehensive solution that addresses the entire workflow of GRBs, from data retrieval to classification. This package facilitates the entire process of GRB analysis, ensuring accessibility, efficiency, and robustness for researchers in the field of gamma-ray astronomy.
@@ -86,6 +88,6 @@ This repository requires Python 3.8 or higher, and the necessary packages will b
 
 # Acknowledgements
 
-KSGC acknowledges support from CONACyT fellowship. RLB acknowledges support from CONACyT postdoctoral fellowship.
+KSGC acknowledges support from CONAHCyT fellowship. RLB acknowledges support from CONAHCyT postdoctoral fellowship.
 
 # References

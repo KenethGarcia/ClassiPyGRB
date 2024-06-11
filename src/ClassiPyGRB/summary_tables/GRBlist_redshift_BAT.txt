@@ -17,11 +17,6 @@
 ##        to the value presented in this table.
 ################################################################################
 ## GRBname | z | Method | Uncertainty (when available; mostly for photo-z) | Ref.
-GRB231215A  |   2.305   | ba |   N/A   |   Thoene et al. GCN Circ. 35373 (OSIRIS+/GTC)  
-GRB231210B  |   3.13    | ba |   N/A   |   Saccardi et al. GCN Circ. 35317 (VLT/X-shooter)  
-GRB231118A  |   0.8304  | ba |   N/A   |   Schneider et al. GCN Circ. 35123 (VLT/X-shooter)  
-GRB231117A  |   0.257   | he |   N/A   |   Gonzalez-Bañuelos et al. GCN Circ. 35098  (ePESSTO+)  
-GRB231111A  |   1.179<z<2.0   | b |   N/A   |   Thoene et al. GCN Circ. 35009 (OSIRIS+/GTC); D'Avanzo et al. GCN Circ 35007 (TNG)  
 GRB230818A  |   2.42    | ba |   N/A   |   Malesani et al. GCN Circ. 34485 (NOT)  
 GRB230628E  |   <2      | be |   N/A   |   Palmerio et al. GCN Circ 34122  
 GRB230506C  |   3.7<z<4.0   | ba Lyman-alpha break |   N/A   |   Adami et al. GCN Circ. 33749 (OHP/T193)  

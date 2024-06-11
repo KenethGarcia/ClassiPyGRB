@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install System Dependencies
         run: |  # Install Tkinter and Pillow dependencies for ClassiPyGRB
